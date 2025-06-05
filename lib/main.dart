@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(), // Langsung ke login sebagai root
+      home: SignInScreen(), // Langsung ke login sebagai root
       debugShowCheckedModeBanner: false,
     );
   }
