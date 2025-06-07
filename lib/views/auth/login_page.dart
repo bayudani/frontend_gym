@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/views/register_page.dart'; 
-import '../controllers/auth_controller.dart';   
+import 'package:gym_app/views/auth/register_page.dart'; 
+import '../../controllers/auth_controller.dart';   
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});

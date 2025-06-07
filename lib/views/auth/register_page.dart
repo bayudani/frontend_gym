@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/auth_controller.dart';   
+import '../../controllers/auth_controller.dart';   
 // Kalo mau navigasi balik ke SignInScreen secara eksplisit, uncomment dan sesuaikan path
 // import 'sign_in_screen.dart';
 
