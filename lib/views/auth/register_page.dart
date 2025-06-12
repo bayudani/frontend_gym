@@ -40,7 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   final _authController = AuthController();
   final _formKey = GlobalKey<FormState>(); // Kunci buat validasi form
@@ -52,7 +51,6 @@ class _RegisterPageState extends State<RegisterPage> {
         name: _nameController.text,
         email: _emailController.text,
         password: _passwordController.text,
-        passwordConfirmation: _confirmPasswordController.text,
         context: context, // Buat nampilin snackbar atau notif lain
       );
     }
@@ -64,7 +62,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -166,23 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     // Field buat Konfirmasi Password
-                    _buildTextFormField(
-                      controller: _confirmPasswordController,
-                      hintText: "Confirm your password",
-                      labelText: "Confirm Password",
-                      iconSvg: lockIcon, // Icon-nya sama aja kayak password
-                      obscureText: true,
-                      textInputAction: TextInputAction.done, // Tombol "done" di keyboard
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
+                    
                     SizedBox(height: MediaQuery.of(context).size.height * 0.05),
 
                     // Tombol Sign Up

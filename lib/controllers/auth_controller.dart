@@ -8,10 +8,9 @@ class AuthController {
   required String name,
   required String email,
   required String password,
-  required String passwordConfirmation,
   required BuildContext context,
 }) async {
-  final res = await ApiService.register(name, email, password, passwordConfirmation);
+  final res = await ApiService.register(name, email, password);
   if (res.statusCode == 201) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Register berhasil')));
     Navigator.pop(context); // Balik ke login
