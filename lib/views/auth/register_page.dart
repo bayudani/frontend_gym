@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../controllers/auth_controller.dart';   
+import 'package:flutter_svg/flutter_svg.dart'; // Import for SVG icons
+import '../../controllers/auth_controller.dart'; 
 // Kalo mau navigasi balik ke SignInScreen secara eksplisit, uncomment dan sesuaikan path
 // import 'sign_in_screen.dart';
 
@@ -24,7 +25,7 @@ const lockIcon = '''<svg width="15" height="18" viewBox="0 0 15 18" fill="none" 
 // Style border input field yang sama
 const authOutlineInputBorder = OutlineInputBorder(
   borderSide: BorderSide(color: Color(0xFF757575)),
-  borderRadius: BorderRadius.all(Radius.circular(100)),
+  borderRadius: BorderRadius.all(Radius.circular(10)), // Adjusted for a slightly less rounded look
 );
 // === END OF DEFINITIONS ===
 
@@ -71,145 +72,182 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // Make Scaffold background transparent to show Stack's background
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0, // Biar gak ada bayangan
-        title: const Text("Sign Up"), // Judul AppBar
-        leading: IconButton( // Tombol back otomatis
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
+        backgroundColor: Colors.transparent, // Transparent AppBar
+        elevation: 0, // No shadow
+        title: const Text(
+          "Sign Up",
+          style: TextStyle(color: Colors.white), // White text for AppBar title
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white), // White back icon
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SingleChildScrollView( // Biar bisa di-scroll kalo kontennya panjang
-              child: Form( // Bungkus pake Form widget buat validasi
-                key: _formKey, // Pasang GlobalKey ke Form
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Register Account",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Complete your details to create \nyour account", // Sedikit ubah teksnya
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFF757575)),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-
-                    // Field buat Nama
-                    _buildTextFormField(
-                      controller: _nameController,
-                      hintText: "Enter your name",
-                      labelText: "Name",
-                      iconSvg: userIcon, // Pake icon user
-                      textInputAction: TextInputAction.next, // Pindah ke field berikutnya
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null; // Return null kalo valid
-                      },
-                    ),
-                    const SizedBox(height: 24), // Jarak antar field
-
-                    // Field buat Email
-                    _buildTextFormField(
-                      controller: _emailController,
-                      hintText: "Enter your email",
-                      labelText: "Email",
-                      iconSvg: mailIcon, // Pake icon mail
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        // Validasi email sederhana
-                        if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-                          return 'Enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Field buat Password
-                    _buildTextFormField(
-                      controller: _passwordController,
-                      hintText: "Enter your password",
-                      labelText: "Password",
-                      iconSvg: lockIcon, // Pake icon lock
-                      obscureText: true, // Sembunyiin inputan password
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 6) { // Contoh: password minimal 6 karakter
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Field buat Konfirmasi Password
-                    _buildTextFormField(
-                      controller: _confirmPasswordController,
-                      hintText: "Confirm your password",
-                      labelText: "Confirm Password",
-                      iconSvg: lockIcon, // Icon-nya sama aja kayak password
-                      obscureText: true,
-                      textInputAction: TextInputAction.done, // Tombol "done" di keyboard
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-
-                    // Tombol Sign Up
-                    ElevatedButton(
-                      onPressed: _handleRegister, // Panggil fungsi register
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: const Color(0xFFFF7643), // Warna tombol
-                        foregroundColor: Colors.white, // Warna teks tombol
-                        minimumSize: const Size(double.infinity, 48), // Ukuran tombol
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
+      extendBodyBehindAppBar: true, // Extend body behind app bar for full background
+      body: Stack(
+        children: [
+          // Background Image
+          // Container(
+          //   decoration: const BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage('assets/images/master_gym_bg.png'), // Path to your background image
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
+          // Gradient Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.6),
+                  Colors.black.withOpacity(0.8),
+                ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SingleChildScrollView(
+                  // Biar bisa di-scroll kalo kontennya panjang
+                  child: Form(
+                    // Bungkus pake Form widget buat validasi
+                    key: _formKey, // Pasang GlobalKey ke Form
+                    child: Column(
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.1), // Adjusted space
+                        const Text(
+                          "Register Account",
+                          style: TextStyle(
+                            color: Colors.white, // White text
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      child: const Text("Sign Up"),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Complete your details to create \nyour account", // Sedikit ubah teksnya
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70), // White70 text
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+
+                        // Field buat Nama
+                        _buildTextFormField(
+                          controller: _nameController,
+                          hintText: "Enter your name",
+                          labelText: "Name",
+                          iconSvg: userIcon, // Pake icon user
+                          textInputAction: TextInputAction.next, // Pindah ke field berikutnya
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your name';
+                            }
+                            return null; // Return null kalo valid
+                          },
+                        ),
+                        const SizedBox(height: 24), // Jarak antar field
+
+                        // Field buat Email
+                        _buildTextFormField(
+                          controller: _emailController,
+                          hintText: "Enter your email",
+                          labelText: "Email",
+                          iconSvg: mailIcon, // Pake icon mail
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            // Validasi email sederhana
+                            if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Field buat Password
+                        _buildTextFormField(
+                          controller: _passwordController,
+                          hintText: "Enter your password",
+                          labelText: "Password",
+                          iconSvg: lockIcon, // Pake icon lock
+                          obscureText: true, // Sembunyiin inputan password
+                          textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              // Contoh: password minimal 6 karakter
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Field buat Konfirmasi Password
+                        _buildTextFormField(
+                          controller: _confirmPasswordController,
+                          hintText: "Confirm your password",
+                          labelText: "Confirm Password",
+                          iconSvg: lockIcon, // Icon-nya sama aja kayak password
+                          obscureText: true,
+                          textInputAction: TextInputAction.done, // Tombol "done" di keyboard
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your password';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+
+                        // Tombol Sign Up
+                        ElevatedButton(
+                          onPressed: _handleRegister, // Panggil fungsi register
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.red, // Warna tombol jadi merah
+                            foregroundColor: Colors.white, // Warna teks tombol
+                            minimumSize: const Size(double.infinity, 50), // Ukuran tombol sedikit lebih tinggi
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10)), // Sudut tombol 10
+                            ),
+                          ),
+                          child: const Text(
+                            "Sign Up",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Bold and larger text
+                          ),
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+
+                        // Teks "Already have an account? Sign In"
+                        _buildAlreadyHaveAccountText(context),
+                        const SizedBox(height: 20), // Padding di bawah
+                      ],
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                    
-                    // Teks "Already have an account? Sign In"
-                    _buildAlreadyHaveAccountText(context),
-                    const SizedBox(height: 20), // Padding di bawah
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -230,28 +268,39 @@ class _RegisterPageState extends State<RegisterPage> {
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      style: const TextStyle(color: Colors.white), // Input text color
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
         floatingLabelBehavior: FloatingLabelBehavior.always, // Label selalu di atas
-        hintStyle: const TextStyle(color: Color(0xFF757575)),
+        hintStyle: const TextStyle(color: Colors.white54), // Hint text color
+        labelStyle: const TextStyle(color: Colors.white70), // Label text color
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 16,
         ),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 12, 12), // Padding buat icon
-          
+        prefixIcon: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 8, 12), // Padding buat icon
+          child: SvgPicture.string(
+            iconSvg,
+            colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn), // Icon color
+            width: 18, // Adjust width as needed for specific icons
+            height: 13, // Adjust height as needed for specific icons
+          ),
         ),
         border: authOutlineInputBorder,
-        enabledBorder: authOutlineInputBorder,
+        enabledBorder: authOutlineInputBorder.copyWith(
+          borderSide: const BorderSide(color: Colors.white70), // White border
+        ),
         focusedBorder: authOutlineInputBorder.copyWith(
           borderSide: const BorderSide(color: Color(0xFFFF7643)), // Warna border pas di-fokus
         ),
-        errorBorder: authOutlineInputBorder.copyWith( // Warna border pas error
+        errorBorder: authOutlineInputBorder.copyWith(
+          // Warna border pas error
           borderSide: const BorderSide(color: Colors.red),
         ),
-        focusedErrorBorder: authOutlineInputBorder.copyWith( // Warna border pas error & di-fokus
+        focusedErrorBorder: authOutlineInputBorder.copyWith(
+          // Warna border pas error & di-fokus
           borderSide: const BorderSide(color: Colors.red, width: 1.5),
         ),
       ),
@@ -266,7 +315,7 @@ class _RegisterPageState extends State<RegisterPage> {
       children: [
         const Text(
           "Already have an account? ",
-          style: TextStyle(color: Color(0xFF757575)),
+          style: TextStyle(color: Colors.white70), // White70 color
         ),
         GestureDetector(
           onTap: () {
@@ -280,7 +329,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: const Text(
             "Sign In",
             style: TextStyle(
-              color: Color(0xFFFF7643), // Warna link
+              color: Colors.red, // Red color for "Sign In" link
               fontWeight: FontWeight.bold,
             ),
           ),

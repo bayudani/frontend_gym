@@ -1,84 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/views/auth/register_page.dart'; 
-import '../../controllers/auth_controller.dart';   
+import 'package:flutter_svg/flutter_svg.dart'; // Import for SVG icons
+import 'package:gym_app/views/auth/register_page.dart';
+import '../../controllers/auth_controller.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //  controllerinputan user
+    // Controller untuk inputan user
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
-    // instance AuthController
+    // Instance AuthController
     final AuthController auth = AuthController();
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0, 
-        title: const Text("Sign In"),
-      ),
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Welcome Back",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Sign in with your email and password  \nor continue with social media",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF757575)),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                  // Oper controller & auth ke SignInForm
-                  SignInForm(
-                    emailController: emailController,
-                    passwordController: passwordController,
-                    authController: auth,
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.08), // Jarak ke tombol sosmed
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        
-                      ),
-                      
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const NoAccountText(), // Widget buat teks "Don't have an account?"
-                  const SizedBox(height: 20), // Padding tambahan di bawah
+      // The Scaffold's background is transparent so the Stack can show its background
+      backgroundColor: Colors.transparent, // Make Scaffold background transparent
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/login.png'), // Path to your background image
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Gradient Overlay (optional, for better text readability)
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.6),
+                  Colors.black.withOpacity(0.8),
                 ],
               ),
             ),
           ),
-        ),
+          SafeArea(
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.15), // Adjust height for top spacing
+                      const Text(
+                        "Welcome To",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      const Text(
+                        "Fit.Id",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // const Text(
+                      //   "Lorem ipsum dolor sit amet",
+                      //   textAlign: TextAlign.center,
+                      //   style: TextStyle(color: Colors.white70, fontSize: 16),
+                      // ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.08), // Space before form
+                      // Pass controller & auth to SignInForm
+                      SignInForm(
+                        emailController: emailController,
+                        passwordController: passwordController,
+                        authController: auth,
+                      ),
+                      const SizedBox(height: 20), // Adjust padding before "Don't have an account?"
+                      const NoAccountText(), // Widget for "Don't have an account?" text
+                      const SizedBox(height: 20), // Additional bottom padding
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Style buat border input field
+// Style for input field border
 const authOutlineInputBorder = OutlineInputBorder(
-  borderSide: BorderSide(color: Color(0xFF757575)),
-  borderRadius: BorderRadius.all(Radius.circular(100)),
+  borderSide: BorderSide(color: Colors.white70), // White border
+  borderRadius: BorderRadius.all(Radius.circular(10)), // Slightly less rounded for a modern look
 );
 
 class SignInForm extends StatelessWidget {
@@ -95,36 +114,44 @@ class SignInForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final _formKey = GlobalKey<FormState>(); // Kalo mau pake validasi form, aktifin ini
+    // final _formKey = GlobalKey<FormState>(); // If you want to use form validation, activate this
 
     return Form(
-      // key: _formKey, // Pasangin sama GlobalKey di atas
+      // key: _formKey, // Pair with GlobalKey above
       child: Column(
         children: [
           TextFormField(
-            controller: emailController, // Sambungin ke controller email
-            keyboardType: TextInputType.emailAddress, // Biar keyboardnya pas buat email
-            // onSaved: (email) {}, // Dipake kalo formnya di-save
-            // onChanged: (email) {}, // Kalo mau ada aksi tiap input berubah
-            textInputAction: TextInputAction.next, // Tombol "next" di keyboard
+            controller: emailController, // Connect to email controller
+            keyboardType: TextInputType.emailAddress, // Keyboard type for email
+            // onSaved: (email) {}, // Used if form is saved
+            // onChanged: (email) {}, // For actions when input changes
+            textInputAction: TextInputAction.next, // "Next" button on keyboard
+            style: const TextStyle(color: Colors.white), // Input text color
             decoration: InputDecoration(
-                hintText: "Enter your email",
-                labelText: "Email",
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintStyle: const TextStyle(color: Color(0xFF757575)),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
+              hintText: "Email", // Changed hint text
+              labelText: "Email", // Label text
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintStyle: const TextStyle(color: Colors.white54), // Hint text color
+              labelStyle: const TextStyle(color: Colors.white70), // Label text color
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 16,
+              ),
+              prefixIcon: Padding( // Use prefixIcon for icon inside the field
+                padding: const EdgeInsets.fromLTRB(12, 12, 8, 12), // Adjust icon padding
+                child: SvgPicture.string(
+                  mailIcon, // Your SVG string for mail icon
+                  colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn), // Icon color
+                  width: 18,
+                  height: 13,
                 ),
-                suffixIcon: Padding( // Pake suffixIcon biar iconnya gak mepet
-                  padding: const EdgeInsets.fromLTRB(0, 12, 12, 12), // Atur padding icon
-                  
-                ),
-                border: authOutlineInputBorder,
-                enabledBorder: authOutlineInputBorder,
-                focusedBorder: authOutlineInputBorder.copyWith(
-                    borderSide: const BorderSide(color: Color(0xFFFF7643)))),
-            // validator: (value) { // Contoh validasi
+              ),
+              border: authOutlineInputBorder,
+              enabledBorder: authOutlineInputBorder,
+              focusedBorder: authOutlineInputBorder.copyWith(
+                  borderSide: const BorderSide(color: Color(0xFFFF7643))), // Orange focus border
+            ),
+            // validator: (value) { // Example validation
             //   if (value == null || value.isEmpty) {
             //     return 'Please enter your email';
             //   }
@@ -135,31 +162,39 @@ class SignInForm extends StatelessWidget {
             // },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+            padding: const EdgeInsets.symmetric(vertical: 24), // Spacing between fields
             child: TextFormField(
-              controller: passwordController, // Sambungin ke controller password
+              controller: passwordController, // Connect to password controller
               // onSaved: (password) {},
               // onChanged: (password) {},
-              obscureText: true, // Biar inputan password jadi bintang-bintang
-              textInputAction: TextInputAction.done, // Tombol "done" di keyboard
+              obscureText: true, // Hide password input
+              textInputAction: TextInputAction.done, // "Done" button on keyboard
+              style: const TextStyle(color: Colors.white), // Input text color
               decoration: InputDecoration(
-                  hintText: "Enter your password",
-                  labelText: "Password",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintStyle: const TextStyle(color: Color(0xFF757575)),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
+                hintText: "Password", // Changed hint text
+                labelText: "Password", // Label text
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintStyle: const TextStyle(color: Colors.white54), // Hint text color
+                labelStyle: const TextStyle(color: Colors.white70), // Label text color
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                prefixIcon: Padding( // Use prefixIcon for icon inside the field
+                  padding: const EdgeInsets.fromLTRB(12, 12, 8, 12), // Adjust icon padding
+                  child: SvgPicture.string(
+                    lockIcon, // Your SVG string for lock icon
+                    colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn), // Icon color
+                    width: 15,
+                    height: 18,
                   ),
-                  suffixIcon: Padding( // Pake suffixIcon
-                    padding: const EdgeInsets.fromLTRB(0, 12, 12, 12), // Atur padding icon
-                    
-                  ),
-                  border: authOutlineInputBorder,
-                  enabledBorder: authOutlineInputBorder,
-                  focusedBorder: authOutlineInputBorder.copyWith(
-                      borderSide: const BorderSide(color: Color(0xFFFF7643)))),
-              // validator: (value) { // Contoh validasi
+                ),
+                border: authOutlineInputBorder,
+                enabledBorder: authOutlineInputBorder,
+                focusedBorder: authOutlineInputBorder.copyWith(
+                    borderSide: const BorderSide(color: Color(0xFFFF7643))), // Orange focus border
+              ),
+              // validator: (value) { // Example validation
               //   if (value == null || value.isEmpty) {
               //     return 'Please enter your password';
               //   }
@@ -170,56 +205,59 @@ class SignInForm extends StatelessWidget {
               // },
             ),
           ),
-          // Bisa tambahin "Forgot password?" di sini kalo mau
+          // "Forgot password?"
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.end,
           //   children: [
           //     TextButton(
           //       onPressed: () {
-          //         // Logic buat lupa password
+          //         // Logic for forgot password
           //       },
-          //       child: Text(
-          //         "Forgot password?",
-          //         style: TextStyle(color: Color(0xFF757575)),
+          //       child: const Text(
+          //         "Forgot Password", // Text for forgot password
+          //         style: TextStyle(color: Colors.white70), // White color for the text
           //       ),
           //     ),
           //   ],
           // ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24), // Adjusted space before button
           ElevatedButton(
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) { // Kalo pake validasi, cek dulu
+              // if (_formKey.currentState!.validate()) { // If using validation, check first
               //   _formKey.currentState!.save();
-                // Panggil fungsi login dari AuthController
-                final user = await authController.login(
-                  emailController.text, // Ambil email dari controller
-                  passwordController.text, // Ambil password dari controller
-                  context, // Kirim context buat nampilin error (kalo ada)
-                );
-                if (user != null) {
-                  // Kalo login berhasil, simpen token atau pindah halaman
-                  print('Login berhasil: ${user.token}');
-                  // Contoh pindah halaman setelah login:
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => HomePage()), // Ganti HomePage sama halaman tujuanmu
-                  // );
-                } else {
-                  // Kalo login gagal, AuthController biasanya udah nampilin pesan
-                  print('Login gagal');
-                }
+              // Call login function from AuthController
+              final user = await authController.login(
+                emailController.text, // Get email from controller
+                passwordController.text, // Get password from controller
+                context, // Pass context for displaying errors (if any)
+              );
+              if (user != null) {
+                // If login successful, save token or navigate
+                print('Login successful: ${user.token}');
+                // Example of navigating after login:
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => HomePage()), // Replace HomePage with your destination
+                // );
+              } else {
+                // If login failed, AuthController typically displays a message
+                print('Login failed');
+              }
               // }
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
-              backgroundColor: const Color(0xFFFF7643),
+              backgroundColor: Colors.red, // Red background color
               foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 48),
+              minimumSize: const Size(double.infinity, 50), // Increased height slightly
               shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+                borderRadius: BorderRadius.all(Radius.circular(10)), // Less rounded corners
               ),
             ),
-            child: const Text("Continue"),
+            child: const Text(
+              "Sign In", // Button text changed to "Sign In"
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Bold and larger text
+            ),
           )
         ],
       ),
@@ -227,6 +265,7 @@ class SignInForm extends StatelessWidget {
   }
 }
 
+// SocalCard is defined but not used in the final design as per the target image
 class SocalCard extends StatelessWidget {
   const SocalCard({
     Key? key,
@@ -242,20 +281,20 @@ class SocalCard extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Container(
-        padding: const EdgeInsets.all(12), // Padding dalem container icon
-        height: 48, // Tinggi container icon
-        width: 48,  // Lebar container icon
+        padding: const EdgeInsets.all(12), // Padding inside icon container
+        height: 48, // Icon container height
+        width: 48, // Icon container width
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F6F9),
-          shape: BoxShape.circle,
-          boxShadow: [ // Efek shadow biar agak ngambang (opsional)
-            BoxShadow(
-              offset: Offset(0, 1),
-              blurRadius: 2,
-              color: Colors.black.withOpacity(0.1),
-            )
-          ]
-        ),
+            color: const Color(0xFFF5F6F9),
+            shape: BoxShape.circle,
+            boxShadow: [
+              // Optional shadow effect for floating look
+              BoxShadow(
+                offset: Offset(0, 1),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.1),
+              )
+            ]),
         child: icon,
       ),
     );
@@ -273,22 +312,22 @@ class NoAccountText extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-          "Don’t have an account? ",
-          style: TextStyle(color: Color(0xFF757575)),
+          "Didn't have any account? ", // Changed text
+          style: TextStyle(color: Colors.white70), // White color for the text
         ),
         GestureDetector(
           onTap: () {
-            // Pindah ke halaman RegisterPage pas "Sign Up" diklik
+            // Navigate to RegisterPage when "Sign Up" is clicked
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => RegisterPage()),
             );
           },
           child: const Text(
-            "Sign Up",
+            "Sign up here", // Changed text to "Sign up here"
             style: TextStyle(
-              color: Color(0xFFFF7643),
-              fontWeight: FontWeight.bold, // Biar teks "Sign Up" lebih keliatan
+              color: Colors.red, // Red color for "Sign up here"
+              fontWeight: FontWeight.bold, // Make "Sign Up" text more prominent
             ),
           ),
         ),
