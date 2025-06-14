@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Import for SVG icons
-import '../../controllers/auth_controller.dart'; 
+import '../../controllers/auth_controller.dart';
 // Kalo mau navigasi balik ke SignInScreen secara eksplisit, uncomment dan sesuaikan path
 // import 'sign_in_screen.dart';
 
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController(); // <-- Penambahan ini
 
   final _authController = AuthController();
   final _formKey = GlobalKey<FormState>(); // Kunci buat validasi form
@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
         name: _nameController.text,
         email: _emailController.text,
         password: _passwordController.text,
-        passwordConfirmation: _confirmPasswordController.text,
+        passwordConfirmation: _confirmPasswordController.text, // <-- Penambahan ini
         context: context, // Buat nampilin snackbar atau notif lain
       );
     }
@@ -65,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _confirmPasswordController.dispose(); // <-- Penambahan ini
     super.dispose();
   }
 
@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
       extendBodyBehindAppBar: true, // Extend body behind app bar for full background
       body: Stack(
         children: [
-          // Background Image
+          // Background Image (dikomen, jika ingin pakai uncomment)
           // Container(
           //   decoration: const BoxDecoration(
           //     image: DecorationImage(
@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         // Field buat Konfirmasi Password
                         _buildTextFormField(
-                          controller: _confirmPasswordController,
+                          controller: _confirmPasswordController, // <-- Menggunakan controller yang sudah didefinisikan
                           hintText: "Confirm your password",
                           labelText: "Confirm Password",
                           iconSvg: lockIcon, // Icon-nya sama aja kayak password
