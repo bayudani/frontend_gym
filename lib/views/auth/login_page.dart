@@ -3,32 +3,40 @@ import 'package:flutter_svg/flutter_svg.dart'; // Import for SVG icons
 import 'package:gym_app/views/auth/register_page.dart';
 import '../../controllers/auth_controller.dart';
 
-class SignInScreen extends StatelessWidget {
+
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Controller untuk inputan user
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    // Instance AuthController
-    final AuthController auth = AuthController();
+  State<SignInScreen> createState() => _SignInScreenState();
+}
 
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthController auth = AuthController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      // The Scaffold's background is transparent so the Stack can show its background
-      backgroundColor: Colors.transparent, // Make Scaffold background transparent
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background Image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/login.png'), // Path to your background image
+                image: AssetImage('assets/images/login.png'),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          // Gradient Overlay (optional, for better text readability)
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -42,49 +50,33 @@ class SignInScreen extends StatelessWidget {
             ),
           ),
           SafeArea(
-            child: SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.15), // Adjust height for top spacing
-                      const Text(
-                        "Welcome To",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      const Text(
-                        "Fit.Id",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // const Text(
-                      //   "Lorem ipsum dolor sit amet",
-                      //   textAlign: TextAlign.center,
-                      //   style: TextStyle(color: Colors.white70, fontSize: 16),
-                      // ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.08), // Space before form
-                      // Pass controller & auth to SignInForm
-                      SignInForm(
-                        emailController: emailController,
-                        passwordController: passwordController,
-                        authController: auth,
-                      ),
-                      const SizedBox(height: 20), // Adjust padding before "Don't have an account?"
-                      const NoAccountText(), // Widget for "Don't have an account?" text
-                      const SizedBox(height: 20), // Additional bottom padding
-                    ],
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+                  const Text(
+                    "Welcome To",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
-                ),
+                  const Text(
+                    "Fit.Id",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                  SignInForm(
+                    emailController: emailController,
+                    passwordController: passwordController,
+                    authController: auth,
+                  ),
+                  const SizedBox(height: 20),
+                  const NoAccountText(),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
           ),
@@ -94,10 +86,9 @@ class SignInScreen extends StatelessWidget {
   }
 }
 
-// Style for input field border
 const authOutlineInputBorder = OutlineInputBorder(
-  borderSide: BorderSide(color: Colors.white70), // White border
-  borderRadius: BorderRadius.all(Radius.circular(10)), // Slightly less rounded for a modern look
+  borderSide: BorderSide(color: Colors.white70),
+  borderRadius: BorderRadius.all(Radius.circular(10)),
 );
 
 class SignInForm extends StatelessWidget {
@@ -114,34 +105,28 @@ class SignInForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final _formKey = GlobalKey<FormState>(); // If you want to use form validation, activate this
-
     return Form(
-      // key: _formKey, // Pair with GlobalKey above
       child: Column(
         children: [
           TextFormField(
-            controller: emailController, // Connect to email controller
-            keyboardType: TextInputType.emailAddress, // Keyboard type for email
-            // onSaved: (email) {}, // Used if form is saved
-            // onChanged: (email) {}, // For actions when input changes
-            textInputAction: TextInputAction.next, // "Next" button on keyboard
-            style: const TextStyle(color: Colors.white), // Input text color
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
-              hintText: "Email", // Changed hint text
-              labelText: "Email", // Label text
+              hintText: "Email",
+              labelText: "Email",
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintStyle: const TextStyle(color: Colors.white54), // Hint text color
-              labelStyle: const TextStyle(color: Colors.white70), // Label text color
+              hintStyle: const TextStyle(color: Colors.white54),
+              labelStyle: const TextStyle(color: Colors.white70),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
-              ),
-              prefixIcon: Padding( // Use prefixIcon for icon inside the field
-                padding: const EdgeInsets.fromLTRB(12, 12, 8, 12), // Adjust icon padding
+                  horizontal: 24, vertical: 16),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
                 child: SvgPicture.string(
-                  mailIcon, // Your SVG string for mail icon
-                  colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn), // Icon color
+                  mailIcon,
+                  colorFilter: const ColorFilter.mode(
+                      Colors.white70, BlendMode.srcIn),
                   width: 18,
                   height: 13,
                 ),
@@ -149,121 +134,76 @@ class SignInForm extends StatelessWidget {
               border: authOutlineInputBorder,
               enabledBorder: authOutlineInputBorder,
               focusedBorder: authOutlineInputBorder.copyWith(
-                  borderSide: const BorderSide(color: Color(0xFFFF7643))), // Orange focus border
-            ),
-            // validator: (value) { // Example validation
-            //   if (value == null || value.isEmpty) {
-            //     return 'Please enter your email';
-            //   }
-            //   if (!value.contains('@')) {
-            //     return 'Please enter a valid email';
-            //   }
-            //   return null;
-            // },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24), // Spacing between fields
-            child: TextFormField(
-              controller: passwordController, // Connect to password controller
-              // onSaved: (password) {},
-              // onChanged: (password) {},
-              obscureText: true, // Hide password input
-              textInputAction: TextInputAction.done, // "Done" button on keyboard
-              style: const TextStyle(color: Colors.white), // Input text color
-              decoration: InputDecoration(
-                hintText: "Password", // Changed hint text
-                labelText: "Password", // Label text
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintStyle: const TextStyle(color: Colors.white54), // Hint text color
-                labelStyle: const TextStyle(color: Colors.white70), // Label text color
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                prefixIcon: Padding( // Use prefixIcon for icon inside the field
-                  padding: const EdgeInsets.fromLTRB(12, 12, 8, 12), // Adjust icon padding
-                  child: SvgPicture.string(
-                    lockIcon, // Your SVG string for lock icon
-                    colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn), // Icon color
-                    width: 15,
-                    height: 18,
-                  ),
-                ),
-                border: authOutlineInputBorder,
-                enabledBorder: authOutlineInputBorder,
-                focusedBorder: authOutlineInputBorder.copyWith(
-                    borderSide: const BorderSide(color: Color(0xFFFF7643))), // Orange focus border
+                borderSide: const BorderSide(color: Color(0xFFFF7643)),
               ),
-              // validator: (value) { // Example validation
-              //   if (value == null || value.isEmpty) {
-              //     return 'Please enter your password';
-              //   }
-              //   if (value.length < 6) {
-              //     return 'Password must be at least 6 characters';
-              //   }
-              //   return null;
-              // },
             ),
           ),
-          // "Forgot password?"
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   children: [
-          //     TextButton(
-          //       onPressed: () {
-          //         // Logic for forgot password
-          //       },
-          //       child: const Text(
-          //         "Forgot Password", // Text for forgot password
-          //         style: TextStyle(color: Colors.white70), // White color for the text
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          const SizedBox(height: 24), // Adjusted space before button
+          const SizedBox(height: 24),
+          TextFormField(
+            controller: passwordController,
+            obscureText: true,
+            textInputAction: TextInputAction.done,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: "Password",
+              labelText: "Password",
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintStyle: const TextStyle(color: Colors.white54),
+              labelStyle: const TextStyle(color: Colors.white70),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 24, vertical: 16),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
+                child: SvgPicture.string(
+                  lockIcon,
+                  colorFilter: const ColorFilter.mode(
+                      Colors.white70, BlendMode.srcIn),
+                  width: 15,
+                  height: 18,
+                ),
+              ),
+              border: authOutlineInputBorder,
+              enabledBorder: authOutlineInputBorder,
+              focusedBorder: authOutlineInputBorder.copyWith(
+                borderSide: const BorderSide(color: Color(0xFFFF7643)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () async {
-              // if (_formKey.currentState!.validate()) { // If using validation, check first
-              //   _formKey.currentState!.save();
-              // Call login function from AuthController
               final user = await authController.login(
-                emailController.text, // Get email from controller
-                passwordController.text, // Get password from controller
-                context, // Pass context for displaying errors (if any)
+                emailController.text.trim(),
+                passwordController.text.trim(),
+                context,
               );
               if (user != null) {
-                // If login successful, save token or navigate
                 print('Login successful: ${user.token}');
-                // Example of navigating after login:
-                // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => HomePage()), // Replace HomePage with your destination
-                // );
+                // TODO: Navigate to home screen or save token
               } else {
-                // If login failed, AuthController typically displays a message
                 print('Login failed');
               }
-              // }
             },
             style: ElevatedButton.styleFrom(
               elevation: 0,
-              backgroundColor: Colors.red, // Red background color
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 50), // Increased height slightly
+              minimumSize: const Size(double.infinity, 50),
               shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)), // Less rounded corners
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
             ),
             child: const Text(
-              "Sign In", // Button text changed to "Sign In"
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Bold and larger text
+              "Sign In",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
+
 
 // SocalCard is defined but not used in the final design as per the target image
 class SocalCard extends StatelessWidget {
