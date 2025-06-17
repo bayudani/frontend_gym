@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 import 'package:gym_app/views/home/home_page.dart'; // Import HomePage for navigation
-// import 'package:gym_app/app_constants.dart'; // Import file konstanta jika ada untuk path gambar
-// Jika Anda belum memiliki app_constants.dart, Anda bisa membuat file ini
-// dan menempatkan path gambar di sana, atau definisikan langsung di sini.
+import 'package:gym_app/views/profile/profile_page.dart'; // Import ProfilePage for navigation
+import 'package:gym_app/views/membership/membership_card_page.dart'; // Import MembershipCardPage for navigation
 
 // --- Placeholder for Images ---
-const _membershipBannerImage = 'assets/images/membership_banner.png'; // Gambar banner membership
-const _membershipGymBroImage = 'assets/images/membership_gym_bro.png'; // Gambar orang gym
+// Pastikan path gambar ini benar di pubspec.yaml dan folder assets Anda
+const _membershipBannerImage = 'assets/images/Carousel.png'; // Menggunakan Carousel.png sebagai gambar latar belakang header
+// const _membershipGymBroImage = 'assets/images/membership_gym_bro.png'; // Dihapus karena tidak lagi digunakan di header
 const _barbellProgramImage = 'assets/images/barbell_program.png'; // Gambar untuk program
-const _dumbbellProgramImage = 'assets/images/dumbbell_program.png'; // Gambar untuk program
+const _dumbbellProgramImage = 'assets/images/dumble.png'; // Gambar untuk program
+const _megaphoneIconPath = 'assets/images/megaphone_icon.png'; // Icon megaphone untuk diskon
 
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
@@ -19,13 +20,13 @@ class MembershipPage extends StatefulWidget {
 }
 
 class _MembershipPageState extends State<MembershipPage> {
-  int _selectedIndex = 2; // Assuming Membership is at index 1 in the new bottom nav order
+  int _selectedIndex = 1; // Assuming Membership is at index 1 in the bottom nav order (Home 0, Blog 1, Membership 2, Profile 3)
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // Navigation is handled by CustomBottomNavBar internally.
+    // Navigasi ditangani oleh CustomBottomNavBar internally.
   }
 
   @override
@@ -33,7 +34,7 @@ class _MembershipPageState extends State<MembershipPage> {
     return Scaffold(
       backgroundColor: Colors.black, // Background utama hitam
       appBar: AppBar(
-        backgroundColor: Colors.red, // AppBar merah
+        backgroundColor: Colors.black, // AppBar hitam
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
@@ -41,37 +42,41 @@ class _MembershipPageState extends State<MembershipPage> {
             Navigator.pop(context); // Kembali ke halaman sebelumnya
           },
         ),
-        // Title dihilangkan karena gambar memiliki teks "Let's Join Membership" di bagian atas
-        // title: const Text('Membership'),
       ),
-      extendBodyBehindAppBar: true, // Untuk memperluas gambar di belakang AppBar
+      // PERBAIKAN: extendBodyBehindAppBar diatur ke false agar latar belakang tidak di belakang AppBar
+      // extendBodyBehindAppBar: true, 
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.transparent, // Transparan agar gambar terlihat
-            expandedHeight: MediaQuery.of(context).size.height * 0.4, // Tinggi 40% dari layar
+            expandedHeight: MediaQuery.of(context).size.height * 0.25, // Tinggi 25% dari layar
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
+                  // Gambar latar belakang utama
                   Image.asset(
-                    _membershipBannerImage, // Gambar latar belakang merah
-                    fit: BoxFit.cover,
+                    _membershipBannerImage,
+                    fit: BoxFit.cover, // Memastikan gambar menutupi seluruh area
                   ),
+                  // Gradien Overlay di atas gambar latar belakang
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.red.withOpacity(0.0), // Awal transparan
-                          Colors.red.withOpacity(0.5), // Akhir lebih merah
+                          Colors.black.withOpacity(0.2), // Sedikit transparan
+                          Colors.black.withOpacity(0.5), // Lebih gelap di bawah
                         ],
                       ),
                     ),
                   ),
+                  // Teks "Let's Join Membership"
                   Positioned(
-                    top: MediaQuery.of(context).padding.top + 60, // Sesuaikan dengan tinggi status bar dan padding
+                    // PERBAIKAN: Mengurangi nilai 'top' karena AppBar tidak lagi transparan di belakangnya
+                    // Ini akan memposisikan teks relatif terhadap bagian atas FlexibleSpaceBar
+                    top: 30, // Posisi teks dari atas FlexibleSpaceBar
                     left: 20,
                     right: 20,
                     child: Column(
@@ -106,16 +111,6 @@ class _MembershipPageState extends State<MembershipPage> {
                       ],
                     ),
                   ),
-                  // Gambar orang gym di kanan bawah banner
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Image.asset(
-                      _membershipGymBroImage, // Gambar orang gym
-                      height: 200, // Tinggi gambar orang gym
-                      fit: BoxFit.contain,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -123,7 +118,7 @@ class _MembershipPageState extends State<MembershipPage> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                // Section "40% discount" (reuse from HomePage)
+                // Section "40% discount"
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: ClipRRect(
@@ -143,12 +138,20 @@ class _MembershipPageState extends State<MembershipPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Icon Megaphone
+                          Image.asset(
+                            _megaphoneIconPath, // Icon Megaphone
+                            width: 30,
+                            height: 30,
+                            color: Colors.white, // Warna putih untuk ikon
+                          ),
+                          const SizedBox(width: 10), // Jarak antara ikon dan teks
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  '📣 40% discount',
+                                  '40% discount',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -167,7 +170,7 @@ class _MembershipPageState extends State<MembershipPage> {
                             ),
                           ),
                           Image.asset(
-                            _dumbbellProgramImage, // Reusing dumbbell icon from Home page, adjust if different
+                            _dumbbellProgramImage, // Gambar barbel/dumbbell
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,

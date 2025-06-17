@@ -62,11 +62,11 @@ flutter:
   assets:
     - assets/images/1.png
     - assets/images/login.png
-    - assets/images/discount.png
     - assets/images/dumble.png
-    # - assets/images/upper_body_program.png
-    # - assets/images/chest_article.png
-    # - assets/images/biceps_article.png
+    - assets/images/Carousel.png
+    - assets/images/3.png
+    - assets/images/megaphone_icon.png
+    - assets/images/1.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
