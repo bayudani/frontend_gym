@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart'; // No longer needed directly in HomePage, unless used for other elements
+// Removed unused import: import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gym_app/views/profile/profile_page.dart';
 import 'package:gym_app/views/membership/membership_card_page.dart'; // Import MembershipCardPage
-import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
+import 'package:gym_app/widget/custom_bottom_nav_bar.dart'; // Corrected Import CustomBottomNavBar path
+import 'package:gym_app/views/blog/blog_page.dart'; // Import BlogPage
+import 'package:gym_app/widget/point/point_page.dart'; // Import PointPage yang baru
+
+// Import bagian-bagian baru
+import 'package:gym_app/views/home/choose_program_section.dart';
+import 'package:gym_app/views/home/article_section.dart';
 
 // Assume you have a constants or utility file for SVG icons if you have more
 // and want them centralized. For now, I'll include them here.
-const _profileIconPlaceholder = 'assets/images/profile_placeholder.png'; // Replace with your profile image path
+// const _profileIconPlaceholder = 'assets/images/1.png'; // Replace with your profile image path
 const _dumbbellIconPath = 'assets/images/dumble.png'; // Path for the dumbbell icon in the banner
+// PERBAIKAN: Mengatur path yang benar untuk ikon megaphone
+const _megaphoneIconPath = 'assets/images/megaphone_icon.png'; // Path untuk ikon megaphone
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -79,11 +88,43 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
-                          // Placeholder for profile image or avatar
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: AssetImage(_profileIconPlaceholder), // Replace with profile image
-                            backgroundColor: Colors.grey[800],
+                          // Mengganti CircleAvatar menjadi GestureDetector untuk Poin
+                          GestureDetector(
+                            onTap: () {
+                              // Navigasi ke halaman Poin saat diklik
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const PointPage()),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[800], // Latar belakang abu-abu gelap
+                                borderRadius: BorderRadius.circular(20), // Sudut membulat
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min, // Sesuaikan ukuran kolom
+                                children: const [
+                                  Text(
+                                    'Points', // Teks "Points"
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    '1250', // Contoh jumlah poin
+                                    style: TextStyle(
+                                      color: Colors.yellow, // Warna poin (bisa disesuaikan)
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -105,14 +146,14 @@ class _HomePageState extends State<HomePage> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                // Discount / Promo Section
+                // PERBAIKAN: Discount / Promo Section - Disesuaikan dengan gambar kedua
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
                       padding: const EdgeInsets.all(16.0),
-                      decoration: const BoxDecoration( // Changed to const for BoxDecoration
+                      decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
@@ -125,12 +166,20 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // PERBAIKAN: Image.asset untuk ikon megaphone tanpa color property
+                          Image.asset(
+                            _megaphoneIconPath, // Ikon Megaphone
+                            width: 35,
+                            height: 35,
+                            // Dihapus 'color: Colors.white' agar ikon menggunakan warna aslinya dari aset
+                          ),
+                          const SizedBox(width: 10), // Jarak antara ikon dan teks
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  '📣 40% discount',
+                                  '40% discount',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -148,12 +197,22 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-                          // Placeholder for dumbbell image
-                          Image.asset(
-                            _dumbbellIconPath, // Replace with your dumbbell image
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover, // Ensure it fits correctly
+                          // Container untuk gambar barbel dengan latar belakang putih
+                          Container(
+                            width: 65, // Sesuaikan lebar agar cocok dengan gambar
+                            height: 65, // Sesuaikan tinggi agar cocok dengan gambar
+                            decoration: BoxDecoration(
+                              color: Colors.white, // Latar belakang putih
+                              borderRadius: BorderRadius.circular(10), // Sedikit sudut membulat
+                            ),
+                            child: Center(
+                              child: Image.asset(
+                                _dumbbellIconPath, // Gambar barbel/dumbbell
+                                width: 50, // Ukuran gambar barbel di dalam container
+                                height: 50,
+                                fit: BoxFit.contain, // Memastikan gambar pas di dalam container
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -161,105 +220,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                // "Choose Your Program" Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Choose Your Program',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      SizedBox(
-                        height: 220, // Height for horizontal program list
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            _buildProgramCard(
-                              context,
-                              'Full Body',
-                              'Selengkapnya',
-                              '2 - 3 times a week',
-                              'assets/images/full_body_program.png', // Replace with program image
-                            ),
-                            const SizedBox(width: 15),
-                            _buildProgramCard(
-                              context,
-                              'Upper and I', // Corrected from 'Upper and l'
-                              'Selengkapnya',
-                              '4 times',
-                              'assets/images/upper_body_program.png', // Replace with program image
-                            ),
-                            const SizedBox(width: 15),
-                            // Add more cards if needed
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Memanggil widget ChooseProgramSection yang baru
+                const ChooseProgramSection(),
 
-                // "Artikel" Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Artikel',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              // Action to view all articles
-                            },
-                            child: const Text(
-                              'See all',
-                              style: TextStyle(
-                                color: Colors.red, // Red color for "See all"
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      _buildArticleCard(
-                        context,
-                        title: 'Antara Arm Day dan Leg Day, Dilema Para Pemula Workout',
-                        date: '28 Mei 2025',
-                        imagePath: 'assets/images/arm_leg_day_article.png', // Gambar artikel baru
-                      ),
-                      const SizedBox(height: 15),
-                      _buildArticleCard(
-                        context,
-                        title: 'Lebih Dari Sekadar Otot, Inilah Dampak Latihan Angkat Beban Terhadap Tubuh Anda',
-                        date: '20 Mei 2025',
-                        imagePath: 'assets/images/muscle_impact_article.png', // Gambar artikel baru
-                      ),
-                      const SizedBox(height: 20), // Bottom padding before bottom nav
-                    ],
-                  ),
-                ),
+                // Memanggil widget ArticleSection yang baru
+                const ArticleSection(),
               ],
             ),
           ),
         ],
       ),
-      // Menggunakan CustomBottomNavBar di sini
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -334,7 +304,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Widget for Article Card
-  Widget _buildArticleCard(BuildContext context, {required String title, required String date, required String imagePath}) {
+  Widget _buildArticleCard({
+    required BuildContext context,
+    required String title,
+    required String date,
+    required String imagePath,
+  }) {
     return Container(
       height: 150, // Article card height
       decoration: BoxDecoration(
@@ -348,11 +323,13 @@ class _HomePageState extends State<HomePage> {
         ),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Padding( // Tambahkan Padding untuk teks di dalam kartu
+      child: Padding(
+        // Tambahkan Padding untuk teks di dalam kartu
         padding: const EdgeInsets.all(15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Untuk menempatkan tanggal di paling atas
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // Untuk menempatkan tanggal di paling atas
           children: [
             Align(
               alignment: Alignment.topRight,

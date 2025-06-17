@@ -90,14 +90,14 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Stack(
         children: [
           // Background Image (dikomen, jika ingin pakai uncomment)
-          // Container(
-          //   decoration: const BoxDecoration(
-          //     image: DecorationImage(
-          //       image: AssetImage('assets/images/master_gym_bg.png'), // Path to your background image
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          // ),
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/3.png'), // Path to your background image
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           // Gradient Overlay
           Container(
             decoration: BoxDecoration(

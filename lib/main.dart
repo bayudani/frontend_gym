@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gym_app/views/auth/splash_screen.dart'; // Import OnboardingScreen
+import 'package:gym_app/views/auth/splash_screen.dart';
 import '../../controllers/profile_controller.dart';
 
 void main() {

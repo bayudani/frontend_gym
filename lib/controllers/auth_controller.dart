@@ -1,10 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gym_app/views/home/home_page.dart'; // Import halaman home_page Anda
+
 import '../models/user_models.dart';
 import '../service/api_service.dart';
-import 'package:gym_app/views/home/home_page.dart'; // Import halaman home_page Anda
-import 'package:gym_app/views/auth/login_page.dart'
-    hide HomePage; // Import halaman login_page Anda
 
 class AuthController {
   Future<void> register({
@@ -51,7 +51,7 @@ class AuthController {
       // Ambil token dan user
       final token = data['token'];
       final user = User.fromJson(data['user']);
-      
+
       if (token == null) {
         _showError(context, 'Token tidak ditemukan di response');
         return null;
@@ -70,14 +70,10 @@ class AuthController {
       );
       return user;
     } else {
-      String errorMessage = "Login gagal";
-      try {
-        final errorJson = jsonDecode(res.body);
-        errorMessage = errorJson['error'] ?? errorMessage;
-      } catch (_) {}
-
-      _showError(context, errorMessage); // tampilkan error
-      return null; // stop di sini, jangan pushReplacement ke Home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     }
   }
 
