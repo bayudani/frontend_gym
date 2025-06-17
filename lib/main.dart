@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_app/views/auth/splash_screen.dart';
-import '../../controllers/profile_controller.dart';
+import 'package:intl/date_symbol_data_local.dart'; // <-- IMPORT INI
 
-void main() {
+
+import '../../controllers/profile_controller.dart';
+import '../../controllers/program_controller.dart';
+import '../../controllers/article_controller.dart';
+
+void main() async { // <-- Ubah jadi async
+  // Pastikan semua binding siap sebelum runApp
+  WidgetsFlutterBinding.ensureInitialized(); 
+
+  // Inisialisasi data locale untuk 'id_ID' (Indonesia)
+  await initializeDateFormatting('id_ID', null); 
+
   runApp(const MyApp());
 }
 
@@ -15,6 +26,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProfileController()), // Menyediakan ProfileController
+        ChangeNotifierProvider(create: (context) => ProgramController()), 
+        ChangeNotifierProvider(create: (context) => ArticleController()), // <-- TAMBAHKAN INI
+
+
       ],
       child: MaterialApp(
         title: 'Gym App',

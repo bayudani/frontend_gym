@@ -29,3 +29,15 @@ class User {
     );
   }
 }
+
+class UserPoint {
+  final int point;
+
+  UserPoint({required this.point});
+
+  factory UserPoint.fromJson(Map<String, dynamic> json) {
+    return UserPoint(
+      point: json['point'] ?? 0, // Ambil 'point', kalo null default-nya 0
+    );
+  }
+}

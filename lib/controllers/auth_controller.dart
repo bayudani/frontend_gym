@@ -70,20 +70,24 @@ class AuthController {
       );
       return user;
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+      String errorMessage = "Login gagal";
+      try {
+        final errorJson = jsonDecode(res.body);
+        errorMessage = errorJson['error'] ?? errorMessage;
+      } catch (_) {}
+
+      _showError(context, errorMessage); // tampilkan error
+      return null;
     }
   }
 
-  Future<void> logout(BuildContext context) async {
-  await ApiService().removeToken();
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => const SignInScreen()),
-  );
-}
+//   Future<void> logout(BuildContext context) async {
+//   await ApiService().removeToken();
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(builder: (context) => const SignInScreen()),
+//   );
+// }
 
 
   void _showError(BuildContext context, String message) {
