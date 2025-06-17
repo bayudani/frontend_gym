@@ -81,6 +81,15 @@ class AuthController {
     }
   }
 
+  Future<void> logout(BuildContext context) async {
+  await ApiService().removeToken();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const SignInScreen()),
+  );
+}
+
+
   void _showError(BuildContext context, String message) {
     // Pastikan widget masih terpasang sebelum menggunakan context
     if (!context.mounted) return;

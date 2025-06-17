@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String _baseUrl =
-      'https://1995-114-125-62-36.ngrok-free.app/api';
+      'https://65f7-103-156-248-97.ngrok-free.app/api';
   static const String _baseUrlLaravel =
       'https://e3f8-116-206-36-23.ngrok-free.app/api';
 
@@ -59,6 +59,10 @@ class ApiService {
     await prefs.remove('token');
   }
 
+ Future<void> removeToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+  }
   /// ==================== PROFILE ====================
 
   Future<Map<String, dynamic>?> getProfile() async {

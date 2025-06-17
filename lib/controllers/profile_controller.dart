@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app/service/api_service.dart';
 import 'package:gym_app/models/user_models.dart';
 import 'package:gym_app/views/auth/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileController extends ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -35,25 +36,31 @@ class ProfileController extends ChangeNotifier {
   }
 
   Future<void> saveProfileChanges(
-    BuildContext context, String name, String email) async {
-  try {
-    final success = await _apiService.updateProfile(name, email);
-    if (success) {
-      // Update data lokal
-      _userProfile = _userProfile?.copyWith(name: name, email: email);
-      _showSnackBar(context, '✅ Perubahan profil disimpan!');
-    } else {
-      _showSnackBar(context, '❌ Gagal menyimpan perubahan profil.');
+    BuildContext context,
+    String name,
+    String email,
+  ) async {
+    try {
+      final success = await _apiService.updateProfile(name, email);
+      if (success) {
+        // Update data lokal
+        _userProfile = _userProfile?.copyWith(name: name, email: email);
+        _showSnackBar(context, '✅ Perubahan profil disimpan!');
+      } else {
+        _showSnackBar(context, '❌ Gagal menyimpan perubahan profil.');
+      }
+    } catch (e) {
+      _showSnackBar(context, '❌ Terjadi error: $e');
     }
-  } catch (e) {
-    _showSnackBar(context, '❌ Terjadi error: $e');
+    notifyListeners();
   }
-  notifyListeners();
-}
-
 
   Future<void> changePassword(
-      BuildContext context, String oldPassword, String newPassword, String confirmNewPassword) async {
+    BuildContext context,
+    String oldPassword,
+    String newPassword,
+    String confirmNewPassword,
+  ) async {
     if (newPassword != confirmNewPassword) {
       _showSnackBar(context, 'Konfirmasi password tidak cocok!');
       return;
@@ -69,17 +76,21 @@ class ProfileController extends ChangeNotifier {
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void logout(BuildContext context) {
-    // Clear session/token if needed
+  void logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // Hapus token atau session lainnya
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const SignInScreen()),
       (Route<dynamic> route) => false,
     );
+
+    _showSnackBar(context, '👋 Logout berhasil. Sampai jumpa lagi!');
   }
 }
