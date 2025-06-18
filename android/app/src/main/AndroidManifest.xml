@@ -1,10 +1,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- =================================================================== -->
+    <!-- 🔥 TARO DI SINI YA BRO, DI LUAR <application> 🔥 -->
+    <!-- =================================================================== -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <!-- 
+      CATATAN PENTING:
+      Izin WRITE_EXTERNAL_STORAGE ini udah nggak terlalu ngefek buat Android 10 (API 29) ke atas.
+      Kalau aplikasi lo butuh nulis file, sebaiknya pelajari tentang 'Scoped Storage'.
+      Tapi untuk sekarang, kita taruh di sini biar manifest-nya valid dulu.
+    -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
     <application
         android:label="gym_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true"> // <-- TAMBAHKAN BARIS INI
->
+        android:enableOnBackInvokedCallback="true"
+        android:requestLegacyExternalStorage="true" 
+        > <!-- Tambahin ini buat 'compatibility mode' storage di Android 10 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -14,12 +31,11 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
-                <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-                <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            
+            <!-- =================================================================== -->
+            <!-- 🔥 IZIN YANG TADI DI SINI UDAH GUE PINDAHIN KE ATAS 🔥 -->
+            <!-- =================================================================== -->
+
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
@@ -29,17 +45,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <!-- Required to query activities that can process text, see:
-         https://developer.android.com/training/package-visibility and
-         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

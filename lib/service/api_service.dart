@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String baseUrl =
-      'https://65f7-103-156-248-97.ngrok-free.app/api';
+      'https://01ce-103-156-248-97.ngrok-free.app/api';
   // static const String _baseUrlLaravel =
   //     'https://e3f8-116-206-36-23.ngrok-free.app/api';
 
@@ -59,10 +59,11 @@ class ApiService {
     await prefs.remove('token');
   }
 
- Future<void> removeToken() async {
+  Future<void> removeToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
   }
+
   /// ==================== PROFILE ====================
 
   Future<Map<String, dynamic>?> getProfile() async {
@@ -74,9 +75,7 @@ class ApiService {
       return null;
     }
 
-    final url = Uri.parse(
-      '$baseUrl/auth/profile',
-    ); // Ganti sesuai base URL
+    final url = Uri.parse('$baseUrl/auth/profile'); // Ganti sesuai base URL
     final response = await http.get(
       url,
       headers: {
@@ -139,6 +138,7 @@ class ApiService {
       return false;
     }
   }
+
   /// ==================== MEMBER POINT ====================
 
   Future<Map<String, dynamic>?> getMemberPoint() async {
@@ -150,8 +150,8 @@ class ApiService {
     }
 
     // Pastikan base URL-nya bener ya. Gue asumsiin pake _baseUrl yang sama.
-    final url = Uri.parse('$baseUrl/member/point'); 
-    
+    final url = Uri.parse('$baseUrl/member/point');
+
     try {
       final response = await http.get(
         url,
@@ -176,11 +176,12 @@ class ApiService {
   Future<List<dynamic>> getPrograms() async {
     // Asumsi endpoint ini tidak butuh token/otorisasi
     final url = Uri.parse('$baseUrl/programs/');
-    
+
     try {
-      final response = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-      });
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -193,14 +194,16 @@ class ApiService {
       throw Exception('Gagal terhubung ke server program.');
     }
   }
+
   /// ==================== POSTS (ARTICLES) ====================
   Future<List<dynamic>> getPosts() async {
     final url = Uri.parse('$baseUrl/posts'); // Endpoint artikel dari Express
 
     try {
-      final response = await http.get(url, headers: {
-        'Content-Type': 'application/json',
-      });
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -213,7 +216,7 @@ class ApiService {
     }
   }
 
-// member
+  // member
   Future<Map<String, dynamic>?> getMemberData() async {
     final token = await getToken();
     if (token == null) {
@@ -243,9 +246,3 @@ class ApiService {
     }
   }
 }
-
-
-
-
-
-
