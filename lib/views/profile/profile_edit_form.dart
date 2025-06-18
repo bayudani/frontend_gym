@@ -1,72 +1,117 @@
-import 'package:flutter/material.dart';
+// lib/views/profile/profile_edit_form.dart
 
-class ProfileEditForm extends StatelessWidget {
-  final TextEditingController nameController;
-  final TextEditingController emailController;
-  final VoidCallback onSave;
+import 'package:flutter/material.dart';
+import 'package:gym_app/models/user_models.dart';
+
+class ProfileEditForm extends StatefulWidget {
+  final User userProfile;
+  final Function(String newName, String newEmail) onSave;
 
   const ProfileEditForm({
     super.key,
-    required this.nameController,
-    required this.emailController,
+    required this.userProfile,
     required this.onSave,
   });
+
+  @override
+  State<ProfileEditForm> createState() => _ProfileEditFormState();
+}
+
+class _ProfileEditFormState extends State<ProfileEditForm> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.userProfile.name);
+    _emailController = TextEditingController(text: widget.userProfile.email);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Manage Account',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Manage Account',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          _buildProfileFormField(
-            controller: nameController,
-            hintText: 'Jhon doe',
-            labelText: 'Name',
-            readOnly: false,
-          ),
-          const SizedBox(height: 20),
-          _buildProfileFormField(
-            controller: emailController,
-            hintText: 'Jhon@gmail.com',
-            labelText: 'Email',
-            keyboardType: TextInputType.emailAddress,
-            readOnly: false,
-          ),
-          const SizedBox(height: 40),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onSave,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 20),
+            _buildProfileFormField(
+              controller: _nameController,
+              labelText: 'Name',
+              hintText: 'Enter your name', // <-- TAMBAHKAN hintText YANG HILANG
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Name cannot be empty';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildProfileFormField(
+              controller: _emailController,
+              labelText: 'Email',
+              hintText: 'Enter your email', // <-- TAMBAHKAN hintText YANG HILANG
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || !RegExp(r".+@.+\..+").hasMatch(value)) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    widget.onSave(
+                      _nameController.text.trim(),
+                      _emailController.text.trim(),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Simpan perubahan',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                child: const Text(
+                  'Simpan perubahan',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+  // --- DEFINISI FUNGSI HELPER YANG DIPERBAIKI ---
   Widget _buildProfileFormField({
     required TextEditingController controller,
     required String hintText,
@@ -74,6 +119,7 @@ class ProfileEditForm extends StatelessWidget {
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
     bool readOnly = false,
+    String? Function(String?)? validator, // <-- TERIMA FUNGSI VALIDATOR DI SINI
   }) {
     const profileOutlineInputBorder = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.white70),
@@ -103,6 +149,7 @@ class ProfileEditForm extends StatelessWidget {
         fillColor: Colors.white,
         filled: true,
       ),
+      validator: validator, // <-- OPER validator-NYA KE SINI
     );
   }
 }

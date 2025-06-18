@@ -15,34 +15,28 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _oldPasswordController = TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController = TextEditingController();
+  // === PERUBAHAN 1: HAPUS SEMUA TEXTEDITINGCONTROLLER DARI SINI ===
+  // Mereka akan di-handle oleh widget form-nya masing-masing.
+  // bool _isProfileInitialized juga tidak diperlukan lagi.
 
+  // State untuk mengontrol tampilan UI, ini tetap di sini.
   bool _showEditForm = false;
   bool _showSecurityForm = false;
-  bool _isProfileInitialized = false;
-
   int _selectedIndex = 3; // Profile index di bottom nav
 
   @override
   void initState() {
     super.initState();
-    // Fetch profile ketika halaman dimuat
+    // Panggil fetchProfile sekali saat halaman pertama kali dibuka.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // listen: false karena ini hanya trigger, tidak perlu me-rebuild initState.
       context.read<ProfileController>().fetchProfile(context);
     });
   }
 
+  // dispose() sekarang jadi kosong karena controller sudah pindah.
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _oldPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmNewPasswordController.dispose();
     super.dispose();
   }
 
@@ -54,15 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Kita tetap pakai Consumer untuk mendapatkan update dari ProfileController
     return Consumer<ProfileController>(
       builder: (context, controller, child) {
-        // Update controller hanya sekali setelah data profile berhasil diambil
-        if (controller.userProfile != null && !_isProfileInitialized) {
-          _nameController.text = controller.userProfile!.name ?? 'Nama Pengguna';
-          _emailController.text = controller.userProfile!.email ?? 'nomor@example.com';
-          _isProfileInitialized = true;
-        }
-
+        // === PERUBAHAN 2: HAPUS LOGIKA SINKRONISASI CONTROLLER DARI SINI ===
+        // Build method sekarang jadi jauh lebih bersih.
+        
         return Scaffold(
           backgroundColor: Colors.grey[200],
           appBar: AppBar(
@@ -77,12 +68,9 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
               onPressed: () {
-                if (_showEditForm) {
+                if (_showEditForm || _showSecurityForm) {
                   setState(() {
                     _showEditForm = false;
-                  });
-                } else if (_showSecurityForm) {
-                  setState(() {
                     _showSecurityForm = false;
                   });
                 } else {
@@ -99,61 +87,53 @@ class _ProfilePageState extends State<ProfilePage> {
                   isLoading: controller.isLoading,
                 ),
                 const SizedBox(height: 10),
+
+                // --- Tampilan Menu Utama ---
                 Visibility(
                   visible: !_showEditForm && !_showSecurityForm,
                   child: ProfileMenu(
-                    onEditProfile: () {
-                      setState(() {
-                        _showEditForm = true;
-                        _showSecurityForm = false;
-                      });
-                    },
-                    onSecurity: () {
-                      setState(() {
-                        _showSecurityForm = true;
-                        _showEditForm = false;
-                      });
-                    },
+                    onEditProfile: () => setState(() => _showEditForm = true),
+                    onSecurity: () => setState(() => _showSecurityForm = true),
                     onLogout: () => controller.logout(context),
                   ),
                 ),
+
+                // --- Tampilan Form Edit Profile ---
                 Visibility(
                   visible: _showEditForm,
-                  child: ProfileEditForm(
-                    nameController: _nameController,
-                    emailController: _emailController,
-                    onSave: () {
-                      controller.saveProfileChanges(
-                        context,
-                        _nameController.text,
-                        _emailController.text,
-                      );
-                      setState(() {
-                        _showEditForm = false;
-                        _isProfileInitialized = false; // Refresh data saat kembali
-                      });
-                    },
-                  ),
+                  // Tampilkan form hanya jika userProfile tidak null
+                  child: controller.userProfile != null
+                      ? ProfileEditForm(
+                          // === PERUBAHAN 3: PASSING DATA USER, BUKAN CONTROLLER ===
+                          userProfile: controller.userProfile!,
+                          onSave: (String newName, String newEmail) {
+                            // Panggil fungsi controller untuk menyimpan
+                            controller.saveProfileChanges(
+                              context: context,
+                              name: newName,
+                              email: newEmail,
+                            );
+                            // Kembali ke menu utama
+                            setState(() => _showEditForm = false);
+                          },
+                        )
+                      : const SizedBox.shrink(), // atau tampilkan loading
                 ),
+
+                // --- Tampilan Form Security ---
                 Visibility(
                   visible: _showSecurityForm,
                   child: ProfileSecurityForm(
-                    oldPasswordController: _oldPasswordController,
-                    newPasswordController: _newPasswordController,
-                    confirmNewPasswordController: _confirmNewPasswordController,
-                    onSave: () {
+                    onSave: (String oldPass, String newPass, String confirmPass) {
+                      // Panggil fungsi controller untuk menyimpan
                       controller.changePassword(
-                        context,
-                        _oldPasswordController.text,
-                        _newPasswordController.text,
-                        _confirmNewPasswordController.text,
+                        context: context,
+                        oldPassword: oldPass,
+                        newPassword: newPass,
+                        confirmNewPassword: confirmPass,
                       );
-                      setState(() {
-                        _showSecurityForm = false;
-                      });
-                      _oldPasswordController.clear();
-                      _newPasswordController.clear();
-                      _confirmNewPasswordController.clear();
+                      // Kembali ke menu utama
+                      setState(() => _showSecurityForm = false);
                     },
                   ),
                 ),

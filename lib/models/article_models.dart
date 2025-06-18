@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:gym_app/service/api_service.dart'; // <-- Import ApiService
+import 'package:gym_app/config/app_config.dart'; // <-- Import ApiService
 
 class Article {
   // Kita tidak perlu lagi URL base di sini, akan kita ambil dari ApiService
@@ -19,7 +19,7 @@ class Article {
   // --- INI DIA PERBAIKANNYA ---
   String get fullCoverPhotoUrl {
     // 1. Ambil domain dari URL Ngrok (tanpa https://)
-    final authority = Uri.parse(ApiService.baseUrl).authority;
+    final authority = Uri.parse(AppConfig.BaseUrl).authority;
     
     // 2. Tentukan path mentah (unencoded)
     final unencodedPath = '/laravel/storage/$coverPhotoPath';

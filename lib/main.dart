@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/controllers/auth_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_app/views/auth/splash_screen.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <-- IMPORT INI
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileController()), // Menyediakan ProfileController
         ChangeNotifierProvider(create: (context) => ProgramController()), 
         ChangeNotifierProvider(create: (context) => ArticleController()), // <-- TAMBAHKAN INI
+        ChangeNotifierProvider(create: (_) => AuthController()),
+
 
 
       ],

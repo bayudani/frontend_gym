@@ -53,6 +53,7 @@ dependencies:
   permission_handler: ^11.3.1
   screenshot: ^3.0.0
   share_plus: ^11.0.0
+  dio: ^5.8.0+1
 
     # share_plus: ^9.0.0      # Buat munculin menu "Share"
 

@@ -1,122 +1,131 @@
-import 'dart:convert';
+// lib/controllers/auth_controller.dart
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_app/views/home/home_page.dart'; // Import halaman home_page Anda
+import 'package:gym_app/models/user_models.dart';
+import 'package:gym_app/service/auth_service.dart'; // <-- Ganti import
+import 'package:gym_app/service/token_service.dart'; // <-- Tambah import
+import 'package:gym_app/views/auth/login_page.dart';
+import 'package:gym_app/views/home/home_page.dart';
 
-import '../models/user_models.dart';
-import '../service/api_service.dart';
+// Jadikan ChangeNotifier untuk state management (misal: loading)
+class AuthController with ChangeNotifier {
+  // Ganti ApiService dengan service yang lebih spesifik
+  final AuthService _authService = AuthService();
+  final TokenService _tokenService = TokenService();
 
-class AuthController {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  // Helper untuk mengubah state loading dan memberitahu UI
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   Future<void> register({
     required String name,
     required String email,
     required String password,
-    // required String passwordConfirmation,
     required BuildContext context,
   }) async {
-    // Pastikan widget masih terpasang sebelum melanjutkan operasi UI
     if (!context.mounted) return;
+    _setLoading(true);
 
-    final res = await ApiService.register(name, email, password);
+    try {
+      // Panggil service yang benar
+      await _authService.register(name, email, password);
 
-    // Pastikan widget masih terpasang sebelum menggunakan context lagi
-    if (!context.mounted) return;
-
-    if (res.statusCode == 201) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Register berhasil')));
-      Navigator.pop(context); // Balik ke login
-    } else {
-      _showError(context, res.body);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+      );
+      Navigator.pop(context); // Balik ke halaman login
+    } on DioException catch (e) {
+      // Tangani error dari Dio dengan lebih modern
+      if (!context.mounted) return;
+      _showError(context, e);
+    } finally {
+      _setLoading(false);
     }
   }
 
-  Future<User?> login(
-    String email,
-    String password,
-    BuildContext context,
-  ) async {
-    // Pastikan widget masih terpasang sebelum melanjutkan operasi UI
+  Future<User?> login({
+    required String email,
+    required String password,
+    required BuildContext context,
+  }) async {
     if (!context.mounted) return null;
+    _setLoading(true);
 
-    final res = await ApiService.login(email, password);
-
-    // Pastikan widget masih terpasang sebelum menggunakan context lagi
-    if (!context.mounted) return null;
-
-    if (res.statusCode == 200) {
-      final data = jsonDecode(res.body);
-
-      // Ambil token dan user
+    try {
+      final response = await _authService.login(email, password);
+      
+      // PENTING: Dio sudah otomatis decode JSON, hasilnya ada di `response.data`
+      final data = response.data;
       final token = data['token'];
       final user = User.fromJson(data['user']);
 
       if (token == null) {
-        _showError(context, 'Token tidak ditemukan di response');
+        if (!context.mounted) return null;
+        _showError(context, DioException(requestOptions: response.requestOptions, message: 'Token tidak ditemukan di response'));
         return null;
       }
+      
+      // Panggil TokenService untuk urusan simpan-menyimpan token
+      await _tokenService.saveToken(token);
 
-      // Simpan token pakai ApiService
-      await ApiService().saveToken(token);
+      if (!context.mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login berhasil!')),
+      );
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login berhasil!')));
-
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false, // Hapus semua halaman sebelumnya
       );
       return user;
-    } else {
-      String errorMessage = "Login gagal";
-      try {
-        final errorJson = jsonDecode(res.body);
-        errorMessage = errorJson['error'] ?? errorMessage;
-      } catch (_) {}
 
-      _showError(context, errorMessage); // tampilkan error
+    } on DioException catch (e) {
+      if (!context.mounted) return null;
+      _showError(context, e);
       return null;
+    } finally {
+      _setLoading(false);
     }
   }
 
-//   Future<void> logout(BuildContext context) async {
-//   await ApiService().removeToken();
-//   Navigator.pushReplacement(
-//     context,
-//     MaterialPageRoute(builder: (context) => const SignInScreen()),
-//   );
-// }
-
-
-  void _showError(BuildContext context, String message) {
-    // Pastikan widget masih terpasang sebelum menggunakan context
+  Future<void> logout(BuildContext context) async {
+    await _tokenService.removeToken();
     if (!context.mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const SignInScreen()), // Arahkan ke halaman login
+      (route) => false,
+    );
+  }
 
-    String errorMessage;
-    try {
-      final decodedJson = jsonDecode(message);
-      // Coba ambil pesan dari 'message' atau 'error', atau gunakan pesan default
-      if (decodedJson is Map &&
-          decodedJson.containsKey('message') &&
-          decodedJson['message'] is String) {
-        errorMessage = decodedJson['message'];
-      } else if (decodedJson is Map &&
-          decodedJson.containsKey('error') &&
-          decodedJson['error'] is String) {
-        errorMessage = decodedJson['error'];
-      } else {
-        errorMessage =
-            'Terjadi kesalahan tidak dikenal.'; // Pesan default jika struktur JSON tidak sesuai
-      }
-    } catch (e) {
-      errorMessage =
-          'Terjadi kesalahan: ${e.toString()}'; // Tangani error jika bukan JSON valid
+  // Helper _showError sekarang menerima DioException agar lebih kuat
+  void _showError(BuildContext context, DioException e) {
+    if (!context.mounted) return;
+    
+    String errorMessage = "Terjadi kesalahan tidak dikenal.";
+
+    // Cek apakah error berasal dari response server (misal: 4xx, 5xx)
+    if (e.response != null && e.response?.data is Map) {
+      final responseData = e.response!.data;
+      errorMessage = responseData['message'] ?? responseData['error'] ?? "Gagal memproses permintaan.";
+    } else {
+      // Jika error karena koneksi, timeout, dll.
+      errorMessage = e.message ?? "Gagal terhubung ke server.";
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 }
