@@ -1,7 +1,7 @@
 class AppConfig {
   // static const String appName = 'MyApp';
   static const String appVersion = '1.0.0';
-  static const String BaseUrl = 'https://01ce-103-156-248-97.ngrok-free.app';
+  static const String BaseUrl = 'https://eba8-103-156-248-97.ngrok-free.app';
   static const bool enableLogging = true;
 
   static const String apiUrl = "$BaseUrl/api";
