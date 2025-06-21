@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gym_app/controllers/profile_controller.dart';
+import 'package:gym_app/helpers/formatters.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -245,8 +246,18 @@ class _MembershipCardPageState extends State<MembershipCardPage> {
                 const SizedBox(height: 5),
                  Row(
                   children: [
-                    const Text('BERAKHIR      : ', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
-                    Text('1 AGUSTUS 2025', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)), // TODO: Ganti dengan data dari API
+                    const Text(
+    'Habis pada : ',
+    style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold),
+  ),
+  Expanded(
+    child: Text(
+      // Ini perubahannya, bro!
+      formatTanggal(member.end_date), 
+      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+      overflow: TextOverflow.ellipsis,
+    ),
+  ),
                   ],
                 ),
               ],
