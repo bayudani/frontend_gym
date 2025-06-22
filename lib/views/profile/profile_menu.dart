@@ -27,13 +27,13 @@ class ProfileMenu extends StatelessWidget {
           const Divider(color: Colors.grey),
           _buildMenuItem(
             icon: Icons.security,
-            title: 'Security',
+            title: 'Keamanan',
             onTap: onSecurity,
           ),
           const Divider(color: Colors.grey),
           _buildMenuItem(
             icon: Icons.card_membership,
-            title: 'Kartu Membership',
+            title: 'Member Area',
             onTap: () {
               Navigator.push(
                 context,

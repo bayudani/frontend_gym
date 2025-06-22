@@ -11,6 +11,7 @@ const _membershipBannerImage = 'assets/images/Carousel.png'; // Menggunakan Caro
 const _barbellProgramImage = 'assets/images/barbell_program.png'; // Gambar untuk program
 const _dumbbellProgramImage = 'assets/images/dumble.png'; // Gambar untuk program
 const _megaphoneIconPath = 'assets/images/megaphone_icon.png'; // Icon megaphone untuk diskon
+const _dumbbellIconPath = 'assets/images/dumble.png';
 
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
@@ -20,7 +21,7 @@ class MembershipPage extends StatefulWidget {
 }
 
 class _MembershipPageState extends State<MembershipPage> {
-  int _selectedIndex = 1; // Assuming Membership is at index 1 in the bottom nav order (Home 0, Blog 1, Membership 2, Profile 3)
+  int _selectedIndex = 2; // Assuming Membership is at index 1 in the bottom nav order (Home 0, Blog 1, Membership 2, Profile 3)
 
   void _onItemTapped(int index) {
     setState(() {
@@ -116,70 +117,72 @@ class _MembershipPageState extends State<MembershipPage> {
             ),
           ),
           SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                // Section "40% discount"
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Color(0xFFE53935), // Red
-                            Color(0xFF8B0000), // Darker Red
-                          ],
-                        ),
+            delegate: SliverChildListDelegate([
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 20.0,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Color(0xFFE53935), Color(0xFF8B0000)],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Icon Megaphone
-                          Image.asset(
-                            _megaphoneIconPath, // Icon Megaphone
-                            width: 30,
-                            height: 30,
-                            color: Colors.white, // Warna putih untuk ikon
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset(_megaphoneIconPath, width: 35, height: 35),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                '40% discount',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                'on all our membership →',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10), // Jarak antara ikon dan teks
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  '40% discount',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'on all our membership →',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                        ),
+                        Container(
+                          width: 65,
+                          height: 65,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              _dumbbellIconPath,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.contain,
                             ),
                           ),
-                          Image.asset(
-                            _dumbbellProgramImage, // Gambar barbel/dumbbell
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+              ),
 
                 // Membership Options Cards
                 Padding(
