@@ -3,6 +3,8 @@ import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 import 'package:gym_app/views/home/home_page.dart'; // Import HomePage for navigation
 import 'package:gym_app/views/profile/profile_page.dart'; // Import ProfilePage for navigation
 import 'package:gym_app/views/membership/membership_card_page.dart'; // Import MembershipCardPage for navigation
+import 'package:gym_app/views/membership/membership_checkout_page.dart'; // Import MembershipCheckoutPage
+
 
 // --- Placeholder for Images ---
 // Pastikan path gambar ini benar di pubspec.yaml dan folder assets Anda
@@ -283,9 +285,15 @@ class _MembershipPageState extends State<MembershipPage> {
               const SizedBox(height: 5),
               GestureDetector(
                 onTap: () {
-                  // Aksi ketika "Join membership" diklik
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Join $title diklik!')),
+                  // PERBAIKAN: Navigasi ke MembershipCheckoutPage
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MembershipCheckoutPage(
+                        membershipType: title, // Meneruskan jenis membership
+                        membershipPrice: price, // Meneruskan harga
+                      ),
+                    ),
                   );
                 },
                 child: const Text(
