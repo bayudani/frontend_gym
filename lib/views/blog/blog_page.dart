@@ -1,9 +1,10 @@
+// lib/views/blog/blog_page.dart
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gym_app/controllers/article_controller.dart'; // <-- IMPORT CONTROLLER
+import 'package:gym_app/models/article_models.dart';      // <-- IMPORT MODEL
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/views/home/home_page.dart'; // Import HomePage for navigation
-import 'package:gym_app/views/profile/profile_page.dart'; // Import ProfilePage for navigation
-import 'package:gym_app/views/membership/membership_card_page.dart'; // Import MembershipCardPage for navigation
-import 'package:gym_app/views/membership/membership.dart'; // Import MembershipPage for navigation
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -13,50 +14,58 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
-  // Untuk mengelola indeks item navigasi bawah yang dipilih
-  // PERBAIKAN: Mengubah _selectedIndex menjadi 1 agar sesuai dengan indeks 'Blog' di CustomBottomNavBar
-  int _selectedIndex = 1; // Index 1 karena ini halaman Blog
+  int _selectedIndex = 1; // Index 1 untuk Blog
 
   void _onItemTapped(int index) {
+    // Navigasi akan di-handle oleh CustomBottomNavBar
+    // Biarkan kosong jika navigasi sudah di-handle di dalam nav bar
     setState(() {
       _selectedIndex = index;
     });
-    // Navigasi akan ditangani oleh CustomBottomNavBar secara internal.
   }
 
-  // Widget untuk Kartu Artikel (reused from HomePage, slightly adapted for vertical list)
+  // --- PERUBAHAN DI SINI ---
+  // Widget untuk Kartu Artikel, sekarang menerima URL gambar
   Widget _buildArticleCard({
     required BuildContext context,
     required String title,
     required String date,
-    required String imagePath,
+    required String imageUrl, // <-- Diubah dari imagePath ke imageUrl
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0), // Margin untuk setiap kartu
-      height: 180, // Tinggi kartu artikel
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+      height: 180,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(imagePath),
+          // --- Menggunakan NetworkImage untuk memuat gambar dari URL ---
+          image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.5), // Overlay gelap pada gambar
+            Colors.black.withOpacity(0.5),
             BlendMode.darken,
           ),
+          // Tambahkan errorBuilder untuk antisipasi jika gambar gagal dimuat
+          onError: (exception, stackTrace) {
+             // Bisa diganti dengan gambar placeholder dari assets
+            print('Error loading image: $exception');
+          },
         ),
         borderRadius: BorderRadius.circular(15),
+        color: Colors.grey[800], // Warna background sementara gambar loading
       ),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Untuk menempatkan tanggal di paling atas
+          mainAxisAlignment: MainAxisAlignment.end, // Judul di bawah
           children: [
+            // Kontainer untuk tanggal dipindah ke atas judul agar lebih rapi
             Align(
               alignment: Alignment.topRight,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6), // Latar belakang tanggal gelap transparan
+                  color: Colors.black.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Text(
@@ -68,16 +77,16 @@ class _BlogPageState extends State<BlogPage> {
                 ),
               ),
             ),
-            const Spacer(), // Mendorong judul ke bawah
+            const Spacer(),
             Text(
               title,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 18, // Ukuran font judul disesuaikan
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
-              maxLines: 2, // Batasi jumlah baris
-              overflow: TextOverflow.ellipsis, // Tambahkan ellipsis jika teks terlalu panjang
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -88,52 +97,74 @@ class _BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Latar belakang hitam
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
+            Navigator.pop(context);
           },
         ),
         title: const Text(
-          'Artikel Blog', // Judul halaman blog
-          style: TextStyle(color: Colors.white),
+          'Artikel Blog',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Daftar Artikel
-            _buildArticleCard(
-              context: context,
-              title: 'Antara Arm Day dan Leg Day, Dilema Para Pemula Workout',
-              date: '28 Mei 2025',
-              imagePath: 'assets/images/arm_leg_day_article.png', // Gambar artikel
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Lebih Dari Sekadar Otot, Inilah Dampak Latihan Angkat Beban Terhadap Tubuh Anda',
-              date: '20 Mei 2025',
-              imagePath: 'assets/images/muscle_impact_article.png', // Gambar artikel
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Tips Memilih Suplemen Protein yang Tepat untuk Pembangunan Otot',
-              date: '15 Mei 2025',
-              imagePath: 'assets/images/protein_supplement_article.png', // Gambar artikel baru
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Manfaat Kardio Selain Membakar Kalori: Meningkatkan Kesehatan Jantung dan Stamina',
-              date: '10 Mei 2025',
-              imagePath: 'assets/images/cardio_benefits_article.png', // Gambar artikel baru
-            ),
-            const SizedBox(height: 20), // Padding bawah
-          ],
-        ),
+      // --- PEROMBAKAN BESAR DI BODY ---
+      body: Consumer<ArticleController>(
+        builder: (context, controller, child) {
+          // 1. Tampilan saat LOADING
+          if (controller.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            );
+          }
+
+          // 2. Tampilan saat ada ERROR
+          if (controller.errorMessage != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Oops! Gagal memuat artikel: ${controller.errorMessage}',
+                  style: const TextStyle(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+          
+          // 3. Tampilan saat artikel KOSONG
+          if (controller.articles.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada artikel yang tersedia.',
+                style: TextStyle(color: Colors.white70),
+              ),
+            );
+          }
+
+          // 4. Tampilan saat data BERHASIL dimuat
+          return ListView.builder(
+            // --- Menggunakan controller.articles untuk mendapatkan SEMUA artikel ---
+            itemCount: controller.articles.length,
+            itemBuilder: (context, index) {
+              final Article article = controller.articles[index];
+              return _buildArticleCard(
+                context: context,
+                title: article.title,
+                // --- Gunakan getter dari model yang sudah ada ---
+                date: article.formattedPublishedDate,
+                imageUrl: article.fullCoverPhotoUrl,
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
