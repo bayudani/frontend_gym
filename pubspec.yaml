@@ -58,6 +58,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.16.0
   timeago:
     ^3.7.1
+  http_parser: ^4.1.2
 
     # share_plus: ^9.0.0      # Buat munculin menu "Share"
 

@@ -12,6 +12,8 @@ import '../../controllers/attends_controller.dart';
 import '../../controllers/comment_controller.dart';
 import '../../controllers/membership_controller.dart';
 import 'package:gym_app/controllers/ai_controller.dart'; // <-- IMPORT
+import 'package:gym_app/controllers/ai_form_checker_controller.dart'; // <-- IMPORT
+
 
 
 void main() async { // <-- Ubah jadi async
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CommentController()), // <-- TAMBAHKAN INI
         ChangeNotifierProvider(create: (_) => MembershipController()), // <-- TAMBAHKAN INI
         ChangeNotifierProvider(create: (_) => AiController()), // <-- TAMBAHKAN INI
+        ChangeNotifierProvider(create: (_) => AiFormCheckerController()), // <-- TAMBAHKAN INI
 
 
 
