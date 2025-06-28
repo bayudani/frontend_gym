@@ -8,6 +8,11 @@ import 'package:intl/date_symbol_data_local.dart'; // <-- IMPORT INI
 import '../../controllers/profile_controller.dart';
 import '../../controllers/program_controller.dart';
 import '../../controllers/article_controller.dart';
+import '../../controllers/attends_controller.dart';
+import '../../controllers/comment_controller.dart';
+import '../../controllers/membership_controller.dart';
+import 'package:gym_app/controllers/ai_controller.dart'; // <-- IMPORT
+
 
 void main() async { // <-- Ubah jadi async
   // Pastikan semua binding siap sebelum runApp
@@ -30,6 +35,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProgramController()), 
         ChangeNotifierProvider(create: (context) => ArticleController()), // <-- TAMBAHKAN INI
         ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(create: (_) => AttendanceController()),
+        ChangeNotifierProvider(create: (_) => CommentController()), // <-- TAMBAHKAN INI
+        ChangeNotifierProvider(create: (_) => MembershipController()), // <-- TAMBAHKAN INI
+        ChangeNotifierProvider(create: (_) => AiController()), // <-- TAMBAHKAN INI
 
 
 

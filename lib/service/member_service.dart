@@ -13,4 +13,15 @@ class MemberService {
   Future<Response> getMemberPoint() {
     return _dio.get('/member/point');
   }
+
+  Future<Response> getAttendanceHistory() async {
+    try {
+      // Panggil endpoint sesuai yang lo kasih
+      final response = await _dio.get('/member/attends/me');
+      return response;
+    } catch (e) {
+      // Biarkan DioException di-handle oleh controller
+      rethrow;
+    }
+  }
 }

@@ -13,7 +13,13 @@
     -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Max SDK Version bisa ditambahkan jika ini hanya untuk API < 30 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <!-- Tambahkan ini juga jika aplikasi Anda akan menggunakan kamera untuk mengambil gambar/video -->
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:label="gym_app"

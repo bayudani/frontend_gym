@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/views/profile/profile_page.dart';
-import 'package:gym_app/views/membership/membership_card_page.dart';
-import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/views/blog/blog_page.dart';
-import 'package:gym_app/widget/point/point_page.dart';
-import '../../controllers/profile_controller.dart';
-import 'package:provider/provider.dart';
-
-// Import bagian-bagian baru
-import 'package:gym_app/views/home/choose_program_section.dart';
 import 'package:gym_app/views/home/article_section.dart';
+import 'package:gym_app/views/home/choose_program_section.dart';
+import 'package:gym_app/views/home/ai_chat_page.dart'; // <-- 1. IMPORT HALAMAN CHAT
+import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
+import 'package:gym_app/widget/point/point_page.dart';
+import 'package:gym_app/controllers/profile_controller.dart';
+import 'package:provider/provider.dart';
 
 const _dumbbellIconPath = 'assets/images/dumble.png';
 const _megaphoneIconPath = 'assets/images/megaphone_icon.png';
@@ -24,11 +20,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // --- FIX 1: Hapus @override duplikat ---
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Panggil semua data yang dibutuhkan di home saat pertama kali load
       final controller = Provider.of<ProfileController>(context, listen: false);
       controller.fetchProfile(context);
       controller.fetchPoint(context);
@@ -45,6 +41,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      // --- 2. TAMBAHKAN TOMBOL CHAT MENGAMBANG (FAB) ---
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AiChatPage()),
+          );
+        },
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        tooltip: 'Konsultasi dengan AI',
+      ),
+      // --- Akhir dari tambahan ---
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -62,114 +71,52 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 60.0,
-                    left: 24,
-                    right: 24,
-                  ),
+                  padding: const EdgeInsets.only(top: 60.0, left: 24, right: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Kolom untuk Hello & Nama User
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Hello',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 18,
-                                ),
-                              ),
+                              const Text('Hello', style: TextStyle(color: Colors.white70, fontSize: 18)),
                               Consumer<ProfileController>(
                                 builder: (context, profileController, child) {
                                   if (profileController.isLoading) {
-                                    return const Text(
-                                      'Loading...',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
+                                    return const Text('Loading...', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
                                   }
-                                  final userName =
-                                      profileController.userProfile?.name ??
-                                      'Guest';
-                                  return Text(
-                                    userName,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
+                                  final userName = profileController.userProfile?.name ?? 'Guest';
+                                  return Text(userName, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
                                 },
                               ),
                             ],
                           ),
+                          // Kolom untuk Poin
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const PointPage(),
-                                ),
-                              );
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const PointPage()));
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.grey[800],
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                // --- FIX 2: Hapus 'const' dari list ini ---
                                 children: [
-                                  const Text(
-                                    'Points',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  // --- FIX 3: Ganti total logika Consumer untuk menampilkan POIN, bukan NAMA ---
+                                  const Text('Points', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                  // --- PERBAIKAN LOGIKA CONSUMER UNTUK POIN ---
                                   Consumer<ProfileController>(
-                                    builder: (
-                                      context,
-                                      profileController,
-                                      child,
-                                    ) {
-                                      // Gunakan loading flag spesifik untuk poin
+                                    builder: (context, profileController, child) {
                                       if (profileController.isPointLoading) {
-                                        return const Text(
-                                          '...',
-                                          style: TextStyle(
-                                            color: Colors.yellow,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
+                                        return const Text('...', style: TextStyle(color: Colors.yellow, fontSize: 14, fontWeight: FontWeight.bold));
                                       }
-                                      // Ambil data poin dari controller
-                                      final points =
-                                          profileController.userPoint?.point ??
-                                          0;
-                                      return Text(
-                                        points.toString(), // Tampilkan poin
-                                        style: const TextStyle(
-                                          color: Colors.yellow,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      );
+                                      final points = profileController.userPoint?.point ?? 0;
+                                      return Text(points.toString(), style: const TextStyle(color: Colors.yellow, fontSize: 14, fontWeight: FontWeight.bold));
                                     },
                                   ),
                                 ],
@@ -181,11 +128,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 20),
                       const Text(
                         "Let's start your day",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -195,11 +138,9 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
+              // ... Sisa widget di home page tetap sama ...
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 20.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
@@ -220,22 +161,9 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text(
-                                '40% discount',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              Text('40% discount', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                               SizedBox(height: 5),
-                              Text(
-                                'on all our membership →',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
+                              Text('on all our membership →', style: TextStyle(color: Colors.white70, fontSize: 14)),
                             ],
                           ),
                         ),
@@ -247,12 +175,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                            child: Image.asset(
-                              _dumbbellIconPath,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.contain,
-                            ),
+                            child: Image.asset(_dumbbellIconPath, width: 50, height: 50, fit: BoxFit.contain),
                           ),
                         ),
                       ],
@@ -273,9 +196,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-/*
-NOTE: Fungsi-fungsi di bawah ini tidak dipanggil di dalam widget HomePage di atas.
-Jika tidak digunakan di tempat lain, ini bisa dianggap kode mati dan bisa dihapus
-agar file lebih bersih.
-*/

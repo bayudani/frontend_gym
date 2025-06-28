@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.0+1
+  image_picker: ^1.1.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -54,10 +55,11 @@ dependencies:
   screenshot: ^3.0.0
   share_plus: ^11.0.0
   dio: ^5.8.0+1
+  flutter_widget_from_html_core: ^0.16.0
+  timeago:
+    ^3.7.1
 
     # share_plus: ^9.0.0      # Buat munculin menu "Share"
-
-
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +87,8 @@ flutter:
     - assets/images/3.png
     - assets/images/megaphone_icon.png
     - assets/images/1.png
+    - assets/images/logoBri.png
+    - assets/images/logoBca.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
