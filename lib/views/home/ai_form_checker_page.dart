@@ -15,29 +15,71 @@ class AiFormCheckerPage extends StatefulWidget {
 class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
-  
-  // --- PERUBAHAN 1: Ganti state String dengan TextEditingController ---
   final TextEditingController _exerciseController = TextEditingController(text: 'Squat');
 
   @override
   void dispose() {
-    // Jangan lupa dispose controller untuk mencegah memory leak
     _exerciseController.dispose();
     super.dispose();
   }
 
-  // Fungsi untuk memilih gambar
-  Future<void> _pickImage() async {
+  // --- PERUBAHAN 1: Modifikasi fungsi _pickImage untuk menerima sumber (source) ---
+  Future<void> _pickImage(ImageSource source) async {
+    // Reset hasil sebelumnya saat memilih gambar baru
     Provider.of<AiFormCheckerController>(context, listen: false).clearResult();
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 80, // Kompres sedikit biar ga terlalu besar
+      );
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      // Menangani error jika user tidak memberikan izin kamera/galeri
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal mengakses sumber gambar: $e')),
+        );
+      }
     }
   }
 
-  // Fungsi untuk memulai analisis
+  // --- PERUBAHAN 2: Fungsi baru untuk menampilkan pilihan Kamera / Galeri ---
+  void _showImageSourceActionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF2c2c2e),
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_camera, color: Colors.white70),
+                title: const Text('Ambil Foto dari Kamera', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.white70),
+                title: const Text('Pilih dari Galeri', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _analyze() {
     final exerciseName = _exerciseController.text.trim();
     if (_image == null) {
@@ -49,7 +91,6 @@ class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
       return;
     }
     
-    // --- PERUBAHAN 2: Ambil nama latihan dari controller ---
     Provider.of<AiFormCheckerController>(context, listen: false)
         .analyzeForm(imageFile: _image!, exerciseName: exerciseName);
   }
@@ -71,10 +112,10 @@ class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // --- PERUBAHAN 3: Ganti Dropdown dengan TextField ---
             _buildExerciseInputField(),
             const SizedBox(height: 20),
 
+            // --- PERUBAHAN 3: GestureDetector sekarang memanggil Action Sheet ---
             _buildImagePicker(),
             const SizedBox(height: 30),
 
@@ -95,7 +136,6 @@ class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
             ),
             const SizedBox(height: 30),
 
-            // Area untuk menampilkan hasil (tidak ada perubahan di sini)
             Consumer<AiFormCheckerController>(
               builder: (context, controller, child) {
                 if (controller.isLoading) {
@@ -116,7 +156,6 @@ class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
     );
   }
 
-  // --- Widget baru untuk TextField ---
   Widget _buildExerciseInputField() {
     return TextField(
       controller: _exerciseController,
@@ -126,22 +165,16 @@ class _AiFormCheckerPageState extends State<AiFormCheckerPage> {
         labelStyle: const TextStyle(color: Colors.white70),
         filled: true,
         fillColor: const Color(0xFF2c2c2e),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.red)),
       ),
     );
   }
 
-  // Widget-widget helper lainnya (tidak ada perubahan)
   Widget _buildImagePicker() {
     return GestureDetector(
-      onTap: _pickImage,
+      // Panggil fungsi yang menampilkan pilihan
+      onTap: () => _showImageSourceActionSheet(context),
       child: Container(
         height: 250,
         decoration: BoxDecoration(
