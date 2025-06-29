@@ -37,4 +37,13 @@ class MembershipController extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<MembershipPlan?> getMembershipById(String id) async {
+    try {
+      final response = await _contentService.getMembershipById(id);
+      return MembershipPlan.fromJson(response.data);
+    } catch (e) {
+      print('Error fetching membership by ID: $e');
+      return null;
+    }
+  }
 }

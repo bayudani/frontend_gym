@@ -13,8 +13,9 @@ class ContentService {
   Future<Response> getPrograms() {
     return _dio.get('/programs');
   }
+
   Future<Response> getPostDetail(String slug) {
-  return _dio.get('/posts/$slug');
+    return _dio.get('/posts/$slug');
   }
 
   Future<Response> getLikesCount(String slug) {
@@ -30,20 +31,19 @@ class ContentService {
   }
 
   Future<Response> getComments(String slug) {
-    return _dio.get('/comment/article/$slug'); 
+    return _dio.get('/comment/article/$slug');
   }
 
   /// Mengirim komentar baru ke API (membutuhkan token).
   Future<Response> postComment(String slug, String commentText) {
-    return _dio.post(
-      '/comment/article/$slug',
-      data: {
-        'comment': commentText,
-      },
-    );
+    return _dio.post('/comment/article/$slug', data: {'comment': commentText});
   }
 
   Future<Response> getMemberships() {
     return _dio.get('/memberships');
+  }
+
+  Future<Response> getMembershipById(String id) {
+    return _dio.get('/memberships/$id');
   }
 }

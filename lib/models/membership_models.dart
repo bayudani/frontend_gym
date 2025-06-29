@@ -7,12 +7,14 @@ class MembershipPlan {
   final String name;
   final int durationInDays; // Kita anggap 'duration_months' itu sebenarnya hari
   final String price;
+  final String created_at;
 
   MembershipPlan({
     required this.id,
     required this.name,
     required this.durationInDays,
     required this.price,
+    required this.created_at,
   });
 
   /// Getter Bantuan untuk format harga jadi "Rp 250.000"
@@ -46,6 +48,7 @@ class MembershipPlan {
       // API 'duration_months' sepertinya berisi hari, jadi kita simpan sebagai hari
       durationInDays: json['duration_months'] ?? 30,
       price: json['price']?.toString() ?? '0',
+      created_at: json['created_at'] ?? DateTime.now().toIso8601String(),
     );
   }
 }

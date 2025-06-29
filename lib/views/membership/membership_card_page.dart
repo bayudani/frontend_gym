@@ -146,7 +146,7 @@ class _MembershipCardPageState extends State<MembershipCardPage> {
                           ),
                           const Positioned(
                             top: 20, left: 20, right: 160,
-                            child: Text('MASTER GYM', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                            child: Text('FITID', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
                           ),
                           const Positioned(
                             top: 45, left: 20, right: 160,

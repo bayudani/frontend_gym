@@ -301,13 +301,19 @@ class _MembershipPageState extends State<MembershipPage> {
               const SizedBox(height: 5),
               GestureDetector(
                 onTap: () {
+                  final String planId =
+                      plan.id; // Ganti 'id' jika nama property di modelmu beda
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
                           (context) => MembershipCheckoutPage(
-                            membershipType: plan.name,
-                            membershipPrice: plan.formattedPrice,
+                            // ===================================
+                            //           PERUBAHAN INTI
+                            // Kita sekarang hanya mengirim ID-nya
+                            // ===================================
+                            membershipId: planId,
                           ),
                     ),
                   );
