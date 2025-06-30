@@ -14,6 +14,8 @@ import '../../controllers/membership_controller.dart';
 import 'package:gym_app/controllers/ai_controller.dart'; // <-- IMPORT
 import 'package:gym_app/controllers/ai_form_checker_controller.dart'; // <-- IMPORT
 import 'package:gym_app/controllers/membership_checkout_controller.dart'; // <-- IMPORT CONTROLLER BARU
+import 'package:gym_app/controllers/item_rewards_controller.dart'; // <-- IMPORT CONTROLLER BARU
+
 
 
 
@@ -45,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AiController()), // <-- TAMBAHKAN INI
         ChangeNotifierProvider(create: (_) => AiFormCheckerController()), // <-- TAMBAHKAN INI
         ChangeNotifierProvider(create: (_) => MembershipCheckoutController()), // <-- TAMBAHKAN INI
+        ChangeNotifierProvider(create: (_) => RewardController()), // <-- TAMBAHKAN INI
 
 
 

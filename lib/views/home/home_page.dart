@@ -1,10 +1,13 @@
+// lib/views/home/home_page.dart
+
 import 'package:flutter/material.dart';
+import 'package:gym_app/controllers/profile_controller.dart';
+import 'package:gym_app/views/home/ai_chat_page.dart';
+import 'package:gym_app/views/membership/membership.dart'; // <-- Pastikan ini di-import
 import 'package:gym_app/views/home/article_section.dart';
 import 'package:gym_app/views/home/choose_program_section.dart';
-import 'package:gym_app/views/home/ai_chat_page.dart'; // <-- 1. IMPORT HALAMAN CHAT
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 import 'package:gym_app/widget/point/point_page.dart';
-import 'package:gym_app/controllers/profile_controller.dart';
 import 'package:provider/provider.dart';
 
 const _dumbbellIconPath = 'assets/images/dumble.png';
@@ -24,10 +27,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Panggil semua data yang dibutuhkan di home saat pertama kali load
       final controller = Provider.of<ProfileController>(context, listen: false);
       controller.fetchProfile(context);
       controller.fetchPoint(context);
+      // PERUBAHAN: Panggil juga data member saat home dibuka
+      controller.fetchMemberData(context);
     });
   }
 
@@ -36,24 +40,81 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
   }
+  
+  // --- FUNGSI LOGIKA UNTUK GERBANG AI ---
+  void _handleAiChatTap() {
+    final profileController = Provider.of<ProfileController>(context, listen: false);
+    
+    // Cek status member aktif
+    if (profileController.isMemberActive) {
+      // Jika aktif, gaskeun ke AI Chat
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AiChatPage()),
+      );
+    } else {
+      // Jika tidak aktif, tampilkan dialog
+      _showMembershipRequiredDialog();
+    }
+  }
+
+  void _showMembershipRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2c2c2e),
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Row(
+            children: [
+              // Icon(Icons.star, color: Colors.amber, size: 28),
+              SizedBox(width: 10),
+              Text('Fitur Khusus Member', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: const Text(
+            'Fitur AI Assistant hanya bisa diakses oleh member aktif. Yuk, gabung sekarang untuk dapatkan benefit lengkapnya!',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Nanti Saja', style: TextStyle(color: Colors.grey)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+              ),
+              child: const Text('Jadi Member', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MembershipPage()),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  // --- AKHIR DARI FUNGSI LOGIKA ---
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      // --- 2. TAMBAHKAN TOMBOL CHAT MENGAMBANG (FAB) ---
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AiChatPage()),
-          );
-        },
+        // PERUBAHAN: Panggil _handleAiChatTap, bukan navigasi langsung
+        onPressed: _handleAiChatTap,
         backgroundColor: Colors.red,
         child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
         tooltip: 'Konsultasi dengan AI',
       ),
-      // --- Akhir dari tambahan ---
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -78,7 +139,6 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Kolom untuk Hello & Nama User
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -94,7 +154,6 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
-                          // Kolom untuk Poin
                           GestureDetector(
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const PointPage()));
@@ -109,7 +168,6 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Text('Points', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                                  // --- PERBAIKAN LOGIKA CONSUMER UNTUK POIN ---
                                   Consumer<ProfileController>(
                                     builder: (context, profileController, child) {
                                       if (profileController.isPointLoading) {
@@ -138,7 +196,6 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              // ... Sisa widget di home page tetap sama ...
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 child: ClipRRect(
@@ -157,10 +214,10 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image.asset(_megaphoneIconPath, width: 35, height: 35),
                         const SizedBox(width: 10),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text('40% discount', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                               SizedBox(height: 5),
                               Text('on all our membership →', style: TextStyle(color: Colors.white70, fontSize: 14)),

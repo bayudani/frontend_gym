@@ -91,6 +91,10 @@ flutter:
     - assets/images/1.png
     - assets/images/logoBri.png
     - assets/images/logoBca.png
+    - assets/images/coooo.png
+    - assets/images/coin_stack.png
+    - assets/images/red_gift_box.png
+    - assets/images/history.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

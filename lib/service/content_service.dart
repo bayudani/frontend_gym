@@ -46,4 +46,9 @@ class ContentService {
   Future<Response> getMembershipById(String id) {
     return _dio.get('/memberships/$id');
   }
+
+   // --- METHOD BARU UNTUK MENGAMBIL ITEM REWARD ---
+  Future<Response> getItemRewards() {
+    return _dio.get('/item-rewards');
+  }
 }

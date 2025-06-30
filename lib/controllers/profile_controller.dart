@@ -41,6 +41,11 @@ class ProfileController extends ChangeNotifier {
 
   // === 2. SEMUA FUNGSI SEKARANG PAKAI SERVICE YANG SESUAI & TRY-CATCH DIO ===
 
+bool get isMemberActive {
+    // User dianggap member aktif jika data member ada dan statusnya true
+    return _memberData != null && _memberData!.isActive == true;
+  }
+
   Future<void> fetchProfile(BuildContext context) async {
     _isLoading = true;
     notifyListeners();
