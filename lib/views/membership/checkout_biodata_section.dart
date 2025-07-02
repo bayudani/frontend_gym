@@ -1,6 +1,7 @@
+import 'dart:io'; // Untuk menggunakan kelas File
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // Import image_picker
-import 'dart:io'; // Untuk menggunakan kelas File
 
 // Style border input field yang sama dengan halaman login/register
 const _outlineInputBorder = OutlineInputBorder(
@@ -43,9 +44,9 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal memilih gambar: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal memilih gambar: $e')));
     }
   }
 
@@ -74,7 +75,10 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
         ),
         filled: true,
         fillColor: Colors.grey[900], // Background field sedikit lebih gelap
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
       ),
     );
   }
@@ -102,9 +106,23 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
           // Dua titik di kanan (dekoratif)
           Row(
             children: [
-              Container(width: 5, height: 5, decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), shape: BoxShape.circle)),
+              Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+              ),
               const SizedBox(width: 5),
-              Container(width: 5, height: 5, decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), shape: BoxShape.circle)),
+              Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+              ),
             ],
           ),
         ],
@@ -132,17 +150,16 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
           decoration: BoxDecoration(
             color: const Color(0xFF262626), // Abu-abu gelap
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey[800]!), // Border abu-abu tipis
+            border: Border.all(
+              color: Colors.grey[800]!,
+            ), // Border abu-abu tipis
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Mohon isi data dengan\nlengkap dan valid',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 15),
               _buildTextField(
@@ -165,7 +182,6 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
                 maxLines: 2, // Izinkan lebih dari satu baris
               ),
               const SizedBox(height: 20), // Jarak ke tombol baru
-
               // Tombol "Upload Bukti Transaksi"
               SizedBox(
                 width: double.infinity,
@@ -186,13 +202,17 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
                   ),
                 ),
               ),
-              // Opsional: Tampilkan pratinjau gambar yang dipilih
+              // PERBAIKAN: Tampilkan gambar yang dipilih di sini
               if (_pickedImage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
-                  child: Text(
-                    'File dipilih: ${_pickedImage!.path.split('/').last}',
-                    style: const TextStyle(color: Colors.greenAccent, fontSize: 12),
+                  child: Image.file(
+                    _pickedImage!,
+                    height: 150, // Sesuaikan tinggi sesuai kebutuhan
+                    width: double.infinity, // Ambil lebar penuh
+                    fit:
+                        BoxFit
+                            .contain, // Sesuaikan bagaimana gambar mengisi ruang
                   ),
                 ),
             ],

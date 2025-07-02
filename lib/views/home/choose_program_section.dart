@@ -26,15 +26,15 @@ class ChooseProgramSection extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  // TODO: Buat halaman untuk menampilkan semua program
-                },
-                child: const Text(
-                  'See all',
-                  style: TextStyle(color: Colors.red, fontSize: 16),
-                ),
-              ),
+              // TextButton(
+              //   onPressed: () {
+              //     // TODO: Buat halaman untuk menampilkan semua program
+              //   },
+              //   child: const Text(
+              //     'See all',
+              //     style: TextStyle(color: Colors.red, fontSize: 16),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 15),
