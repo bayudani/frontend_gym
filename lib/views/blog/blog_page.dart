@@ -1,10 +1,11 @@
+// lib/views/blog/blog_page.dart
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gym_app/controllers/article_controller.dart';
+import 'package:gym_app/models/article_models.dart';
+import 'package:gym_app/views/blog/article_detail_page.dart'; // <-- PENTING: Import halaman detail
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/views/home/home_page.dart'; // Import HomePage for navigation
-import 'package:gym_app/views/profile/profile_page.dart'; // Import ProfilePage for navigation
-import 'package:gym_app/views/membership/membership_card_page.dart'; // Import MembershipCardPage for navigation
-import 'package:gym_app/views/membership/membership.dart'; // Import MembershipPage for navigation
-import 'package:gym_app/views/blog/article_detail_page.dart'; // Import ArticleDetailPage
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -14,71 +15,64 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
-  // Untuk mengelola indeks item navigasi bawah yang dipilih
-  // PERBAIKAN: Mengubah _selectedIndex menjadi 1 agar sesuai dengan indeks 'Blog' di CustomBottomNavBar
-  int _selectedIndex = 1; // Index 1 karena ini halaman Blog
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // Navigasi akan ditangani oleh CustomBottomNavBar secara internal.
   }
 
-  // Widget untuk Kartu Artikel (reused from HomePage, slightly adapted for vertical list)
+  // --- WIDGET KARTU ARTIKEL YANG SUDAH DI-UPGRADE ---
   Widget _buildArticleCard({
     required BuildContext context,
-    required String title,
-    required String date,
-    required String imagePath,
-    required String content, // Menambahkan content untuk ArticleDetailPage
-    required List<Map<String, String>> comments, // Menambahkan comments untuk ArticleDetailPage
+    required Article article, // <-- Sekarang menerima object Article lengkap
   }) {
-    return GestureDetector( // PERBAIKAN: Membungkus kartu dengan GestureDetector
+    return GestureDetector( // <-- DIBUNGKUS DENGAN GESTUREDETECTOR
       onTap: () {
+        // --- INI DIA LOGIC NAVIGASINYA ---
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ArticleDetailPage(
-              title: title,
-              date: date,
-              imagePath: imagePath,
-              content: content, // Meneruskan content
-              comments: comments, // Meneruskan comments
-            ),
+            // Kirim slug-nya ke ArticleDetailPage
+            builder: (context) => ArticleDetailPage(slug: article.slug),
           ),
         );
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0), // Margin untuk setiap kartu
-        height: 180, // Tinggi kartu artikel
+        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+        height: 180,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(imagePath),
+            image: NetworkImage(article.fullCoverPhotoUrl), // <-- Dari model
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5), // Overlay gelap pada gambar
+              Colors.black.withOpacity(0.5),
               BlendMode.darken,
             ),
+            onError: (exception, stackTrace) {
+              print('Error loading image: $exception');
+            },
           ),
           borderRadius: BorderRadius.circular(15),
+          color: Colors.grey[800],
         ),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Untuk menempatkan tanggal di paling atas
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6), // Latar belakang tanggal gelap transparan
+                    color: Colors.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    date,
+                    article.formattedPublishedDate, // <-- Dari model
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 12,
@@ -86,16 +80,15 @@ class _BlogPageState extends State<BlogPage> {
                   ),
                 ),
               ),
-              const Spacer(), // Mendorong judul ke bawah
               Text(
-                title,
+                article.title, // <-- Dari model
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 18, // Ukuran font judul disesuaikan
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                maxLines: 2, // Batasi jumlah baris
-                overflow: TextOverflow.ellipsis, // Tambahkan ellipsis jika teks terlalu panjang
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -106,72 +99,48 @@ class _BlogPageState extends State<BlogPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Contoh konten dan komentar untuk artikel
-    final String defaultArticleContent = 'Ini adalah contoh isi artikel. Di dunia olahraga, terutama bagi mereka yang baru memulai rutinitas latihan beban, istilah \'arm-day\' dan \'leg-day\' kerap menjadi topik perbincangan yang menarik. Bagi pemula workout atau gymbro, menentukan fokus latihan hari ini seperti: apakah ingin memperkuat lengan atau kaki? sering kali menjadi dilema yang tidak berujung. Di balik latihan yang terdengar ringan ini, tersimpan pertimbangan penting yang membentuk pengalaman latihan seseorang, terutama dalam hal motivasi, konsistensi, dan hasil yang ingin dicapai.\n\nSolusi terbaik untuk mengatasi dilema ini adalah dengan menerapkan pendekatan latihan yang seimbang. Alih-alih terfokus hanya pada satu bagian tubuh, sebaiknya jadwal latihan dirancang agar melibatkan semua kelompok otot secara proporsional. Pendekatan menyeluruh ini tidak hanya mendukung perkembangan fisik yang lebih harmonis, tetapi juga mengurangi risiko cedera dan meningkatkan performa dalam jangka panjang. Tentu saja, setiap individu memiliki kondisi dan tujuan yang berbeda, sehingga penting untuk merancang program latihan yang sesuai dengan kebutuhan pribadi.';
-    final List<Map<String, String>> defaultComments = const [
-      {'user': 'ayam', 'time': '7 hari', 'comment': 'hebat banget'},
-      {'user': 'hendriii01', 'time': '1 hari', 'comment': 'nyaman bgt gua ngegym disini bro....'},
-      {'user': 'boni_jbe', 'time': '2 jam', 'comment': 'gasor kaleee'},
-      {'user': 'king_bay', 'time': '1 jam', 'comment': 'sixpac rutar dulu doritos no satu!!'},
-      {'user': 'klluutt_', 'time': '1 jam', 'comment': 'masih pemula kaa'},
-    ];
-
-
     return Scaffold(
-      backgroundColor: Colors.black, // Latar belakang hitam
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
+            Navigator.pop(context);
           },
         ),
         title: const Text(
-          'Artikel Blog', // Judul halaman blog
-          style: TextStyle(color: Colors.white),
+          'Artikel Blog',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Daftar Artikel
-            _buildArticleCard(
-              context: context,
-              title: 'Antara Arm Day dan Leg Day, Dilema Para Pemula Workout',
-              date: '28 Mei 2025',
-              imagePath: 'assets/images/arm_leg_day_article.png', // Gambar artikel
-              content: defaultArticleContent,
-              comments: defaultComments,
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Lebih Dari Sekadar Otot, Inilah Dampak Latihan Angkat Beban Terhadap Tubuh Anda',
-              date: '20 Mei 2025',
-              imagePath: 'assets/images/muscle_impact_article.png', // Gambar artikel
-              content: defaultArticleContent,
-              comments: defaultComments,
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Tips Memilih Suplemen Protein yang Tepat untuk Pembangunan Otot',
-              date: '15 Mei 2025',
-              imagePath: 'assets/images/protein_supplement_article.png', // Gambar artikel baru
-              content: defaultArticleContent,
-              comments: defaultComments,
-            ),
-            _buildArticleCard(
-              context: context,
-              title: 'Manfaat Kardio Selain Membakar Kalori: Meningkatkan Kesehatan Jantung dan Stamina',
-              date: '10 Mei 2025',
-              imagePath: 'assets/images/cardio_benefits_article.png', // Gambar artikel baru
-              content: defaultArticleContent,
-              comments: defaultComments,
-            ),
-            const SizedBox(height: 20), // Padding bawah
-          ],
-        ),
+      body: Consumer<ArticleController>(
+        builder: (context, controller, child) {
+          // (Tampilan loading, error, empty tetap sama persis)
+          if (controller.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.white));
+          }
+          if (controller.errorMessage != null) {
+            return Center(child: Text('Oops! ${controller.errorMessage}'));
+          }
+          if (controller.articles.isEmpty) {
+            return const Center(child: Text('Belum ada artikel.'));
+          }
+
+          // --- TAMPILAN LISTVIEW BUILDER ---
+          return ListView.builder(
+            itemCount: controller.articles.length,
+            itemBuilder: (context, index) {
+              final Article article = controller.articles[index];
+              return _buildArticleCard(
+                context: context,
+                article: article, // <-- Kirim seluruh object article
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,

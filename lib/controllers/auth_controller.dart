@@ -6,6 +6,7 @@ import 'package:gym_app/models/user_models.dart';
 import 'package:gym_app/service/auth_service.dart'; // <-- Ganti import
 import 'package:gym_app/service/token_service.dart'; // <-- Tambah import
 import 'package:gym_app/views/auth/login_page.dart';
+import 'package:gym_app/views/auth/verify_email_page.dart';
 import 'package:gym_app/views/home/home_page.dart';
 
 // Jadikan ChangeNotifier untuk state management (misal: loading)
@@ -38,9 +39,14 @@ class AuthController with ChangeNotifier {
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+        const SnackBar(content: Text('Registrasi berhasil! Silakan cek email.')),
       );
-      Navigator.pop(context); // Balik ke halaman login
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyEmailPage(email: email),
+        ),
+      );
     } on DioException catch (e) {
       // Tangani error dari Dio dengan lebih modern
       if (!context.mounted) return;
@@ -60,7 +66,7 @@ class AuthController with ChangeNotifier {
 
     try {
       final response = await _authService.login(email, password);
-      
+
       // PENTING: Dio sudah otomatis decode JSON, hasilnya ada di `response.data`
       final data = response.data;
       final token = data['token'];
@@ -68,17 +74,23 @@ class AuthController with ChangeNotifier {
 
       if (token == null) {
         if (!context.mounted) return null;
-        _showError(context, DioException(requestOptions: response.requestOptions, message: 'Token tidak ditemukan di response'));
+        _showError(
+          context,
+          DioException(
+            requestOptions: response.requestOptions,
+            message: 'Token tidak ditemukan di response',
+          ),
+        );
         return null;
       }
-      
+
       // Panggil TokenService untuk urusan simpan-menyimpan token
       await _tokenService.saveToken(token);
 
       if (!context.mounted) return null;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login berhasil!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login berhasil!')));
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -86,7 +98,6 @@ class AuthController with ChangeNotifier {
         (route) => false, // Hapus semua halaman sebelumnya
       );
       return user;
-
     } on DioException catch (e) {
       if (!context.mounted) return null;
       _showError(context, e);
@@ -96,12 +107,59 @@ class AuthController with ChangeNotifier {
     }
   }
 
+  // --- FUNGSI BARU UNTUK VERIFIKASI KODE ---
+  Future<void> verifyEmail({
+    required String email,
+    required String code,
+    required BuildContext context,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.verifyEmail(email, code);
+      final message = response.data['message'];
+      _showSuccessSnackBar(context, message);
+
+      // Jika verifikasi berhasil, hapus semua halaman sebelumnya dan
+      // arahkan ke halaman Login.
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SignInScreen(),
+        ), // Ganti ke SignInPage jika perlu
+        (route) => false,
+      );
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['error'] ?? "Terjadi kesalahan.";
+      _showErrorSnackBar(context, errorMessage);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // --- Helper untuk SnackBar (biar rapi) ---
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+    );
+  }
+
+  void _showSuccessSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    );
+  }
+
   Future<void> logout(BuildContext context) async {
     await _tokenService.removeToken();
     if (!context.mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const SignInScreen()), // Arahkan ke halaman login
+      MaterialPageRoute(
+        builder: (context) => const SignInScreen(),
+      ), // Arahkan ke halaman login
       (route) => false,
     );
   }
@@ -109,23 +167,23 @@ class AuthController with ChangeNotifier {
   // Helper _showError sekarang menerima DioException agar lebih kuat
   void _showError(BuildContext context, DioException e) {
     if (!context.mounted) return;
-    
+
     String errorMessage = "Terjadi kesalahan tidak dikenal.";
 
     // Cek apakah error berasal dari response server (misal: 4xx, 5xx)
     if (e.response != null && e.response?.data is Map) {
       final responseData = e.response!.data;
-      errorMessage = responseData['message'] ?? responseData['error'] ?? "Gagal memproses permintaan.";
+      errorMessage =
+          responseData['message'] ??
+          responseData['error'] ??
+          "Gagal memproses permintaan.";
     } else {
       // Jika error karena koneksi, timeout, dll.
       errorMessage = e.message ?? "Gagal terhubung ke server.";
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(errorMessage),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
     );
   }
 }

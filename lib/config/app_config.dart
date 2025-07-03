@@ -1,7 +1,7 @@
 class AppConfig {
   // static const String appName = 'MyApp';
   static const String appVersion = '1.0.0';
-  static const String BaseUrl = 'https://77c9-182-23-28-53.ngrok-free.app';
+  static const String BaseUrl = 'http://rnins-180-241-161-191.a.free.pinggy.link';
   static const bool enableLogging = true;
 
   static const String apiUrl = "$BaseUrl/api";

@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-// Impor CustomBottomNavBar dan impor terkait dihapus karena tidak lagi digunakan di halaman ini
-// import 'package:gym_app/widgets/custom_bottom_nav_bar.dart';
-// import 'package:gym_app/views/home/home_page.dart';
-// import 'package:gym_app/views/profile/profile_page.dart';
-// import 'package:gym_app/views/membership/membership_page.dart';
+// lib/views/profile/attendance_history_page.dart (atau di mana pun file ini berada)
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gym_app/controllers/attends_controller.dart';
+import 'package:gym_app/models/attends_models.dart';
 
 class AttendanceHistoryPage extends StatefulWidget {
   const AttendanceHistoryPage({super.key});
@@ -14,71 +13,94 @@ class AttendanceHistoryPage extends StatefulWidget {
 }
 
 class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
-  // _selectedIndex dan _onItemTapped dihapus karena BottomNavigationBar tidak lagi digunakan.
-  // int _selectedIndex = 2; 
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  
+  @override
+  void initState() {
+    super.initState();
+    // Panggil fungsi untuk fetch data saat halaman pertama kali dibuka
+    // `listen: false` wajib di initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AttendanceController>(context, listen: false).fetchAttendanceHistory();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Contoh data riwayat absen. Dalam aplikasi nyata, ini akan diambil dari database/API.
-    final List<Map<String, dynamic>> attendanceRecords = [
-      {'date': '10/06/2025', 'present': true},
-      {'date': '11/06/2025', 'present': true},
-      {'date': '12/06/2025', 'present': false},
-      {'date': '13/06/2025', 'present': true},
-      {'date': '14/06/2025', 'present': false},
-      {'date': '15/06/2025', 'present': true},
-    ];
-
     return Scaffold(
-      backgroundColor: Colors.black, // Latar belakang hitam pekat untuk seluruh Scaffold
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam pekat
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
+            Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'Riwayat Absen',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Riwayat Absen', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
-      body: Container( // Menggunakan Container untuk latar belakang di bawah AppBar
-        color: Colors.black, // PERBAIKAN: Mengubah warna latar belakang body menjadi hitam pekat
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-          itemCount: attendanceRecords.length,
-          itemBuilder: (context, index) {
-            final record = attendanceRecords[index];
-            return _buildAttendanceCard(record['date'], record['present']);
-          },
-        ),
+      // Gunakan Consumer untuk "mendengarkan" perubahan dari AttendanceController
+      body: Consumer<AttendanceController>(
+        builder: (context, controller, child) {
+          // Tampilan saat LOADING
+          if (controller.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.white));
+          }
+
+          // Tampilan saat ada ERROR
+          if (controller.errorMessage != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Oops! ${controller.errorMessage}',
+                  style: const TextStyle(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          // Tampilan saat data KOSONG
+          if (controller.records.isEmpty) {
+            return const Center(
+              child: Text(
+                'Kamu belum pernah absen.',
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+            );
+          }
+          
+          // Tampilan saat data BERHASIL dimuat
+          return RefreshIndicator(
+            onRefresh: () => controller.fetchAttendanceHistory(),
+            color: Colors.white,
+            backgroundColor: Colors.grey[800],
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              itemCount: controller.records.length,
+              itemBuilder: (context, index) {
+                final AttendanceRecord record = controller.records[index];
+                // Karena semua data adalah riwayat scan, maka 'present' selalu true
+                return _buildAttendanceCard(record.formattedScanDateTime, true);
+              },
+            ),
+          );
+        },
       ),
-      // bottomNavigationBar dihapus dari sini
-      // bottomNavigationBar: CustomBottomNavBar(
-      //   selectedIndex: _selectedIndex,
-      //   onItemTapped: _onItemTapped,
-      // ),
     );
   }
 
-  // Widget untuk setiap kartu riwayat absen
+  // Widget untuk setiap kartu riwayat absen (tidak ada perubahan di sini)
   Widget _buildAttendanceCard(String date, bool present) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15.0), // Jarak antar kartu
+      margin: const EdgeInsets.only(bottom: 15.0),
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF333333), // Warna latar belakang kartu (tetap abu-abu gelap)
-        borderRadius: BorderRadius.circular(10), // Sudut membulat
-        border: Border.all(color: Colors.grey[700]!), // Border abu-abu tipis
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[800]!),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,13 +109,13 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
             date,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 16, // Sedikit disesuaikan agar pas
               fontWeight: FontWeight.w500,
             ),
           ),
           Icon(
-            present ? Icons.check_circle : Icons.cancel, // Ikon centang atau silang
-            color: present ? const Color(0xFF4CAF50) : const Color(0xFFF44336), // Warna ikon hijau atau merah yang lebih akurat
+            present ? Icons.check_circle : Icons.cancel,
+            color: present ? const Color(0xFF4CAF50) : const Color(0xFFF44336),
             size: 28,
           ),
         ],

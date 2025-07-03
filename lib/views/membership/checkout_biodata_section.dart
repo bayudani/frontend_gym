@@ -1,53 +1,74 @@
+// lib/views/membership/checkout_biodata_section.dart
+
 import 'dart:io'; // Untuk menggunakan kelas File
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // Import image_picker
 
-// Style border input field yang sama dengan halaman login/register
 const _outlineInputBorder = OutlineInputBorder(
   borderSide: BorderSide(color: Color(0xFF757575)),
   borderRadius: BorderRadius.all(Radius.circular(10)),
 );
 
 class CheckoutBiodataSection extends StatefulWidget {
+  // Tambahkan key di constructor agar bisa diakses oleh parent
   const CheckoutBiodataSection({super.key});
 
   @override
-  State<CheckoutBiodataSection> createState() => _CheckoutBiodataSectionState();
+  // State class sekarang jadi public agar bisa diakses via GlobalKey
+  CheckoutBiodataSectionState createState() => CheckoutBiodataSectionState();
 }
 
-class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
-  // Controllers untuk input biodata
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+// State class sekarang jadi public (tanpa underscore)
+class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
+  // Controllers dan variabel gambar sekarang jadi public (tanpa underscore)
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  File? pickedImage; // Variabel untuk menyimpan gambar yang dipilih
 
-  // Variabel untuk menyimpan gambar yang dipilih
-  File? _pickedImage;
   final ImagePicker _picker = ImagePicker();
 
-  // Metode untuk memilih gambar dari galeri
   Future<void> _pickImage() async {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
       if (image != null) {
         setState(() {
-          _pickedImage = File(image.path);
+          pickedImage = File(image.path); // Menggunakan pickedImage (public)
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gambar berhasil dipilih!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Pemilihan gambar dibatalkan.')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Gambar berhasil dipilih!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Gagal memilih gambar: $e')));
+      // Menangkap PlatformException dan error lainnya
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal memilih gambar: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
+  }
+
+  // Metode untuk menghapus gambar yang dipilih
+  void _clearPickedImage() {
+    setState(() {
+      pickedImage = null;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Gambar berhasil dihapus!'),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   // Helper Widget untuk TextField
@@ -71,10 +92,10 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
         prefixIcon: Icon(icon, color: Colors.grey),
         enabledBorder: _outlineInputBorder,
         focusedBorder: _outlineInputBorder.copyWith(
-          borderSide: const BorderSide(color: Colors.red), // Fokus border merah
+          borderSide: const BorderSide(color: Colors.red),
         ),
         filled: true,
-        fillColor: Colors.grey[900], // Background field sedikit lebih gelap
+        fillColor: Colors.grey[900],
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
@@ -83,14 +104,14 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
     );
   }
 
-  // Helper Widget untuk Header Bagian (diulang dari MembershipCheckoutPage untuk konsistensi)
+  // Helper Widget untuk Header Bagian
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF262626), // Abu-abu gelap
+        color: const Color(0xFF262626),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[800]!), // Border abu-abu tipis
+        border: Border.all(color: Colors.grey[800]!),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,7 +124,6 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Dua titik di kanan (dekoratif)
           Row(
             children: [
               Container(
@@ -132,9 +152,9 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
+    nameController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
@@ -143,7 +163,7 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(context, 'Biodata'),
+        _buildSectionHeader(context, 'Biodata & Bukti Transfer'),
         const SizedBox(height: 10),
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -158,61 +178,95 @@ class _CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Mohon isi data dengan\nlengkap dan valid',
+                'Mohon isi data dengan lengkap dan valid',
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: _nameController,
+                controller: nameController, // pakai controller public
                 hintText: 'Nama lengkap',
                 icon: Icons.person,
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: _phoneController,
+                controller: phoneController, // pakai controller public
                 hintText: 'NO HP',
                 icon: Icons.phone,
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: _addressController,
+                controller: addressController, // pakai controller public
                 hintText: 'Alamat',
                 icon: Icons.location_on,
-                maxLines: 2, // Izinkan lebih dari satu baris
+                maxLines: 2,
               ),
-              const SizedBox(height: 20), // Jarak ke tombol baru
-              // Tombol "Upload Bukti Transaksi"
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _pickImage, // Memanggil _pickImage
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // Latar belakang putih
-                    foregroundColor: Colors.black, // Teks hitam
+                child: OutlinedButton.icon(
+                  onPressed: _pickImage,
+                  icon: const Icon(
+                    Icons.cloud_upload_outlined,
+                    color: Colors.white70,
+                  ),
+                  label: const Text(
+                    'Upload Bukti Transaksi',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Color(0xFF757575)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Upload Bukti Transaksi',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              // PERBAIKAN: Tampilkan gambar yang dipilih di sini
-              if (_pickedImage != null)
+              // PERBAIKAN: Tampilkan pratinjau gambar yang dipilih dengan tombol hapus
+              if (pickedImage != null) // Menggunakan pickedImage (public)
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
-                  child: Image.file(
-                    _pickedImage!,
-                    height: 150, // Sesuaikan tinggi sesuai kebutuhan
-                    width: double.infinity, // Ambil lebar penuh
-                    fit:
-                        BoxFit
-                            .contain, // Sesuaikan bagaimana gambar mengisi ruang
+                  child: Stack(
+                    // Menggunakan Stack untuk menempatkan tombol hapus di atas gambar
+                    alignment:
+                        Alignment.topRight, // Menempatkan di sudut kanan atas
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          pickedImage!, // Menggunakan pickedImage (public)
+                          height: 150, // Sesuaikan tinggi sesuai kebutuhan
+                          width: double.infinity, // Ambil lebar penuh
+                          fit:
+                              BoxFit
+                                  .cover, // Gunakan BoxFit.cover agar gambar mengisi ruang
+                        ),
+                      ),
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: GestureDetector(
+                          onTap:
+                              _clearPickedImage, // Memanggil fungsi untuk menghapus gambar
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(
+                                0.6,
+                              ), // Latar belakang tombol hapus
+                              shape: BoxShape.circle,
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
+                              Icons.close, // Ikon silang
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],

@@ -1,23 +1,17 @@
+// lib/views/blog/article_detail_page.dart
+
 import 'package:flutter/material.dart';
-// Import widget-widget bagian yang baru
-// ArticleReactions tidak lagi digunakan, jadi impornya bisa dihapus
-// import 'package:gym_app/views/blog/article_reactions.dart';
-import 'package:gym_app/views/blog/article_comments_section.dart'; // Tetap diimpor
+import 'package:provider/provider.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:gym_app/controllers/article_controller.dart';
+import 'package:gym_app/views/blog/article_comments_section.dart';
 
 class ArticleDetailPage extends StatefulWidget {
-  final String title;
-  final String date;
-  final String imagePath; // Ini akan menerima URL gambar sekarang
-  final String content; // Isi artikel
-  final List<Map<String, String>> comments; // Contoh data komentar
+  final String slug;
 
   const ArticleDetailPage({
     super.key,
-    required this.title,
-    required this.date,
-    required this.imagePath,
-    required this.content,
-    required this.comments,
+    required this.slug,
   });
 
   @override
@@ -25,174 +19,169 @@ class ArticleDetailPage extends StatefulWidget {
 }
 
 class _ArticleDetailPageState extends State<ArticleDetailPage> {
-  // State untuk melacak apakah artikel disukai atau tidak
-  bool _isLiked = false;
-  // State untuk melacak jumlah like saat ini
-  late int _currentLikesCount; // Menggunakan late untuk inisialisasi di initState
 
   @override
   void initState() {
     super.initState();
-    _currentLikesCount = 200; // Inisialisasi dari hardcoded value, atau dari widget.likesCount jika ada
-    // Jika Anda ingin status like persist (misal dari API), Anda bisa inisialisasi _isLiked di sini
-  }
-
-  void _toggleLike() {
-    setState(() {
-      _isLiked = !_isLiked;
-      if (_isLiked) {
-        _currentLikesCount++; // Tambah like
-      } else {
-        _currentLikesCount--; // Kurangi like
-      }
+    // Saat halaman ini dibuka, langsung minta controller untuk ambil data artikel
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ArticleController>(context, listen: false)
+          .fetchArticleBySlug(widget.slug);
     });
   }
 
   @override
   void dispose() {
+    // Saat halaman ditutup, bersihkan data di controller biar nggak nyangkut
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       Provider.of<ArticleController>(context, listen: false).clearSelectedArticle();
+    });
     super.dispose();
+  }
+
+  /// Fungsi yang dipanggil saat tombol hati ditekan.
+  /// Dia cuma ngasih tau controller, "Woi, tombol like di-tap!"
+  void _performToggleLike() {
+    Provider.of<ArticleController>(context, listen: false)
+        .toggleLikeStatus(widget.slug);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Background hitam
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Kembali', // Mengubah teks AppBar menjadi "Kembali" seperti di gambar
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Kembali', style: TextStyle(color: Colors.white)),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Bagian Gambar Artikel Utama
-            Container(
-              height: 250, // Tinggi gambar artikel
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(widget.imagePath), // Menggunakan NetworkImage
-                  fit: BoxFit.cover,
-                  // errorBuilder untuk DecorationImage perlu dibungkus dalam widget lain jika tidak bisa diterapkan langsung
-                ),
-              ),
-              child: Stack(
-                children: [
-                  // Gambar utama dengan errorBuilder
-                  Image.network(
-                    widget.imagePath,
-                    fit: BoxFit.cover,
-                    height: 250, // Pastikan ukuran sama dengan Container induk
-                    width: double.infinity, // Pastikan lebar sama dengan Container induk
-                    errorBuilder: (context, error, stackTrace) {
-                      print('Error loading network image (errorBuilder): $error');
-                      return Container(
-                        height: 250, // Tinggi placeholder
-                        color: Colors.grey[800],
-                        child: const Center(
-                          child: Icon(Icons.broken_image, color: Colors.grey, size: 50),
-                        ),
-                      );
-                    },
-                  ),
-                  // Overlay gelap pada gambar
-                  Container(
-                    height: 250, // Sama dengan tinggi gambar
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.0),
-                          Colors.black.withOpacity(0.6), // Lebih gelap di bagian bawah
-                        ],
-                      ),
+      // Consumer ini yang bikin UI-nya bisa "dengerin" perubahan dari controller
+      body: Consumer<ArticleController>(
+        builder: (context, controller, child) {
+          
+          // 1. Tampilan saat Loading
+          if (controller.isDetailLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.white));
+          }
+
+          // 2. Tampilan saat Error
+          if (controller.detailErrorMessage != null) {
+            return Center(child: Text('Waduh, error: ${controller.detailErrorMessage}'));
+          }
+
+          // 3. Tampilan jika data belum siap
+          final article = controller.selectedArticle;
+          if (article == null) {
+            return const Center(child: Text('Artikel tidak ditemukan.'));
+          }
+
+          // 4. Tampilan utama jika semua data sudah siap
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // --- Bagian Gambar Artikel Utama ---
+                Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(article.fullCoverPhotoUrl),
+                      fit: BoxFit.cover,
+                      // Tambahkan fallback jika gambar gagal dimuat
+                      onError: (exception, stackTrace) {
+                        // Tidak perlu print, cukup tampilkan placeholder
+                      },
                     ),
+                     color: Colors.grey[900], // Background placeholder
                   ),
-                  // PERBAIKAN: Like dan Komentar disatukan dalam satu Row
-                  Positioned(
-                    bottom: 10,
-                    left: 20,
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleLike, // Memanggil fungsi _toggleLike
-                          child: Icon(
-                            Icons.favorite,
-                            color: _isLiked ? Colors.red : Colors.white, // Warna kondisional
-                            size: 18,
+                  child: Stack(
+                    children: [
+                      // Overlay gelap di bawah
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [ Colors.transparent, Colors.black.withOpacity(0.8) ],
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '$_currentLikesCount', // Menggunakan _currentLikesCount
-                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                      // --- Like dan Komentar ---
+                      Positioned(
+                        bottom: 12,
+                        left: 20,
+                        child: Row(
+                          children: [
+                            // 1. Tombol Hati yang Cerdas
+                            GestureDetector(
+                              onTap: controller.isLikingInProgress ? null : _performToggleLike,
+                              child: Icon(
+                                controller.isLikedByCurrentUser == true ? Icons.favorite : Icons.favorite_border,
+                                color: controller.isLikedByCurrentUser == true ? Colors.red : Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // 2. Jumlah Like dari Controller
+                            Text(
+                              controller.likesCount?.toString() ?? '–',
+                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(width: 24),
+                            // 3. Ikon dan Jumlah Komentar (masih data dummy)
+                            const Icon(Icons.mode_comment_outlined, color: Colors.white, size: 20),
+                            const SizedBox(width: 8),
+                            const Text(
+                              '0', // Nanti ini juga dari API
+                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 15), // Jarak antara like dan komentar
-                        const Icon(Icons.comment, color: Colors.grey, size: 18), // Ikon komentar
-                        const SizedBox(width: 5),
-                        Text(
-                          '${widget.comments.length}', // Jumlah komentar
-                          style: const TextStyle(color: Colors.white, fontSize: 14),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            // Judul Artikel dan Tanggal di bawah gambar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22, // Ukuran font judul lebih besar
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    widget.date,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14, // Ukuran font tanggal sedikit lebih besar
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Isi Artikel
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Text(
-                widget.content,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                  height: 1.5, // Spasi baris
                 ),
-              ),
+                
+                // --- Judul, Tanggal, dan Isi Artikel ---
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        article.title,
+                        style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, height: 1.3),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        article.formattedPublishedDate,
+                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // --- Render Konten HTML ---
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: HtmlWidget(
+                    article.body ?? 'Konten tidak tersedia.',
+                    textStyle: const TextStyle(color: Colors.white70, fontSize: 16, height: 1.6),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+                ArticleCommentsSection(articleSlug: article.slug),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 20),
-            // Bagian Komentar - dipanggil sebagai ArticleCommentsSection
-            ArticleCommentsSection(comments: widget.comments),
-            const SizedBox(height: 20), // Padding bawah
-          ],
-        ),
+          );
+        },
       ),
     );
   }

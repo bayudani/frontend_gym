@@ -55,10 +55,13 @@ dependencies:
   screenshot: ^3.0.0
   share_plus: ^11.0.0
   dio: ^5.8.0+1
+  flutter_widget_from_html_core: ^0.16.0
+  timeago:
+    ^3.7.1
+  http_parser: ^4.1.2
+  pinput: ^5.0.1
 
     # share_plus: ^9.0.0      # Buat munculin menu "Share"
-
-
 
 dev_dependencies:
   flutter_test:
@@ -88,7 +91,10 @@ flutter:
     - assets/images/1.png
     - assets/images/logoBri.png
     - assets/images/logoBca.png
-
+    - assets/images/coooo.png
+    - assets/images/coin_stack.png
+    - assets/images/red_gift_box.png
+    - assets/images/history.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

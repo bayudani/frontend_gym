@@ -10,8 +10,8 @@ class DioFactory {
     final dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.apiUrl,
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
