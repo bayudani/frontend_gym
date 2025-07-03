@@ -9,4 +9,12 @@ class ChatMessage {
     required this.isUserMessage,
     this.isError = false,
   });
+
+   // Tambahkan factory constructor ini
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    return ChatMessage(
+      text: json['text'],
+      isUserMessage: json['sender'] == 'user',
+    );
+  }
 }

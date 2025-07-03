@@ -16,6 +16,14 @@ class AiService {
     // Panggil endpoint chat dengan metode POST
     return _dio.post('/ai/chat', data: data);
   }
+
+// get history chat
+  Future<Response> getChatHistory() {
+    // Panggil endpoint chat history dengan metode GET
+    return _dio.get('/ai/chat/history');
+  }
+
+
   /// Mengirim gambar dan nama latihan untuk dianalisis (Form Checker)
   Future<Response> checkExerciseForm({
     required File imageFile,

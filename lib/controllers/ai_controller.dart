@@ -7,13 +7,7 @@ class AiController extends ChangeNotifier {
   final AiService _aiService = AiService();
 
   // State untuk menyimpan daftar pesan
-  final List<ChatMessage> _messages = [
-    // Pesan sapaan pertama dari AI
-    ChatMessage(
-      text: "Halo! Saya FitID AI, asisten virtualmu. Ada yang bisa dibantu seputar kebugaran?",
-      isUserMessage: false,
-    ),
-  ];
+  List<ChatMessage> _messages = []; //awalny kosong
   List<ChatMessage> get messages => _messages;
 
   // State untuk status loading
@@ -47,6 +41,37 @@ class AiController extends ChangeNotifier {
       _handleError("Oops, terjadi kesalahan tidak terduga.");
     } finally {
       // 4. Set loading kembali ke false
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+// === FUNGSI BARU UNTUK FETCH HISTORY ===
+  Future<void> fetchHistory() async {
+    // Set loading biar di UI bisa tampil loading indicator
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _aiService.getChatHistory();
+      if (response.statusCode == 200) {
+        // Ubah list of JSON dari server jadi list of ChatMessage
+        final List<dynamic> historyData = response.data;
+        _messages = historyData.map((item) => ChatMessage.fromJson(item)).toList();
+
+        // Kalau history kosong (user baru pertama kali chat), tambahkan sapaan
+        if (_messages.isEmpty) {
+          _messages.add(ChatMessage(
+            text: "Halo! Saya FitID AI, asisten virtualmu. Ada yang bisa dibantu seputar kebugaran?",
+            isUserMessage: false,
+          ));
+        }
+      }
+    } on DioException catch (e) {
+      _handleError("Gagal memuat riwayat chat: ${e.response?.data['message']}");
+    } catch (e) {
+      _handleError("Oops, terjadi kesalahan tidak terduga.");
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
