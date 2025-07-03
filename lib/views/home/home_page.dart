@@ -40,11 +40,11 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
   }
-  
+
   // --- FUNGSI LOGIKA UNTUK GERBANG AI ---
   void _handleAiChatTap() {
     final profileController = Provider.of<ProfileController>(context, listen: false);
-    
+
     // Cek status member aktif
     if (profileController.isMemberActive) {
       // Jika aktif, gaskeun ke AI Chat
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: const Text('Jadi Member', style: TextStyle(color: Colors.white)),
               onPressed: () {
@@ -214,13 +214,27 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image.asset(_megaphoneIconPath, width: 35, height: 35),
                         const SizedBox(width: 10),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('40% discount', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                              SizedBox(height: 5),
-                              Text('on all our membership →', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                              const Text('40% discount', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              // ===============================================
+                              // PERUBAHAN DI SINI: Membungkus teks dengan GestureDetector
+                              GestureDetector(
+                                onTap: () {
+                                  // Navigasi ke halaman MembershipPage
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MembershipPage(), // Pastikan MembershipPage diimport
+                                    ),
+                                  );
+                                },
+                                child: const Text('on all our membership →', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                              ),
+                              // ===============================================
                             ],
                           ),
                         ),
