@@ -1,12 +1,16 @@
-// lib/controllers/reward_controller.dart
+// lib/controllers/item_rewards_controller.dart
 
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/item_rewards_models.dart';
 import 'package:gym_app/service/content_service.dart';
+import 'package:gym_app/service/member_service.dart'; // <-- IMPORT SERVICE BARU
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart'; // <-- IMPORT PROVIDER
+import 'package:gym_app/controllers/profile_controller.dart'; // <-- IMPORT PROFILE CONTROLLER
 
 class RewardController extends ChangeNotifier {
   final ContentService _contentService = ContentService();
+  final MemberService _memberService = MemberService(); // <-- TAMBAHKAN INSTANCE MEMBER SERVICE
 
   List<RewardItem> _rewards = [];
   List<RewardItem> get rewards => _rewards;
@@ -14,12 +18,17 @@ class RewardController extends ChangeNotifier {
   bool _isLoading = true;
   String? _errorMessage;
 
+  // Tambahkan state untuk proses klaim
+  bool _isClaiming = false;
+  bool get isClaiming => _isClaiming;
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  RewardController() {
-    fetchRewards();
-  }
+  // Hapus constructor, pemanggilan fetchRewards dilakukan di initState view
+  // RewardController() {
+  //   fetchRewards();
+  // }
 
   Future<void> fetchRewards() async {
     _isLoading = true;
@@ -28,19 +37,47 @@ class RewardController extends ChangeNotifier {
 
     try {
       final response = await _contentService.getItemRewards();
-      // Data reward ada di dalam key 'data'
       final List<dynamic> data = response.data['data'];
       _rewards = data.map((json) => RewardItem.fromJson(json)).toList();
-
     } on DioException catch (e) {
       _errorMessage = e.response?.data['message'] ?? "Gagal memuat rewards. Coba lagi nanti.";
-      print("Error fetching rewards: ${e.response?.data}");
     } catch (e) {
       _errorMessage = "Terjadi kesalahan tidak terduga.";
-      print("Error fetching rewards: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // --- FUNGSI BARU UNTUK KLAIM REWARD ---
+  Future<String?> claimReward(BuildContext context, String rewardId) async {
+    _isClaiming = true;
+    notifyListeners();
+
+    try {
+      // Panggil service untuk klaim reward
+      await _memberService.claimReward(rewardId);
+
+      // Jika berhasil, refresh data poin dan daftar reward
+      // agar UI otomatis update. Keren kan?
+      await fetchRewards();
+      // ignore: use_build_context_synchronously
+      await Provider.of<ProfileController>(context, listen: false).fetchPoint(context);
+
+      _isClaiming = false;
+      notifyListeners();
+      return null; // Mengembalikan null menandakan sukses
+
+    } on DioException catch (e) {
+      _isClaiming = false;
+      notifyListeners();
+      // Ambil pesan error spesifik dari backend kamu
+      final error = e.response?.data['error'] ?? "Gagal klaim reward. Coba lagi.";
+      return error; // Mengembalikan pesan error
+    } catch (e) {
+      _isClaiming = false;
+      notifyListeners();
+      return "Terjadi kesalahan yang tidak diketahui."; // Error umum
     }
   }
 }

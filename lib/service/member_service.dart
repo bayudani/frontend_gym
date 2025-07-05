@@ -24,4 +24,14 @@ class MemberService {
       rethrow;
     }
   }
+
+  // claim reward
+  Future<Response> claimReward(String rewardId) {
+    return _dio.post('/member/rewards/$rewardId/claim');
+  }
+
+  Future<Response> getRewardHistory() {
+    // Endpoint ini juga butuh otentikasi (token)
+    return _dio.get('/member/rewards/history');
+  }
 }

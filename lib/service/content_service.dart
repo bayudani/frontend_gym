@@ -14,6 +14,10 @@ class ContentService {
     return _dio.get('/programs');
   }
 
+  Future<Response> getProgramById(String id) {
+    return _dio.get('/programs/$id');
+  }
+
   Future<Response> getPostDetail(String slug) {
     return _dio.get('/posts/$slug');
   }

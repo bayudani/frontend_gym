@@ -1,17 +1,10 @@
+// lib/views/point/reward_history_page.dart
+
 import 'package:flutter/material.dart';
-import 'package:gym_app/widget/custom_bottom_nav_bar.dart'; // Jika ingin Bottom Nav Bar di halaman ini
-import 'package:gym_app/views/home/home_page.dart'; // Import untuk navigasi CustomBottomNavBar
-import 'package:gym_app/views/profile/profile_page.dart'; // Import untuk navigasi CustomBottomNavBar
-import 'package:gym_app/views/membership/membership.dart'; // Import untuk navigasi CustomBottomNavBar
-import 'package:gym_app/views/blog/blog_page.dart'; // Import untuk navigasi CustomBottomNavBar
-
-
-// --- Placeholder for Images ---
-// Pastikan path gambar ini benar di pubspec.yaml dan folder assets Anda
-const _isomaxProductImage = 'assets/images/isomax.png'; // Ganti dengan gambar produk Anda
-const _wheyProteinProductImage = 'assets/images/whey_protein.png'; // Ganti dengan gambar produk Anda
-const _ultimateNutritionImage = 'assets/images/ultimate_nutrition.png'; // Ganti dengan gambar produk Anda
-const _lmenProductImage = 'assets/images/l_men.png'; // Ganti dengan gambar produk Anda
+import 'package:provider/provider.dart';
+import 'package:gym_app/controllers/reward_history_controller.dart';
+import 'package:gym_app/models/RewardHistoryItem_models.dart'; // Pastikan nama file ini benar
+import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 
 class RewardHistoryPage extends StatefulWidget {
   const RewardHistoryPage({super.key});
@@ -21,86 +14,84 @@ class RewardHistoryPage extends StatefulWidget {
 }
 
 class _RewardHistoryPageState extends State<RewardHistoryPage> {
-  // Untuk mengelola indeks item navigasi bawah (misalnya tetap di Home atau tidak ada)
-  int _selectedIndex = 0; // Asumsi default ke Home jika tidak ada di BottomNavBar utama
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<RewardHistoryController>(
+        context,
+        listen: false,
+      ).fetchHistory();
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // Navigasi ditangani oleh CustomBottomNavBar secara internal.
   }
 
   @override
   Widget build(BuildContext context) {
-    // Contoh data riwayat hadiah. Dalam aplikasi nyata, ini akan diambil dari database/API.
-    final List<Map<String, dynamic>> rewardRecords = [
-      {
-        'image': _isomaxProductImage,
-        'name': 'ISOMAX',
-        'date_time': '22 Juni 2025, 12.18',
-        'status': 'Diklaim',
-      },
-      {
-        'image': _wheyProteinProductImage,
-        'name': 'WHEY PROTEIN',
-        'date_time': '02 Januari 2025, 10.18',
-        'status': 'Diklaim',
-      },
-      {
-        'image': _ultimateNutritionImage,
-        'name': 'ULTIMATE NUTRITION',
-        'date_time': '28 Desember 2024, 11.18',
-        'status': 'Diklaim',
-      },
-      {
-        'image': _isomaxProductImage,
-        'name': 'ISOMAX',
-        'date_time': '12 Oktober 2024, 09.18',
-        'status': 'Diklaim',
-      },
-      {
-        'image': _lmenProductImage,
-        'name': 'L MEN',
-        'date_time': '10 Mei 2024, 20.18',
-        'status': 'Diklaim',
-      },
-      {
-        'image': _isomaxProductImage,
-        'name': 'ISOMAX',
-        'date_time': '09 Februari 2024, 15.18',
-        'status': 'Diklaim',
-      },
-    ];
-
     return Scaffold(
-      backgroundColor: Colors.black, // Latar belakang hitam
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Kembali ke halaman sebelumnya
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Kembali', // Mengubah teks AppBar menjadi "Kembali"
+          'Riwayat Reward',
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Container( // Menggunakan Container untuk latar belakang di bawah AppBar
-        color: const Color(0xFF262626), // Warna latar belakang sesuai gambar
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-          itemCount: rewardRecords.length,
-          itemBuilder: (context, index) {
-            final record = rewardRecords[index];
-            return _buildRewardHistoryCard(
-              image: record['image'],
-              name: record['name'],
-              dateTime: record['date_time'],
-              status: record['status'],
+      body: Container(
+        color: Colors.black,
+        child: Consumer<RewardHistoryController>(
+          builder: (context, controller, child) {
+            if (controller.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
+            }
+
+            if (controller.errorMessage != null) {
+              return Center(
+                child: Text(
+                  controller.errorMessage!,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              );
+            }
+
+            if (controller.history.isEmpty) {
+              return const Center(
+                child: Text(
+                  "Kamu belum punya histori reward.",
+                  style: TextStyle(color: Colors.white70),
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => controller.fetchHistory(),
+              color: Colors.white,
+              backgroundColor: Colors.red,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 20.0,
+                ),
+                itemCount: controller.history.length,
+                itemBuilder: (context, index) {
+                  final record = controller.history[index];
+                  return _buildRewardHistoryCard(record);
+                },
+              ),
             );
           },
         ),
@@ -112,40 +103,77 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
     );
   }
 
-  // Widget untuk setiap kartu riwayat hadiah
-  Widget _buildRewardHistoryCard({
-    required String image,
-    required String name,
-    required String dateTime,
-    required String status,
-  }) {
+  // --- Widget kartu riwayat yang sudah siap menangani gambar null ---
+  Widget _buildRewardHistoryCard(RewardHistoryItem record) {
+    final imageUrl = record.fullImageUrl; // Ini bisa jadi null
+
+    Color statusColor;
+    FontWeight statusFontWeight = FontWeight.w500; // Default weight
+
+    if (record.status.toLowerCase() == 'claimed') {
+      statusColor = Colors.greenAccent[400]!; // Warna hijau untuk 'claimed'
+      statusFontWeight = FontWeight.bold; // Buat tebal biar lebih menonjol
+    } else if (record.status.toLowerCase() == 'pending') {
+      statusColor = Colors.red!; // Warna kuning/amber untuk 'pending'
+    } else {
+      statusColor = Colors.white70; // Warna default jika ada status lain
+    }
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 15.0), // Jarak antar kartu
+      margin: const EdgeInsets.only(bottom: 15.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF333333), // Warna latar belakang kartu
-        borderRadius: BorderRadius.circular(10), // Sudut membulat
-        border: Border.all(color: Colors.grey[700]!), // Border abu-abu tipis
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[800]!),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Pusatkan secara vertikal
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8), // Sudut gambar produk
-            child: Image.asset(
-              image,
-              width: 60, // Lebar gambar produk
-              height: 60, // Tinggi gambar produk
-              fit: BoxFit.cover,
-            ),
+            borderRadius: BorderRadius.circular(8),
+            // Cek apakah imageUrl ada atau tidak
+            child:
+                imageUrl != null
+                    ? Image.network(
+                      // Jika ada, tampilkan gambar dari network
+                      imageUrl,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[850],
+                          child: const Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    )
+                    : Container(
+                      // Jika tidak ada, tampilkan container dengan ikon
+                      width: 60,
+                      height: 60,
+                      color: Colors.grey[850],
+                      child: const Icon(
+                        Icons.card_giftcard,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                    ),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  name,
+                  record.name,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -154,23 +182,22 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  dateTime,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
+                  record.formattedDateTime,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 10),
           Text(
-            status,
-            style: const TextStyle(
-              color: Colors.white70, // Warna teks status
+            record.status,
+            style: TextStyle(
+              color: statusColor, // <-- Warnanya sekarang dinamis
               fontSize: 14,
-              fontWeight: FontWeight.bold,
+              fontWeight:
+                  statusFontWeight, // <-- Ketebalan font juga bisa dinamis
             ),
           ),
         ],

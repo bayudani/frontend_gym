@@ -17,6 +17,12 @@ class ProgramController extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+Program? _selectedProgram;
+  Program? get selectedProgram => _selectedProgram;
+
+  bool _isDetailLoading = false;
+  bool get isDetailLoading => _isDetailLoading;
+
   ProgramController() {
     fetchPrograms();
   }
@@ -36,6 +42,23 @@ class ProgramController extends ChangeNotifier {
       _errorMessage = e.response?.data['message'] ?? e.message ?? "Failed to load programs.";
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+  // Method untuk mengambil detail program berdasarkan ID
+  Future<void> fetchProgramById(String id) async {
+    _isDetailLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await _contentService.getProgramById(id);
+      // Dio otomatis decode JSON, ambil datanya dari response.data
+      _selectedProgram = Program.fromJson(response.data);
+    } on DioException catch (e) {
+      _errorMessage = e.response?.data['message'] ?? e.message ?? "Failed to load program details.";
+    } finally {
+      _isDetailLoading = false;
       notifyListeners();
     }
   }

@@ -45,7 +45,7 @@ void showClaimSuccessPopup(BuildContext context, String productName) {
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    'Anda dapat reward $productName kesehatan eksklusif! Semoga membantu meningkatkan kesehatan dan stamina Anda. Terima kasih telah menjadi member setia kami.',
+                    'Anda dapat reward $productName! Silahkan cek di email anda, dan lakukan konfirmasi ke admin FitID untuk mengklaim hadiah tersebut. Terima kasih telah menjadi member setia kami.',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,

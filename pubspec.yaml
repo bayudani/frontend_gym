@@ -47,7 +47,7 @@ dependencies:
   # Untuk mengambil screenshot widget
   printing: ^5.12.0
   # Untuk mencari path/folder di HP
-  path_provider: ^2.1.3
+  path_provider: ^2.1.5
   # Untuk membuka file setelah di-download
   # open_file_plus: ^3.4.1
   # Untuk minta izin penyimpanan
@@ -60,6 +60,8 @@ dependencies:
     ^3.7.1
   http_parser: ^4.1.2
   pinput: ^5.0.1
+  html_unescape: ^2.0.0
+  record: ^6.0.0
 
     # share_plus: ^9.0.0      # Buat munculin menu "Share"
 
