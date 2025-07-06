@@ -34,4 +34,10 @@ class MemberService {
     // Endpoint ini juga butuh otentikasi (token)
     return _dio.get('/member/rewards/history');
   }
+
+  Future<Response> finalizeReward(String claimId) {
+    // Panggil endpoint PUT yang sudah kita siapkan di backend Express
+    // Sesuaikan path jika berbeda, contoh: /rewards/:claimId/finalize
+    return _dio.put('/member/rewards/$claimId/finalize');
+  }
 }

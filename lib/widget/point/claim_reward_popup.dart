@@ -45,7 +45,7 @@ void showClaimSuccessPopup(BuildContext context, String productName) {
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    'Anda dapat reward $productName! Silahkan cek di email anda, dan lakukan konfirmasi ke admin FitID untuk mengklaim hadiah tersebut. Terima kasih telah menjadi member setia kami.',
+                    'Anda dapat reward $productName! Silahkan menunggu konfirmasi, dan lakukan konfirmasi ke admin FitID untuk mengklaim hadiah tersebut. Terima kasih telah menjadi member setia kami.',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
@@ -88,3 +88,69 @@ void showClaimSuccessPopup(BuildContext context, String productName) {
       },
     );
   }
+
+  // pop up baru
+  /// Teks di dalamnya sudah disesuaikan.
+void showFinalConfirmationPopup(BuildContext context, String productName) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFF4CAF50), // Warna hijau untuk sukses
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Berhasil!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                'Reward "$productName" telah selesai kamu klaim. Selamat menikmati dan tetap semangat nge-gym, bro! 🔥',
+                style: const TextStyle(
+                  color: Colors.white, // Ganti jadi putih solid biar lebih jelas
+                  fontSize: 15,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // Elemen gambar bisa tetap sama
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(_popupGiftBoxImage, height: 120),
+                  Positioned(
+                    bottom: 20,
+                    child: Image.asset(_popupSupplementImage, height: 80),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Tombol untuk menutup pop-up
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.green,
+                ),
+                onPressed: () {
+                  Navigator.pop(dialogContext); // Tutup pop-up
+                },
+                child: const Text('OK, Mantap!'),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}

@@ -4,12 +4,15 @@ import 'package:intl/intl.dart';
 import 'package:gym_app/config/app_config.dart';
 
 class RewardHistoryItem {
+    final String id;
+
   final String name;
   final String? image;
   final DateTime? claimedAt;
   final String status;
 
   RewardHistoryItem({
+    required this.id,
     required this.name,
     this.image,
     this.claimedAt,
@@ -54,6 +57,7 @@ class RewardHistoryItem {
     }
     
     return RewardHistoryItem(
+      id: json['id']?.toString() ?? 'ID Tidak Diketahui',
       name: json['item_reward']?['name']?.toString() ?? 'Nama Reward Tidak Ada',
       image: json['item_reward']?['image'],
       // 3. Gunakan waktu yang sudah diproses

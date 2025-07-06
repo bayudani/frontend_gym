@@ -6,7 +6,6 @@ import 'package:gym_app/controllers/profile_controller.dart';
 import 'package:gym_app/controllers/item_rewards_controller.dart';
 import 'package:gym_app/models/item_rewards_models.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/widget/point/claim_reward_popup.dart';
 import 'package:gym_app/widget/point/reward_history_page.dart';
 
 // --- Definisi Gambar dan Ikon ---
@@ -29,8 +28,14 @@ class _PointPageState extends State<PointPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Memuat data saat halaman pertama kali dibuka
       Provider.of<RewardController>(context, listen: false).fetchRewards();
-      Provider.of<ProfileController>(context, listen: false).fetchProfile(context);
-      Provider.of<ProfileController>(context, listen: false).fetchPoint(context);
+      Provider.of<ProfileController>(
+        context,
+        listen: false,
+      ).fetchProfile(context);
+      Provider.of<ProfileController>(
+        context,
+        listen: false,
+      ).fetchPoint(context);
     });
   }
 
@@ -47,9 +52,15 @@ class _PointPageState extends State<PointPage> {
       body: RefreshIndicator(
         onRefresh: () async {
           // Fungsi refresh untuk swipe-down
-          await Provider.of<RewardController>(context, listen: false).fetchRewards();
+          await Provider.of<RewardController>(
+            context,
+            listen: false,
+          ).fetchRewards();
           // ignore: use_build_context_synchronously
-          await Provider.of<ProfileController>(context, listen: false).fetchPoint(context);
+          await Provider.of<ProfileController>(
+            context,
+            listen: false,
+          ).fetchPoint(context);
         },
         color: Colors.white,
         backgroundColor: Colors.red,
@@ -60,10 +71,13 @@ class _PointPageState extends State<PointPage> {
               builder: (context, controller, child) {
                 if (controller.isLoading && controller.rewards.isEmpty) {
                   return const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator(color: Colors.white)),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
                   );
                 }
-                if (controller.errorMessage != null && controller.rewards.isEmpty) {
+                if (controller.errorMessage != null &&
+                    controller.rewards.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(
                       child: Padding(
@@ -105,7 +119,9 @@ class _PointPageState extends State<PointPage> {
       builder: (context, profile, child) {
         final userName = profile.userProfile?.name ?? 'Guest';
         final userPoints = profile.userPoint?.point ?? 0;
-        final formattedPoints = NumberFormat.decimalPattern('id_ID').format(userPoints);
+        final formattedPoints = NumberFormat.decimalPattern(
+          'id_ID',
+        ).format(userPoints);
 
         return SliverAppBar(
           backgroundColor: Colors.black,
@@ -123,33 +139,50 @@ class _PointPageState extends State<PointPage> {
                   end: Alignment.bottomCenter,
                   colors: [Color(0xFF8B0000), Color(0xFFE53935)],
                 ),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
               ),
               child: Stack(
                 children: [
                   Positioned(
-                    top: MediaQuery.of(context).padding.top + kToolbarHeight * 0.7,
+                    top:
+                        MediaQuery.of(context).padding.top +
+                        kToolbarHeight * 0.7,
                     left: 20,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Hello', style: TextStyle(color: Colors.white70, fontSize: 18)),
+                        const Text(
+                          'Hello',
+                          style: TextStyle(color: Colors.white70, fontSize: 18),
+                        ),
                         Text(
                           userName,
-                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Positioned(
-                    top: MediaQuery.of(context).padding.top + kToolbarHeight * 0.7 + 60,
+                    top:
+                        MediaQuery.of(context).padding.top +
+                        kToolbarHeight * 0.7 +
+                        60,
                     left: 20,
                     right: 20,
                     child: Row(
                       children: [
                         Flexible(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(15),
@@ -162,7 +195,10 @@ class _PointPageState extends State<PointPage> {
                                 Flexible(
                                   child: Text(
                                     '$formattedPoints Points',
-                                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -181,16 +217,29 @@ class _PointPageState extends State<PointPage> {
                             );
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Row(
                               children: [
-                                Image.asset(_historyIcon, width: 20, height: 20),
+                                Image.asset(
+                                  _historyIcon,
+                                  width: 20,
+                                  height: 20,
+                                ),
                                 const SizedBox(width: 5),
-                                const Text('History', style: TextStyle(color: Colors.white, fontSize: 14)),
+                                const Text(
+                                  'History',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -219,34 +268,40 @@ class _PointPageState extends State<PointPage> {
           mainAxisSpacing: 16.0,
           childAspectRatio: 0.7,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final reward = rewards[index];
-            return _buildRewardCard(
-              context: context,
-              reward: reward,
-              isClaiming: isClaiming,
-              onClaim: () async {
-                final controller = Provider.of<RewardController>(context, listen: false);
-                final error = await controller.claimReward(context, reward.id);
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final reward = rewards[index];
+          return _buildRewardCard(
+            context: context,
+            reward: reward,
+            isClaiming: isClaiming,
+            onClaim: () async {
+              final controller = Provider.of<RewardController>(
+                context,
+                listen: false,
+              );
+              final error = await controller.claimReward(context, reward.id);
 
-                if (!context.mounted) return;
+              if (!context.mounted) return;
 
-                if (error == null) {
-                  showClaimSuccessPopup(context, reward.name);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                }
-              },
-            );
-          },
-          childCount: rewards.length,
-        ),
+              if (error == null) {
+                // showClaimSuccessPopup(context, reward.name);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RewardHistoryPage(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(error),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
+            },
+          );
+        }, childCount: rewards.length),
       ),
     );
   }
@@ -272,7 +327,9 @@ class _PointPageState extends State<PointPage> {
             flex: 3,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(15),
+                ),
                 image: DecorationImage(
                   image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
@@ -321,17 +378,29 @@ class _PointPageState extends State<PointPage> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: Colors.grey[700],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 // Padding vertikal untuk tinggi tombol
-                padding: const EdgeInsets.symmetric(vertical: 8), 
+                padding: const EdgeInsets.symmetric(vertical: 8),
               ),
-              child: isClaiming
-                  ? const SizedBox(
-                      height: 20, // Sesuaikan tinggi progress indicator
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  : const Text('Klaim', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              child:
+                  isClaiming
+                      ? const SizedBox(
+                        height: 20, // Sesuaikan tinggi progress indicator
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text(
+                        'Klaim',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
           ),
         ],

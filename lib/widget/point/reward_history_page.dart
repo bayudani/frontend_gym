@@ -1,10 +1,10 @@
-// lib/views/point/reward_history_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_app/controllers/reward_history_controller.dart';
-import 'package:gym_app/models/RewardHistoryItem_models.dart'; // Pastikan nama file ini benar
+import 'package:gym_app/models/RewardHistoryItem_models.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
+// Pastikan path import untuk file pop-up kamu sudah benar
+import 'package:gym_app/widget/point/claim_reward_popup.dart';
 
 class RewardHistoryPage extends StatefulWidget {
   const RewardHistoryPage({super.key});
@@ -19,11 +19,11 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
   @override
   void initState() {
     super.initState();
+    // Memuat data saat halaman pertama kali dibuka, tanpa menyebabkan error build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<RewardHistoryController>(
-        context,
-        listen: false,
-      ).fetchHistory();
+      // Panggil controller untuk mengambil data riwayat dari API
+      Provider.of<RewardHistoryController>(context, listen: false)
+          .fetchHistory();
     });
   }
 
@@ -44,57 +44,41 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Riwayat Reward',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Riwayat Reward', style: TextStyle(color: Colors.white)),
       ),
-      body: Container(
-        color: Colors.black,
-        child: Consumer<RewardHistoryController>(
-          builder: (context, controller, child) {
-            if (controller.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              );
-            }
+      body: Consumer<RewardHistoryController>(
+        builder: (context, controller, child) {
+          // Tampilkan loading indicator saat data sedang diambil
+          if (controller.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.white));
+          }
 
-            if (controller.errorMessage != null) {
-              return Center(
-                child: Text(
-                  controller.errorMessage!,
-                  style: const TextStyle(color: Colors.white70),
-                ),
-              );
-            }
+          // Tampilkan pesan error jika terjadi kegagalan
+          if (controller.errorMessage != null) {
+            return Center(child: Text(controller.errorMessage!, style: const TextStyle(color: Colors.white70)));
+          }
 
-            if (controller.history.isEmpty) {
-              return const Center(
-                child: Text(
-                  "Kamu belum punya histori reward.",
-                  style: TextStyle(color: Colors.white70),
-                ),
-              );
-            }
+          // Tampilkan pesan jika riwayat kosong
+          if (controller.history.isEmpty) {
+            return const Center(child: Text("Kamu belum punya histori reward.", style: TextStyle(color: Colors.white70)));
+          }
 
-            return RefreshIndicator(
-              onRefresh: () => controller.fetchHistory(),
-              color: Colors.white,
-              backgroundColor: Colors.red,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 20.0,
-                ),
-                itemCount: controller.history.length,
-                itemBuilder: (context, index) {
-                  final record = controller.history[index];
-                  return _buildRewardHistoryCard(record);
-                },
-              ),
-            );
-          },
-        ),
+          // Tampilkan daftar riwayat dengan fitur RefreshIndicator
+          return RefreshIndicator(
+            onRefresh: () => controller.fetchHistory(),
+            color: Colors.white,
+            backgroundColor: Colors.red,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              itemCount: controller.history.length,
+              itemBuilder: (context, index) {
+                final record = controller.history[index];
+                // Kirim 'context' untuk digunakan oleh pop-up/snackbar
+                return _buildRewardHistoryCard(context, record);
+              },
+            ),
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
@@ -103,20 +87,30 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
     );
   }
 
-  // --- Widget kartu riwayat yang sudah siap menangani gambar null ---
-  Widget _buildRewardHistoryCard(RewardHistoryItem record) {
-    final imageUrl = record.fullImageUrl; // Ini bisa jadi null
+  /// --- WIDGET KARTU RIWAYAT VERSI FINAL ---
+  /// Lengkap dengan logika tampilan status dan tombol konfirmasi fungsional.
+  Widget _buildRewardHistoryCard(BuildContext context, RewardHistoryItem record) {
+    final imageUrl = record.fullImageUrl;
 
+    // Logika untuk menentukan warna dan teks status
     Color statusColor;
-    FontWeight statusFontWeight = FontWeight.w500; // Default weight
+    String statusText = record.status.toUpperCase();
+    FontWeight statusFontWeight = FontWeight.bold;
 
-    if (record.status.toLowerCase() == 'claimed') {
-      statusColor = Colors.greenAccent[400]!; // Warna hijau untuk 'claimed'
-      statusFontWeight = FontWeight.bold; // Buat tebal biar lebih menonjol
-    } else if (record.status.toLowerCase() == 'pending') {
-      statusColor = Colors.red!; // Warna kuning/amber untuk 'pending'
-    } else {
-      statusColor = Colors.white70; // Warna default jika ada status lain
+    switch (record.status.toLowerCase()) {
+      case 'claimed':
+        statusColor = Colors.greenAccent[400]!;
+        break;
+      case 'pending':
+        statusColor = Colors.orangeAccent;
+        break;
+      case 'confirmed':
+        statusColor = Colors.blueAccent;
+        statusText = "SIAP DIAMBIL";
+        break;
+      default:
+        statusColor = Colors.white70;
+        statusFontWeight = FontWeight.normal;
     }
 
     return Container(
@@ -125,81 +119,75 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF333333),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[800]!),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            // Cek apakah imageUrl ada atau tidak
-            child:
-                imageUrl != null
+          // Baris untuk informasi utama (gambar, nama, tanggal, status)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: imageUrl != null
                     ? Image.network(
-                      // Jika ada, tampilkan gambar dari network
-                      imageUrl,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 60,
-                          height: 60,
-                          color: Colors.grey[850],
-                          child: const Icon(
-                            Icons.broken_image,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    )
-                    : Container(
-                      // Jika tidak ada, tampilkan container dengan ikon
-                      width: 60,
-                      height: 60,
-                      color: Colors.grey[850],
-                      child: const Icon(
-                        Icons.card_giftcard,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                    ),
+                        imageUrl,
+                        width: 60, height: 60, fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(width: 60, height: 60, color: Colors.grey[850], child: const Icon(Icons.broken_image, size: 40, color: Colors.grey)),
+                      )
+                    : Container(width: 60, height: 60, color: Colors.grey[850], child: const Icon(Icons.card_giftcard, size: 40, color: Colors.grey)),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(record.name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 4),
+                    Text(record.formattedDateTime, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(statusText, style: TextStyle(color: statusColor, fontSize: 14, fontWeight: statusFontWeight)),
+            ],
           ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  record.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+
+          // Tombol konfirmasi yang hanya muncul jika status 'confirmed'
+          if (record.status.toLowerCase() == 'confirmed')
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  onPressed: () async {
+                    try {
+                      // 1. Panggil controller untuk finalisasi reward via API
+                      await Provider.of<RewardHistoryController>(context, listen: false).finalizeReward(record.id);
+                      
+                      // 2. Jika berhasil, tampilkan pop-up kustom.
+                      // 'if (mounted)' adalah best practice untuk memastikan widget masih ada di tree
+                      if (mounted) {
+                        showFinalConfirmationPopup(context, record.name);
+                      }
+
+                    } catch (e) {
+                      // 3. Jika gagal, tampilkan pesan error di SnackBar
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Konfirmasi Telah Diterima', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  record.formattedDateTime,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            record.status,
-            style: TextStyle(
-              color: statusColor, // <-- Warnanya sekarang dinamis
-              fontSize: 14,
-              fontWeight:
-                  statusFontWeight, // <-- Ketebalan font juga bisa dinamis
-            ),
-          ),
         ],
       ),
     );
