@@ -323,6 +323,7 @@ class _PointPageState extends State<PointPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Gambar reward
           Expanded(
             flex: 3,
             child: Container(
@@ -338,9 +339,10 @@ class _PointPageState extends State<PointPage> {
               ),
             ),
           ),
-          // Bagian bawah kartu
+
+          // Informasi teks
           Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -354,7 +356,10 @@ class _PointPageState extends State<PointPage> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+
+                // Jarak antar teks
+                const SizedBox(height: 8),
+
                 Text(
                   reward.formattedPoints,
                   style: const TextStyle(
@@ -367,9 +372,11 @@ class _PointPageState extends State<PointPage> {
               ],
             ),
           ),
-          // Spacer untuk mendorong tombol ke bawah jika ada sisa ruang
-          const Spacer(),
-          // Tombol Klaim
+
+          // Jarak antara teks dan tombol
+          const SizedBox(height: 12),
+
+          // Tombol klaim
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: ElevatedButton(
@@ -381,13 +388,12 @@ class _PointPageState extends State<PointPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                // Padding vertikal untuk tinggi tombol
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
               child:
                   isClaiming
                       ? const SizedBox(
-                        height: 20, // Sesuaikan tinggi progress indicator
+                        height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,

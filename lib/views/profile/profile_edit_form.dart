@@ -71,6 +71,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
               controller: _emailController,
               labelText: 'Email',
               hintText: 'Enter your email', // <-- TAMBAHKAN hintText YANG HILANG
+              obscureText: false, //edit nnti ni
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || !RegExp(r".+@.+\..+").hasMatch(value)) {

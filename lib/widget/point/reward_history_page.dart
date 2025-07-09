@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:gym_app/controllers/reward_history_controller.dart';
 import 'package:gym_app/models/RewardHistoryItem_models.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-// Pastikan path import untuk file pop-up kamu sudah benar
 import 'package:gym_app/widget/point/claim_reward_popup.dart';
 
 class RewardHistoryPage extends StatefulWidget {
@@ -15,13 +14,14 @@ class RewardHistoryPage extends StatefulWidget {
 
 class _RewardHistoryPageState extends State<RewardHistoryPage> {
   int _selectedIndex = 0;
+  // State untuk melacak ID reward yang sedang dalam proses konfirmasi
+  final Set<String> _loadingClaimIds = {};
 
   @override
   void initState() {
     super.initState();
-    // Memuat data saat halaman pertama kali dibuka, tanpa menyebabkan error build
+    // Memuat data saat halaman pertama kali dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Panggil controller untuk mengambil data riwayat dari API
       Provider.of<RewardHistoryController>(context, listen: false)
           .fetchHistory();
     });
@@ -49,12 +49,12 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
       body: Consumer<RewardHistoryController>(
         builder: (context, controller, child) {
           // Tampilkan loading indicator saat data sedang diambil
-          if (controller.isLoading) {
+          if (controller.isLoading && _loadingClaimIds.isEmpty) {
             return const Center(child: CircularProgressIndicator(color: Colors.white));
           }
 
           // Tampilkan pesan error jika terjadi kegagalan
-          if (controller.errorMessage != null) {
+          if (controller.errorMessage != null && controller.history.isEmpty) {
             return Center(child: Text(controller.errorMessage!, style: const TextStyle(color: Colors.white70)));
           }
 
@@ -87,10 +87,12 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
     );
   }
 
-  /// --- WIDGET KARTU RIWAYAT VERSI FINAL ---
-  /// Lengkap dengan logika tampilan status dan tombol konfirmasi fungsional.
+  /// --- WIDGET KARTU RIWAYAT VERSI UPGRADE ---
+  /// Dengan loading state pada tombol konfirmasi.
   Widget _buildRewardHistoryCard(BuildContext context, RewardHistoryItem record) {
     final imageUrl = record.fullImageUrl;
+    // Cek apakah item ini sedang dalam proses finalisasi
+    final bool isLoading = _loadingClaimIds.contains(record.id);
 
     // Logika untuk menentukan warna dan teks status
     Color statusColor;
@@ -163,18 +165,23 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    minimumSize: const Size(double.infinity, 48),
                   ),
-                  onPressed: () async {
+                  // Nonaktifkan tombol jika sedang loading untuk mencegah double-tap
+                  onPressed: isLoading ? null : () async {
+                    setState(() {
+                      _loadingClaimIds.add(record.id);
+                    });
+
                     try {
                       // 1. Panggil controller untuk finalisasi reward via API
-                      await Provider.of<RewardHistoryController>(context, listen: false).finalizeReward(record.id);
+                      await Provider.of<RewardHistoryController>(context, listen: false)
+                          .finalizeReward(record.id);
                       
-                      // 2. Jika berhasil, tampilkan pop-up kustom.
-                      // 'if (mounted)' adalah best practice untuk memastikan widget masih ada di tree
+                      // 2. Jika berhasil, tampilkan pop-up
                       if (mounted) {
-                        showFinalConfirmationPopup(context, record.name);
+                        showClaimSuccessPopup(context, record.name);
                       }
-
                     } catch (e) {
                       // 3. Jika gagal, tampilkan pesan error di SnackBar
                       if (mounted) {
@@ -182,9 +189,29 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
                           SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
                         );
                       }
+                    } finally {
+                      // 4. Pastikan state loading dihentikan setelah proses selesai
+                      if (mounted) {
+                        setState(() {
+                          _loadingClaimIds.remove(record.id);
+                        });
+                      }
                     }
                   },
-                  child: const Text('Konfirmasi Telah Diterima', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  // Ganti child tombol secara dinamis berdasarkan state isLoading
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : const Text(
+                          'Konfirmasi Telah Diterima',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
             ),
