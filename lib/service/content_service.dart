@@ -43,6 +43,10 @@ class ContentService {
     return _dio.post('/comment/article/$slug', data: {'comment': commentText});
   }
 
+  Future<Response> getCommentsCount(String slug) {
+    return _dio.get('/comment/article/count/$slug');
+  }
+
   Future<Response> getMemberships() {
     return _dio.get('/memberships');
   }
@@ -51,7 +55,7 @@ class ContentService {
     return _dio.get('/memberships/$id');
   }
 
-   // --- METHOD BARU UNTUK MENGAMBIL ITEM REWARD ---
+  // --- METHOD BARU UNTUK MENGAMBIL ITEM REWARD ---
   Future<Response> getItemRewards() {
     return _dio.get('/item-rewards');
   }

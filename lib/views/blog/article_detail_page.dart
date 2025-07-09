@@ -137,9 +137,9 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                             // 3. Ikon dan Jumlah Komentar (masih data dummy)
                             const Icon(Icons.mode_comment_outlined, color: Colors.white, size: 20),
                             const SizedBox(width: 8),
-                            const Text(
-                              '0', // Nanti ini juga dari API
-                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                            Text(
+                              controller.commentsCount?.toString() ?? '',
+                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),

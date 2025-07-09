@@ -1,8 +1,7 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/article_models.dart';
-import 'package:gym_app/service/content_service.dart'; 
+import 'package:gym_app/service/content_service.dart';
 
 class ArticleController extends ChangeNotifier {
   // --- 2. Ganti dependency ke ContentService ---
@@ -21,8 +20,8 @@ class ArticleController extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-// state untuk detail artikel
-Article? _selectedArticle;
+  // state untuk detail artikel
+  Article? _selectedArticle;
   Article? get selectedArticle => _selectedArticle;
 
   bool _isDetailLoading = false;
@@ -36,14 +35,17 @@ Article? _selectedArticle;
   int? get likesCount => _likesCount;
   // ----------------------------------------
 
-// Status like user ini, bisa null saat pertama kali load
+  // state comment count
+  int? _commentsCount;
+  int? get commentsCount => _commentsCount;
+
+  // Status like user ini, bisa null saat pertama kali load
   bool? _isLikedByCurrentUser;
   bool? get isLikedByCurrentUser => _isLikedByCurrentUser;
 
   // Flag untuk mencegah user nge-spam tombol like
   bool _isLikingInProgress = false;
   bool get isLikingInProgress => _isLikingInProgress;
-
 
   ArticleController() {
     fetchArticles();
@@ -62,7 +64,10 @@ Article? _selectedArticle;
       _articles = articleData.map((data) => Article.fromJson(data)).toList();
       _articles.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
     } on DioException catch (e) {
-      _errorMessage = e.response?.data['message'] ?? e.message ?? "Failed to load articles.";
+      _errorMessage =
+          e.response?.data['message'] ??
+          e.message ??
+          "Failed to load articles.";
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -70,12 +75,13 @@ Article? _selectedArticle;
   }
 
   // --- FUNGSI BARU UNTUK FETCH DETAIL ARTIKEL ---
-   Future<void> fetchArticleBySlug(String slug) async {
+  Future<void> fetchArticleBySlug(String slug) async {
     _isDetailLoading = true;
     _detailErrorMessage = null;
     // Reset data sebelumnya
     _selectedArticle = null;
     _likesCount = null;
+    _commentsCount = null;
     notifyListeners();
 
     try {
@@ -83,6 +89,7 @@ Article? _selectedArticle;
       final responses = await Future.wait([
         _contentService.getPostDetail(slug),
         _contentService.getLikesCount(slug),
+        _contentService.getCommentsCount(slug),
       ]);
 
       // Ambil dan parse response detail artikel
@@ -93,8 +100,16 @@ Article? _selectedArticle;
       final likesResponse = responses[1];
       _likesCount = likesResponse.data['likes'];
 
+      // Ambil dan parse response jumlah comments
+      final commentsResponse = responses[2];
+      // TAMBAHKAN INI SEMENTARA BUAT DEBUGGING
+  print('DEBUG: Response jumlah komen -> ${commentsResponse.data}');
+      _commentsCount = commentsResponse.data['comment'];
     } on DioException catch (e) {
-      _detailErrorMessage = e.response?.data['message'] ?? e.message ?? "Failed to load article data.";
+      _detailErrorMessage =
+          e.response?.data['message'] ??
+          e.message ??
+          "Failed to load article data.";
     } catch (e) {
       _detailErrorMessage = "Terjadi kesalahan tidak terduga: $e";
     } finally {
@@ -103,7 +118,7 @@ Article? _selectedArticle;
     }
   }
 
- /// Fungsi utama untuk handle aksi Like & Unlike dari UI.
+  /// Fungsi utama untuk handle aksi Like & Unlike dari UI.
   Future<void> toggleLikeStatus(String slug) async {
     if (_isLikingInProgress) return; // Kalau lagi proses, jangan lakuin apa-apa
 
@@ -141,7 +156,9 @@ Article? _selectedArticle;
 
         // Langsung ubah UI
         _isLikedByCurrentUser = !_isLikedByCurrentUser!;
-        _isLikedByCurrentUser! ? _likesCount = (_likesCount! + 1) : _likesCount = (_likesCount! - 1);
+        _isLikedByCurrentUser!
+            ? _likesCount = (_likesCount! + 1)
+            : _likesCount = (_likesCount! - 1);
         notifyListeners();
 
         // Kirim request ke API
@@ -156,6 +173,7 @@ Article? _selectedArticle;
       try {
         final likesResponse = await _contentService.getLikesCount(slug);
         _likesCount = likesResponse.data['likes'];
+
         // Status isLiked-nya tidak kita ubah, biarkan UI-nya kembali seperti state terakhir yang valid
       } catch (_) {
         // Abaikan jika fetch ulang juga gagal
@@ -171,7 +189,7 @@ Article? _selectedArticle;
     _selectedArticle = null;
     _likesCount = null;
     _isLikedByCurrentUser = null;
+    _commentsCount = null;
   }
   // --- FUNGSI HELPER JUGA DI-UPGRADE ---
-  
 }

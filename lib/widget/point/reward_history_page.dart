@@ -106,6 +106,9 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
       case 'pending':
         statusColor = Colors.orangeAccent;
         break;
+      case 'rejected':
+        statusColor = Colors.redAccent;
+        break;
       case 'confirmed':
         statusColor = Colors.blueAccent;
         statusText = "SIAP DIAMBIL";
