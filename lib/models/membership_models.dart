@@ -38,7 +38,7 @@ class MembershipPlan {
       return 'berlaku 365 hari';
     }
     // Fallback jika tidak ada yang cocok
-    return 'berlaku $durationInDays hari';
+    return 'berlaku $durationInDays bulan';
   }
 
   factory MembershipPlan.fromJson(Map<String, dynamic> json) {

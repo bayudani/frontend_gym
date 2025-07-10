@@ -6,13 +6,15 @@ import 'package:gym_app/controllers/membership_controller.dart'; // <-- IMPORT C
 import 'package:gym_app/models/membership_models.dart'; // <-- IMPORT MODEL
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 import 'package:gym_app/views/membership/membership_checkout_page.dart';
+import 'package:gym_app/views/home/home_page.dart'; // <-- IMPORT HOME PAGE
 
 // Definisi gambar dan ikon yang digunakan
 const _membershipBannerImage = 'assets/images/Carousel.png';
 const _barbellProgramImage = 'assets/images/barbell_program.png';
 const _dumbbellProgramImage = 'assets/images/dumble.png';
 const _megaphoneIconPath = 'assets/images/megaphone_icon.png';
-const _dumbbellIconPath = 'assets/images/dumble.png'; // Ini bisa digunakan di tempat lain jika diperlukan, saat ini dipakai di banner diskon
+const _dumbbellIconPath =
+    'assets/images/dumble.png'; // Ini bisa digunakan di tempat lain jika diperlukan, saat ini dipakai di banner diskon
 
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
@@ -40,7 +42,12 @@ class _MembershipPageState extends State<MembershipPage> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 30, 30, 30), // Warna latar belakang kartu
+        color: const Color.fromARGB(
+          255,
+          30,
+          30,
+          30,
+        ), // Warna latar belakang kartu
         borderRadius: BorderRadius.circular(15), // Sudut membulat kartu
       ),
       child: Row(
@@ -74,17 +81,18 @@ class _MembershipPageState extends State<MembershipPage> {
               GestureDetector(
                 onTap: () {
                   // Mengambil ID plan dari objek plan
-                  final String planId = plan.id; 
+                  final String planId = plan.id;
 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MembershipCheckoutPage(
-                        membershipId: planId, // Meneruskan ID plan
-                        // Jika MembershipCheckoutPage masih membutuhkan, tambahkan juga:
-                        // membershipType: plan.name,
-                        // membershipPrice: plan.formattedPrice,
-                      ),
+                      builder:
+                          (context) => MembershipCheckoutPage(
+                            membershipId: planId, // Meneruskan ID plan
+                            // Jika MembershipCheckoutPage masih membutuhkan, tambahkan juga:
+                            // membershipType: plan.name,
+                            // membershipPrice: plan.formattedPrice,
+                          ),
                     ),
                   );
                 },
@@ -107,8 +115,14 @@ class _MembershipPageState extends State<MembershipPage> {
               color: Colors.white, // Background putih
               borderRadius: BorderRadius.circular(10), // Sudut membulat
             ),
-            child: Center( // Pusatkan gambar di dalam container
-              child: Image.asset(imagePath, width: 60, height: 60, fit: BoxFit.contain), // Ukuran gambar di dalam container
+            child: Center(
+              // Pusatkan gambar di dalam container
+              child: Image.asset(
+                imagePath,
+                width: 60,
+                height: 60,
+                fit: BoxFit.contain,
+              ), // Ukuran gambar di dalam container
             ),
           ),
         ],
@@ -120,10 +134,29 @@ class _MembershipPageState extends State<MembershipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black, // Latar belakang utama halaman
+
       appBar: AppBar(
-        backgroundColor: Colors.black, // AppBar hitam
-        elevation: 0, // Menghilangkan bayangan AppBar
-        // Bagian leading IconButton dikomentari, tidak ada tombol kembali di AppBar
+        backgroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () {
+            // Cek dulu apakah bisa kembali (pop)
+            if (Navigator.canPop(context)) {
+              // Jika ya, kembali ke halaman sebelumnya
+              Navigator.pop(context);
+            }
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          },
+        ),
+        title: const Text(
+          'Memberships',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: Consumer<MembershipController>(
         builder: (context, controller, child) {
@@ -131,8 +164,11 @@ class _MembershipPageState extends State<MembershipPage> {
             slivers: [
               // SliverAppBar untuk banner di bagian atas halaman
               SliverAppBar(
-                backgroundColor: Colors.transparent, // Transparan agar gambar terlihat
-                expandedHeight: MediaQuery.of(context).size.height * 0.25, // Tinggi banner 25% dari layar
+                backgroundColor:
+                    Colors.transparent, // Transparan agar gambar terlihat
+                expandedHeight:
+                    MediaQuery.of(context).size.height *
+                    0.25, // Tinggi banner 25% dari layar
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     fit: StackFit.expand,
@@ -140,7 +176,9 @@ class _MembershipPageState extends State<MembershipPage> {
                       // Gambar latar belakang utama banner
                       Image.asset(
                         _membershipBannerImage,
-                        fit: BoxFit.cover, // Memastikan gambar menutupi seluruh area
+                        fit:
+                            BoxFit
+                                .cover, // Memastikan gambar menutupi seluruh area
                       ),
                       // Gradien Overlay di atas gambar latar belakang untuk efek visual
                       Container(
@@ -149,8 +187,12 @@ class _MembershipPageState extends State<MembershipPage> {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.black.withOpacity(0.2), // Sedikit transparan di atas
-                              Colors.black.withOpacity(0.5), // Lebih gelap di bawah
+                              Colors.black.withOpacity(
+                                0.2,
+                              ), // Sedikit transparan di atas
+                              Colors.black.withOpacity(
+                                0.5,
+                              ), // Lebih gelap di bawah
                             ],
                           ),
                         ),
@@ -235,7 +277,10 @@ class _MembershipPageState extends State<MembershipPage> {
                             gradient: LinearGradient(
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
-                              colors: [Color(0xFFE53935), Color(0xFF8B0000)], // Gradient merah
+                              colors: [
+                                Color(0xFFE53935),
+                                Color(0xFF8B0000),
+                              ], // Gradient merah
                             ),
                           ),
                           child: Row(
@@ -304,14 +349,16 @@ class _MembershipPageState extends State<MembershipPage> {
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 20),
                         itemBuilder: (context, index) {
-                          final plan = controller.plans[index]; // Perbaikan spasi
+                          final plan =
+                              controller.plans[index]; // Perbaikan spasi
                           // Selalu gunakan gambar dumbbell untuk semua kartu membership
                           final imagePath = _dumbbellProgramImage;
 
                           return _buildMembershipOptionCard(
                             context,
                             plan: plan, // Meneruskan objek plan lengkap
-                            imagePath: imagePath, // Meneruskan path gambar dumbbell
+                            imagePath:
+                                imagePath, // Meneruskan path gambar dumbbell
                           );
                         },
                       ),

@@ -6,6 +6,7 @@ import 'package:gym_app/controllers/article_controller.dart';
 import 'package:gym_app/models/article_models.dart';
 import 'package:gym_app/views/blog/article_detail_page.dart'; // <-- PENTING: Import halaman detail
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
+import 'package:gym_app/views/home/home_page.dart'; // <-- Import HomePage untuk navigasi
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -28,7 +29,8 @@ class _BlogPageState extends State<BlogPage> {
     required BuildContext context,
     required Article article, // <-- Sekarang menerima object Article lengkap
   }) {
-    return GestureDetector( // <-- DIBUNGKUS DENGAN GESTUREDETECTOR
+    return GestureDetector(
+      // <-- DIBUNGKUS DENGAN GESTUREDETECTOR
       onTap: () {
         // --- INI DIA LOGIC NAVIGASINYA ---
         Navigator.push(
@@ -66,17 +68,17 @@ class _BlogPageState extends State<BlogPage> {
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
                     article.formattedPublishedDate, // <-- Dari model
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
               ),
@@ -99,7 +101,6 @@ class _BlogPageState extends State<BlogPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -108,7 +109,14 @@ class _BlogPageState extends State<BlogPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              // Jika ya, kembali ke halaman sebelumnya
+              Navigator.pop(context);
+            }
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
           },
         ),
         title: const Text(
@@ -121,7 +129,9 @@ class _BlogPageState extends State<BlogPage> {
         builder: (context, controller, child) {
           // (Tampilan loading, error, empty tetap sama persis)
           if (controller.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: Colors.white));
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           }
           if (controller.errorMessage != null) {
             return Center(child: Text('Oops! ${controller.errorMessage}'));
