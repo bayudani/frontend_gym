@@ -1,7 +1,7 @@
 class AppConfig {
   // static const String appName = 'MyApp';
   static const String appVersion = '1.0.0';
-  static const String BaseUrl = 'https://rnkay-103-156-248-97.a.free.pinggy.link';
+  static const String BaseUrl = 'https://rnczx-114-125-27-11.a.free.pinggy.link';
   static const bool enableLogging = true;
 
   static const String apiUrl = "$BaseUrl/api";

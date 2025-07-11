@@ -33,12 +33,21 @@ class _HomePageState extends State<HomePage> {
       _fetchAllData();
     });
   }
-  
+
   // Fungsi untuk memuat semua data, bisa dipanggil ulang
   Future<void> _fetchAllData() async {
-    final profileController = Provider.of<ProfileController>(context, listen: false);
-    final programController = Provider.of<ProgramController>(context, listen: false);
-    final articleController = Provider.of<ArticleController>(context, listen: false);
+    final profileController = Provider.of<ProfileController>(
+      context,
+      listen: false,
+    );
+    final programController = Provider.of<ProgramController>(
+      context,
+      listen: false,
+    );
+    final articleController = Provider.of<ArticleController>(
+      context,
+      listen: false,
+    );
 
     // Gunakan Future.wait agar proses fetch berjalan bersamaan, lebih cepat!
     await Future.wait([
@@ -57,7 +66,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleAiChatTap() {
-    final profileController = Provider.of<ProfileController>(context, listen: false);
+    final profileController = Provider.of<ProfileController>(
+      context,
+      listen: false,
+    );
     if (profileController.isMemberActive) {
       Navigator.push(
         context,
@@ -77,7 +89,13 @@ class _HomePageState extends State<HomePage> {
           title: const Row(
             children: [
               SizedBox(width: 10),
-              Text('Fitur Khusus Member', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text(
+                'Fitur Khusus Member',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           content: const Text(
@@ -86,7 +104,10 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Nanti Saja', style: TextStyle(color: Colors.grey)),
+              child: const Text(
+                'Nanti Saja',
+                style: TextStyle(color: Colors.grey),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -94,14 +115,21 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('Jadi Member', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Jadi Member',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MembershipPage()),
+                  MaterialPageRoute(
+                    builder: (context) => const MembershipPage(),
+                  ),
                 );
               },
             ),
@@ -124,7 +152,7 @@ class _HomePageState extends State<HomePage> {
       // --- PENERAPAN REFRESH INDICATOR DI SINI ---
       body: RefreshIndicator(
         // Panggil fungsi _fetchAllData yang sudah kita buat
-        onRefresh: _fetchAllData, 
+        onRefresh: _fetchAllData,
         color: Colors.white,
         backgroundColor: Colors.red,
         child: CustomScrollView(
@@ -144,7 +172,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 60.0, left: 24, right: 24),
+                    padding: const EdgeInsets.only(
+                      top: 60.0,
+                      left: 24,
+                      right: 24,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -154,24 +186,54 @@ class _HomePageState extends State<HomePage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Hello', style: TextStyle(color: Colors.white70, fontSize: 18)),
+                                const Text(
+                                  'Hello',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                  ),
+                                ),
                                 Consumer<ProfileController>(
                                   builder: (context, profileController, child) {
                                     if (profileController.isLoading) {
-                                      return const Text('Loading...', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
+                                      return const Text(
+                                        'Loading...',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
                                     }
-                                    final userName = profileController.userProfile?.name ?? 'Guest';
-                                    return Text(userName, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold));
+                                    final userName =
+                                        profileController.userProfile?.name ??
+                                        'Guest';
+                                    return Text(
+                                      userName,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const PointPage()));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PointPage(),
+                                  ),
+                                );
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[800],
                                   borderRadius: BorderRadius.circular(20),
@@ -179,14 +241,43 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('Points', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    const Text(
+                                      'Points',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     Consumer<ProfileController>(
-                                      builder: (context, profileController, child) {
+                                      builder: (
+                                        context,
+                                        profileController,
+                                        child,
+                                      ) {
                                         if (profileController.isPointLoading) {
-                                          return const Text('...', style: TextStyle(color: Colors.yellow, fontSize: 14, fontWeight: FontWeight.bold));
+                                          return const Text(
+                                            '...',
+                                            style: TextStyle(
+                                              color: Colors.yellow,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
                                         }
-                                        final points = profileController.userPoint?.point ?? 0;
-                                        return Text(points.toString(), style: const TextStyle(color: Colors.yellow, fontSize: 14, fontWeight: FontWeight.bold));
+                                        final points =
+                                            profileController
+                                                .userPoint
+                                                ?.point ??
+                                            0;
+                                        return Text(
+                                          points.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.yellow,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
                                       },
                                     ),
                                   ],
@@ -198,7 +289,11 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 20),
                         const Text(
                           "Let's start your day",
-                          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -209,7 +304,10 @@ class _HomePageState extends State<HomePage> {
             SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 20.0,
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
@@ -224,24 +322,42 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Image.asset(_megaphoneIconPath, width: 35, height: 35),
+                          Image.asset(
+                            _megaphoneIconPath,
+                            width: 35,
+                            height: 35,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('40% discount', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                const Text(
+                                  '40% discount',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(height: 5),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const MembershipPage(),
+                                        builder:
+                                            (context) => const MembershipPage(),
                                       ),
                                     );
                                   },
-                                  child: const Text('on all our membership →', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                                  child: const Text(
+                                    'on all our membership →',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -249,12 +365,26 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             width: 65,
                             height: 65,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   // Mengubah warna solid menjadi gradient
+                            //   gradient: LinearGradient(
+                            //     begin: Alignment.topCenter, // Mulai dari atas
+                            //     end:
+                            //         Alignment.bottomCenter, // Berakhir di bawah
+                            //     colors: [
+                            //       Colors.orange, // Warna awal: Oranye
+                            //       Colors.red, // Warna akhir: Merah
+                            //     ],
+                            //   ),
+                            //   borderRadius: BorderRadius.circular(10),
+                            // ),
                             child: Center(
-                              child: Image.asset(_dumbbellIconPath, width: 50, height: 50, fit: BoxFit.contain),
+                              child: Image.asset(
+                                _dumbbellIconPath,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ],

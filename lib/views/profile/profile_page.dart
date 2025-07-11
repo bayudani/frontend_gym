@@ -65,19 +65,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   : (_showSecurityForm ? 'Security' : 'Akun'),
               style: const TextStyle(color: Colors.white),
             ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-              onPressed: () {
-                if (_showEditForm || _showSecurityForm) {
-                  setState(() {
-                    _showEditForm = false;
-                    _showSecurityForm = false;
-                  });
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-            ),
+            // leading: IconButton(
+            //   icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            //   onPressed: () {
+            //     if (_showEditForm || _showSecurityForm) {
+            //       setState(() {
+            //         _showEditForm = false;
+            //         _showSecurityForm = false;
+            //       });
+            //     } else {
+            //       Navigator.pop(context);
+            //     }
+            //   },
+            // ),
           ),
           body: SingleChildScrollView(
             child: Column(
