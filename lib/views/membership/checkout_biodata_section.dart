@@ -86,6 +86,7 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
       obscureText: obscureText,
       maxLines: maxLines,
       style: const TextStyle(color: Colors.white),
+      textAlignVertical: TextAlignVertical.center, 
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -199,7 +200,7 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
                 controller: addressController, // pakai controller public
                 hintText: 'Alamat',
                 icon: Icons.location_on,
-                maxLines: 2,
+                maxLines: 1,
               ),
               const SizedBox(height: 20),
               SizedBox(

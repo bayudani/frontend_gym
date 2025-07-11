@@ -1,9 +1,7 @@
-// lib/views/home/home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:gym_app/controllers/profile_controller.dart';
-import 'package:gym_app/controllers/program_controller.dart'; // <-- Tambahan
-import 'package:gym_app/controllers/article_controller.dart'; // <-- Tambahan
+import 'package:gym_app/controllers/program_controller.dart';
+import 'package:gym_app/controllers/article_controller.dart';
 import 'package:gym_app/views/home/ai_chat_page.dart';
 import 'package:gym_app/views/membership/membership.dart';
 import 'package:gym_app/views/home/article_section.dart';
@@ -29,33 +27,25 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Panggil semua fetch awal di sini
       _fetchAllData();
     });
   }
 
-  // Fungsi untuk memuat semua data, bisa dipanggil ulang
   Future<void> _fetchAllData() async {
-    final profileController = Provider.of<ProfileController>(
-      context,
-      listen: false,
-    );
-    final programController = Provider.of<ProgramController>(
-      context,
-      listen: false,
-    );
-    final articleController = Provider.of<ArticleController>(
-      context,
-      listen: false,
-    );
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
+    final programController =
+        Provider.of<ProgramController>(context, listen: false);
+    final articleController =
+        Provider.of<ArticleController>(context, listen: false);
 
     // Gunakan Future.wait agar proses fetch berjalan bersamaan, lebih cepat!
     await Future.wait([
       profileController.fetchProfile(context),
       profileController.fetchPoint(context),
       profileController.fetchMemberData(context),
-      programController.fetchPrograms(), // Asumsi nama fungsi
-      articleController.fetchArticles(), // Asumsi nama fungsi
+      programController.fetchPrograms(),
+      articleController.fetchArticles(),
     ]);
   }
 
@@ -66,10 +56,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleAiChatTap() {
-    final profileController = Provider.of<ProfileController>(
-      context,
-      listen: false,
-    );
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
     if (profileController.isMemberActive) {
       Navigator.push(
         context,
@@ -89,13 +77,9 @@ class _HomePageState extends State<HomePage> {
           title: const Row(
             children: [
               SizedBox(width: 10),
-              Text(
-                'Fitur Khusus Member',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text('Fitur Khusus Member',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ],
           ),
           content: const Text(
@@ -116,13 +100,10 @@ class _HomePageState extends State<HomePage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text(
-                'Jadi Member',
-                style: TextStyle(color: Colors.white),
-              ),
+              child:
+                  const Text('Jadi Member', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(
@@ -149,9 +130,7 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
         tooltip: 'Konsultasi dengan AI',
       ),
-      // --- PENERAPAN REFRESH INDICATOR DI SINI ---
       body: RefreshIndicator(
-        // Panggil fungsi _fetchAllData yang sudah kita buat
         onRefresh: _fetchAllData,
         color: Colors.white,
         backgroundColor: Colors.red,
@@ -172,117 +151,140 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 60.0,
-                      left: 24,
-                      right: 24,
-                    ),
+                    padding:
+                        const EdgeInsets.only(top: 60.0, left: 24, right: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // Bagian "Hello, Nama"
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Hello',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                const Text('Hello',
+                                    style: TextStyle(
+                                        color: Colors.white70, fontSize: 18)),
                                 Consumer<ProfileController>(
                                   builder: (context, profileController, child) {
                                     if (profileController.isLoading) {
-                                      return const Text(
-                                        'Loading...',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      );
+                                      return const Text('Loading...',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold));
                                     }
                                     final userName =
                                         profileController.userProfile?.name ??
-                                        'Guest';
-                                    return Text(
-                                      userName,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
+                                            'Guest';
+                                    return Text(userName,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold));
                                   },
                                 ),
                               ],
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const PointPage(),
+
+                            // WIDGET KONDISIONAL: POIN ATAU PREMIUM BADGE
+                            Consumer<ProfileController>(
+                              builder: (context, profileController, child) {
+                                // Jika BUKAN MEMBER, tampilkan Premium Badge
+                                if (!profileController.isMemberActive) {
+                                  // === INI BAGIAN YANG DIUBAH ===
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MembershipPage()),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                        border: Border.all(
+                                            color: Colors.red.shade400,
+                                            width: 1),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.workspace_premium_outlined,
+                                            color: Color(0xFFB38728),
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'Upgrade Now',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                // Jika MEMBER AKTIF, tampilkan Poin
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PointPage()));
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[800],
+                                      borderRadius:
+                                          BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text('Points',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                        if (profileController.isPointLoading)
+                                          const Text('...',
+                                              style: TextStyle(
+                                                  color: Colors.yellow,
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.bold))
+                                        else
+                                          Text(
+                                              (profileController
+                                                      .userPoint?.point ??
+                                                  0)
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.yellow,
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.bold)),
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[800],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text(
-                                      'Points',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Consumer<ProfileController>(
-                                      builder: (
-                                        context,
-                                        profileController,
-                                        child,
-                                      ) {
-                                        if (profileController.isPointLoading) {
-                                          return const Text(
-                                            '...',
-                                            style: TextStyle(
-                                              color: Colors.yellow,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          );
-                                        }
-                                        final points =
-                                            profileController
-                                                .userPoint
-                                                ?.point ??
-                                            0;
-                                        return Text(
-                                          points.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.yellow,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ),
                           ],
                         ),
@@ -290,10 +292,9 @@ class _HomePageState extends State<HomePage> {
                         const Text(
                           "Let's start your day",
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                          ),
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -305,9 +306,7 @@ class _HomePageState extends State<HomePage> {
               delegate: SliverChildListDelegate([
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 20.0,
-                  ),
+                      horizontal: 16.0, vertical: 20.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
@@ -332,32 +331,26 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  '40% discount',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                const Text('40% discount',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 5),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder:
-                                            (context) => const MembershipPage(),
+                                        builder: (context) =>
+                                            const MembershipPage(),
                                       ),
                                     );
                                   },
-                                  child: const Text(
-                                    'on all our membership →',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                  ),
+                                  child: const Text('on all our membership →',
+                                      style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 14)),
                                 ),
                               ],
                             ),
@@ -379,12 +372,10 @@ class _HomePageState extends State<HomePage> {
                             //   borderRadius: BorderRadius.circular(10),
                             // ),
                             child: Center(
-                              child: Image.asset(
-                                _dumbbellIconPath,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.contain,
-                              ),
+                              child: Image.asset(_dumbbellIconPath,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.contain),
                             ),
                           ),
                         ],

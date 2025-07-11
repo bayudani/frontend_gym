@@ -98,7 +98,7 @@ flutter:
     - assets/images/red_gift_box.png
     - assets/images/history.png
     - assets/images/Register.png
-    # - assets/images/dumbleee.png
+    - assets/images/3d.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

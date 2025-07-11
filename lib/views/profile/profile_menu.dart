@@ -1,48 +1,54 @@
 import 'package:flutter/material.dart';
-// Import halaman-halaman sub-menu yang baru
+import 'package:gym_app/views/membership/membership.dart'; // <-- Import halaman membership
 import 'package:gym_app/views/profile/member_card_menu_item.dart';
 import 'package:gym_app/views/profile/attendance_history_menu_item.dart';
 
-// Hapus impor MembershipCardPage dan AttendanceHistoryPage dari sini
-// karena sekarang diimpor langsung oleh widget item menu mereka
-
 class ProfileMenu extends StatelessWidget {
+  final bool isMemberActive; // Untuk menampung status member dari luar
   final VoidCallback onEditProfile;
   final VoidCallback onSecurity;
   final VoidCallback onLogout;
 
   const ProfileMenu({
     super.key,
+    required this.isMemberActive, // Wajib diisi saat memanggil widget ini
     required this.onEditProfile,
     required this.onSecurity,
     required this.onLogout,
   });
 
-  // Helper Widget untuk item menu utama profil
+  // Helper Widget untuk membuat item menu, sekarang dengan logika enabled/disabled
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    bool enabled = true, // Secara default, menu aktif
   }) {
+    // Warna akan berubah jadi abu-abu jika menu tidak enabled
+    final Color iconColor = enabled ? const Color(0xFFC62828) : Colors.grey;
+    final Color textColor = enabled ? Colors.black87 : Colors.grey;
+
     return ListTile(
-      leading: Icon(icon, color: const Color(0xFFC62828)),
+      leading: Icon(icon, color: iconColor),
       title: Text(
         title,
-        style: const TextStyle(
-          color: Colors.black87,
+        style: TextStyle(
+          color: textColor,
           fontSize: 16,
         ),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.arrow_forward_ios,
-        color: Colors.grey,
+        // Panah juga ikut meredup jika tidak aktif
+        color: enabled ? Colors.grey : Colors.grey.withOpacity(0.5),
         size: 16,
       ),
       onTap: onTap,
+      enabled: enabled, // Properti bawaan ListTile untuk handle interaksi
     );
   }
 
-  // Metode untuk menampilkan menu Member Area
+  // Metode untuk menampilkan submenu Member Area
   void _showMemberAreaMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -51,7 +57,7 @@ class ProfileMenu extends StatelessWidget {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.black, // Latar belakang hitam untuk sheet
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Sudut membulat di atas
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -67,10 +73,10 @@ class ProfileMenu extends StatelessWidget {
                 ),
                 margin: const EdgeInsets.only(bottom: 15),
               ),
-              // Memanggil widget-widget item menu yang baru
-              const MemberCardMenuItem(), // Menggunakan widget terpisah
+              // Item-item di dalam submenu
+              const MemberCardMenuItem(),
               const Divider(color: Colors.grey),
-              const AttendanceHistoryMenuItem(), // Menggunakan widget terpisah
+              const AttendanceHistoryMenuItem(),
             ],
           ),
         );
@@ -96,11 +102,29 @@ class ProfileMenu extends StatelessWidget {
             onTap: onSecurity,
           ),
           const Divider(color: Colors.grey),
+          
+          // --- INI BAGIAN UTAMA YANG BERUBAH ---
+          // Logika untuk menampilkan menu "Member Area" secara kondisional
           _buildMenuItem(
-            icon: Icons.card_membership, // Ikon untuk Member Area
-            title: 'Member Area', // Mengubah teks
-            onTap: () => _showMemberAreaMenu(context), // Memanggil metode untuk menampilkan submenu
+            icon: Icons.card_membership,
+            title: 'Member Area',
+            enabled: isMemberActive, // Status aktif/tidaknya menu
+            onTap: () {
+              // Aksi saat di-klik juga kondisional
+              if (isMemberActive) {
+                // Jika member, buka submenu
+                _showMemberAreaMenu(context);
+              } else {
+                // Jika bukan member, arahkan ke halaman pembelian membership
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MembershipPage()),
+                );
+              }
+            },
           ),
+          // --- AKHIR DARI PERUBAHAN ---
+          
           const Divider(color: Colors.grey),
           _buildMenuItem(
             icon: Icons.logout,
