@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_app/views/auth/login_page.dart';
 import 'package:gym_app/views/home/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -40,9 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -83,26 +81,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 32,
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 32,
+                      ),
                       children: const [
                         TextSpan(text: "Bangun Badan Impian\nMu Dengan "),
                         TextSpan(
-                          text: "Fit.Id",
+                          text: "Fit.ID",
                           style: TextStyle(color: Colors.red),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Lorem ipsum dolor sit amet\nconsectetur.",
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+                  // const SizedBox(height: 16),
+                  // const Text(
+                  //   "Lorem ipsum dolor sit amet\nconsectetur.",
+                  //   style: TextStyle(color: Colors.white70, fontSize: 16),
+                  //   textAlign: TextAlign.center,
+                  // ),
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
@@ -110,7 +110,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const SignInScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const SignInScreen(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -124,7 +126,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       child: const Text(
                         "Get started",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -140,12 +145,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const SignInScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const SignInScreen(),
+                            ),
                           );
                         },
                         child: const Text(
                           "Log in",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],

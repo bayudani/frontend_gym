@@ -49,7 +49,7 @@ class SignInScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   const Text(
-                    "Fit.Id",
+                    "Fit.ID",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 32,

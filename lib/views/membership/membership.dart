@@ -11,7 +11,7 @@ import 'package:gym_app/views/home/home_page.dart'; // <-- IMPORT HOME PAGE
 // Definisi gambar dan ikon yang digunakan
 const _membershipBannerImage = 'assets/images/Carousel.png';
 const _barbellProgramImage = 'assets/images/barbell_program.png';
-const _dumbbellProgramImage = 'assets/images/dumble.png';
+const _dumbbellProgramImage = 'assets/images/3d.png'; // Updated to 3d.png
 const _megaphoneIconPath = 'assets/images/megaphone_icon.png';
 const _dumbbellIconPath =
     'assets/images/dumble.png'; // Ini bisa digunakan di tempat lain jika diperlukan, saat ini dipakai di banner diskon
@@ -86,13 +86,12 @@ class _MembershipPageState extends State<MembershipPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => MembershipCheckoutPage(
-                            membershipId: planId, // Meneruskan ID plan
-                            // Jika MembershipCheckoutPage masih membutuhkan, tambahkan juga:
-                            // membershipType: plan.name,
-                            // membershipPrice: plan.formattedPrice,
-                          ),
+                      builder: (context) => MembershipCheckoutPage(
+                        membershipId: planId, // Meneruskan ID plan
+                        // Jika MembershipCheckoutPage masih membutuhkan, tambahkan juga:
+                        // membershipType: plan.name,
+                        // membershipPrice: plan.formattedPrice,
+                      ),
                     ),
                   );
                 },
@@ -107,12 +106,12 @@ class _MembershipPageState extends State<MembershipPage> {
               ),
             ],
           ),
-          // Container untuk gambar ikon membership dengan background putih
+          // Container untuk gambar ikon membership dengan background yang diubah
           Container(
             width: 80, // Lebar container untuk gambar
             height: 80, // Tinggi container untuk gambar
             decoration: BoxDecoration(
-              color: Colors.white, // Background putih
+              color: const Color(0xFF424242), // BACKGROUND DIUBAH DI SINI
               borderRadius: BorderRadius.circular(10), // Sudut membulat
             ),
             child: Center(
@@ -153,7 +152,7 @@ class _MembershipPageState extends State<MembershipPage> {
           },
         ),
         title: const Text(
-          'Memberships',
+          'Membership',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -166,8 +165,7 @@ class _MembershipPageState extends State<MembershipPage> {
               SliverAppBar(
                 backgroundColor:
                     Colors.transparent, // Transparan agar gambar terlihat
-                expandedHeight:
-                    MediaQuery.of(context).size.height *
+                expandedHeight: MediaQuery.of(context).size.height *
                     0.25, // Tinggi banner 25% dari layar
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
@@ -176,9 +174,7 @@ class _MembershipPageState extends State<MembershipPage> {
                       // Gambar latar belakang utama banner
                       Image.asset(
                         _membershipBannerImage,
-                        fit:
-                            BoxFit
-                                .cover, // Memastikan gambar menutupi seluruh area
+                        fit: BoxFit.cover, // Memastikan gambar menutupi seluruh area
                       ),
                       // Gradien Overlay di atas gambar latar belakang untuk efek visual
                       Container(
@@ -307,7 +303,7 @@ class _MembershipPageState extends State<MembershipPage> {
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      'on all our membership →',
+                                      'on all our membership',
                                       style: TextStyle(
                                         color: Colors.white70,
                                         fontSize: 14,
@@ -320,10 +316,10 @@ class _MembershipPageState extends State<MembershipPage> {
                               Container(
                                 width: 65,
                                 height: 65,
-                                decoration: BoxDecoration(
-                                  color: Colors.white, // Background putih
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                                // decoration: BoxDecoration(
+                                //    color: Colors.white, // Background putih
+                                //    borderRadius: BorderRadius.circular(10),
+                                // ),
                                 child: Center(
                                   child: Image.asset(
                                     _dumbbellIconPath, // Gambar dumbbell untuk banner ini

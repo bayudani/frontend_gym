@@ -88,7 +88,10 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Nanti Saja', style: TextStyle(color: Colors.grey)),
+              child: const Text(
+                'Nanti Saja',
+                style: TextStyle(color: Colors.grey),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -105,7 +108,9 @@ class _HomePageState extends State<HomePage> {
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MembershipPage()),
+                  MaterialPageRoute(
+                    builder: (context) => const MembershipPage(),
+                  ),
                 );
               },
             ),
@@ -316,7 +321,11 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Image.asset(_megaphoneIconPath, width: 35, height: 35),
+                          Image.asset(
+                            _megaphoneIconPath,
+                            width: 35,
+                            height: 35,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
@@ -349,10 +358,19 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             width: 65,
                             height: 65,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                            // decoration: BoxDecoration(
+                            //   // Mengubah warna solid menjadi gradient
+                            //   gradient: LinearGradient(
+                            //     begin: Alignment.topCenter, // Mulai dari atas
+                            //     end:
+                            //         Alignment.bottomCenter, // Berakhir di bawah
+                            //     colors: [
+                            //       Colors.orange, // Warna awal: Oranye
+                            //       Colors.red, // Warna akhir: Merah
+                            //     ],
+                            //   ),
+                            //   borderRadius: BorderRadius.circular(10),
+                            // ),
                             child: Center(
                               child: Image.asset(_dumbbellIconPath,
                                   width: 50,
