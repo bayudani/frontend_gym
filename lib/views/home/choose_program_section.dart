@@ -29,12 +29,12 @@ class ChooseProgramSection extends StatelessWidget {
   IconData _getIconForProgram(String programName) {
     // Daftar ikon yang bisa kita pakai
     const List<IconData> icons = [
-      Icons.fitness_center,       // Dumbbell
-      Icons.local_fire_department,  // Api (untuk HIIT)
-      Icons.directions_run,       // Lari (untuk Cardio)
-      Icons.self_improvement,     // Yoga/Meditasi
-      Icons.pool,                 // Renang
-      Icons.shield_outlined,      // Defense/Martial Arts
+      Icons.fitness_center, // Dumbbell
+      Icons.local_fire_department, // Api (untuk HIIT)
+      Icons.directions_run, // Lari (untuk Cardio)
+      Icons.self_improvement, // Yoga/Meditasi
+      Icons.pool, // Renang
+      Icons.shield_outlined, // Defense/Martial Arts
     ];
     // Pilih ikon berdasarkan nama program biar konsisten
     return icons[programName.hashCode % icons.length];
@@ -59,13 +59,25 @@ class ChooseProgramSection extends StatelessWidget {
           Consumer<ProgramController>(
             builder: (context, controller, child) {
               if (controller.isLoading) {
-                return const Center(child: CircularProgressIndicator(color: Colors.white));
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
               }
               if (controller.errorMessage != null) {
-                return Center(child: Text(controller.errorMessage!, style: const TextStyle(color: Colors.red)));
+                return Center(
+                  child: Text(
+                    controller.errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
               }
               if (controller.programs.isEmpty) {
-                return const Center(child: Text('Tidak ada program tersedia.', style: TextStyle(color: Colors.white70)));
+                return const Center(
+                  child: Text(
+                    'Tidak ada program tersedia.',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                );
               }
               return SizedBox(
                 height: 220,
@@ -105,7 +117,6 @@ class ChooseProgramSection extends StatelessWidget {
         margin: const EdgeInsets.only(right: 15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          // Gunakan gradient yang sudah kita buat
           gradient: LinearGradient(
             colors: gradientColors,
             begin: Alignment.topLeft,
@@ -116,12 +127,11 @@ class ChooseProgramSection extends StatelessWidget {
               color: gradientColors.first.withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
-            )
-          ]
+            ),
+          ],
         ),
         child: Stack(
           children: [
-            // Ikon besar sebagai background pattern
             Positioned(
               top: -20,
               right: -20,
@@ -131,22 +141,17 @@ class ChooseProgramSection extends StatelessWidget {
                 color: Colors.white.withOpacity(0.1),
               ),
             ),
-            // Gradient hitam di bawah untuk memperjelas teks
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.6]
+                  colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                  stops: const [0.0, 0.6],
                 ),
               ),
             ),
-            // Teks informasi program
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -159,7 +164,7 @@ class ChooseProgramSection extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      shadows: [Shadow(blurRadius: 2, color: Colors.black87)]
+                      shadows: [Shadow(blurRadius: 2, color: Colors.black87)],
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

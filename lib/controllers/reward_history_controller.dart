@@ -24,7 +24,6 @@ class RewardHistoryController extends ChangeNotifier {
 
     try {
       final response = await _memberService.getRewardHistory();
-      // TAMBAHKAN BARIS INI UNTUK DEBUGGING
       print("===== RESPONSE HISTORY DARI API =====");
       print(response.data);
       print("====================================");
@@ -43,14 +42,10 @@ class RewardHistoryController extends ChangeNotifier {
 
   Future<void> finalizeReward(String claimId) async {
     try {
-      // Panggil service untuk finalisasi
       await _memberService.finalizeReward(claimId);
 
-      // Jika berhasil, panggil fetchHistory() lagi untuk mendapatkan data terbaru
-      // Ini adalah cara paling simpel dan andal untuk update UI
       await fetchHistory();
     } on DioException catch (e) {
-      // Lempar pesan error yang lebih jelas untuk ditampilkan di UI
       throw e.response?.data['error'] ?? 'Gagal mengonfirmasi reward.';
     } catch (e) {
       throw 'Terjadi kesalahan tidak terduga saat konfirmasi.';

@@ -24,7 +24,7 @@ class AiFormCheckerController extends ChangeNotifier {
   }) async {
     _isLoading = true;
     _errorMessage = null;
-    _result = null; // Reset hasil sebelumnya
+    _result = null;
     notifyListeners();
 
     try {
@@ -39,7 +39,8 @@ class AiFormCheckerController extends ChangeNotifier {
         _errorMessage = "Gagal menganalisis gambar.";
       }
     } on DioException catch (e) {
-      _errorMessage = e.response?.data['message'] ?? "Terjadi kesalahan koneksi.";
+      _errorMessage =
+          e.response?.data['message'] ?? "Terjadi kesalahan koneksi.";
     } catch (e) {
       _errorMessage = "Terjadi kesalahan tidak terduga.";
     } finally {
@@ -48,7 +49,7 @@ class AiFormCheckerController extends ChangeNotifier {
     }
   }
 
-  /// Fungsi untuk mereset state
+  /// untuk mereset state
   void clearResult() {
     _result = null;
     _errorMessage = null;

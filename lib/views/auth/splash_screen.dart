@@ -23,7 +23,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    await Future.delayed(const Duration(seconds: 1)); // efek loading dikit
+    await Future.delayed(const Duration(seconds: 1));
 
     if (token != null && token.isNotEmpty) {
       Navigator.pushReplacement(
@@ -32,7 +32,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
     } else {
       setState(() {
-        _isLoading = false; // Tampilkan onboarding screen
+        _isLoading = false;
       });
     }
   }
@@ -47,7 +47,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background Image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -56,7 +55,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
-          // Gradient Overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -69,7 +67,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
-          // Konten Utama
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -77,7 +74,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Teks judul
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
@@ -97,12 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ],
                     ),
                   ),
-                  // const SizedBox(height: 16),
-                  // const Text(
-                  //   "Lorem ipsum dolor sit amet\nconsectetur.",
-                  //   style: TextStyle(color: Colors.white70, fontSize: 16),
-                  //   textAlign: TextAlign.center,
-                  // ),
+
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,

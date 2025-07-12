@@ -1,12 +1,9 @@
-// views/ai/ai_chat_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:gym_app/controllers/ai_controller.dart';
 import 'package:gym_app/models/chat_models.dart';
 import 'package:gym_app/views/home/ai_form_checker_page.dart';
 import 'package:provider/provider.dart';
 
-// 1. UBAH JADI STATEFULWIDGET
 class AiChatPage extends StatefulWidget {
   const AiChatPage({super.key});
 
@@ -17,17 +14,14 @@ class AiChatPage extends StatefulWidget {
 class _AiChatPageState extends State<AiChatPage> {
   final TextEditingController textController = TextEditingController();
 
-  // 2. PANGGIL FETCH HISTORY DI initState
   @override
   void initState() {
     super.initState();
-    // Panggil sekali saja saat widget pertama kali dibuat
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AiController>(context, listen: false).fetchHistory();
     });
   }
 
-  // Pindahkan handleSend keluar dari build method
   void handleSend() {
     final aiController = Provider.of<AiController>(context, listen: false);
     if (textController.text.trim().isNotEmpty) {
@@ -37,7 +31,6 @@ class _AiChatPageState extends State<AiChatPage> {
     }
   }
 
-  // 3. JANGAN LUPA PANGGIL DISPOSE
   @override
   void dispose() {
     textController.dispose();
@@ -59,13 +52,11 @@ class _AiChatPageState extends State<AiChatPage> {
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
-        // --- 2. TAMBAHKAN TOMBOL AKSI DI SINI ---
         actions: [
           IconButton(
             icon: const Icon(Icons.camera_alt_outlined, color: Colors.white),
             tooltip: 'Cek Form Latihan',
             onPressed: () {
-              // Navigasi ke halaman AI Form Checker
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -75,20 +66,17 @@ class _AiChatPageState extends State<AiChatPage> {
             },
           ),
         ],
-        // --- Akhir dari tambahan ---
       ),
       body: Column(
         children: [
           Expanded(
             child: Consumer<AiController>(
               builder: (context, controller, child) {
-                // Tampilkan loading di tengah saat pertama kali fetch
                 if (controller.isLoading && controller.messages.isEmpty) {
                   return const Center(
                     child: CircularProgressIndicator(color: Colors.red),
                   );
                 }
-                // Tampilkan pesan "Mulai Percakapan" jika kosong setelah fetch
                 if (controller.messages.isEmpty) {
                   return const Center(
                     child: Text(
@@ -97,10 +85,9 @@ class _AiChatPageState extends State<AiChatPage> {
                     ),
                   );
                 }
-                // Tampilkan ListView seperti biasa
                 return ListView.builder(
                   padding: const EdgeInsets.all(16.0),
-                  reverse: true, // <-- Penting untuk chat
+                  reverse: true,
                   itemCount: controller.messages.length,
                   itemBuilder: (context, index) {
                     final message =
@@ -111,7 +98,6 @@ class _AiChatPageState extends State<AiChatPage> {
               },
             ),
           ),
-          // Bagian input text dan tombol send
           Consumer<AiController>(
             builder: (context, controller, child) {
               if (controller.isLoading) {

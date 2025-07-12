@@ -6,7 +6,7 @@ import 'package:gym_app/views/profile/profile_menu.dart';
 import 'package:gym_app/views/profile/profile_edit_form.dart';
 import 'package:gym_app/views/profile/profile_security_form.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/views/home/home_page.dart'; // Import HomePage untuk navigasi
+import 'package:gym_app/views/home/home_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,16 +18,15 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool _showEditForm = false;
   bool _showSecurityForm = false;
-  int _selectedIndex = 3; // Profile index di bottom nav
+  int _selectedIndex = 3;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<ProfileController>();
-      // Panggil fetchProfile dan juga fetchMemberData untuk memastikan status member selalu update
       controller.fetchProfile(context);
-      controller.fetchMemberData(context); // <-- TAMBAHAN PENTING
+      controller.fetchMemberData(context);
     });
   }
 
@@ -67,7 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   });
                 } else {
                   if (Navigator.canPop(context)) {
-                    // Jika ya, kembali ke halaman sebelumnya
                     Navigator.pop(context);
                   }
                   Navigator.pushReplacement(
@@ -87,21 +85,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
 
-                // --- Tampilan Menu Utama ---
                 Visibility(
                   visible: !_showEditForm && !_showSecurityForm,
                   child: ProfileMenu(
-                    // === INI PERBAIKANNYA ===
-                    // Kirim status member ke widget ProfileMenu
                     isMemberActive: controller.isMemberActive,
-                    // ========================
                     onEditProfile: () => setState(() => _showEditForm = true),
                     onSecurity: () => setState(() => _showSecurityForm = true),
                     onLogout: () => controller.logout(context),
                   ),
                 ),
 
-                // --- Tampilan Form Edit Profile ---
+                //Tampilan Form Edit Profile
                 Visibility(
                   visible: _showEditForm,
                   child:
@@ -120,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           : const SizedBox.shrink(),
                 ),
 
-                // --- Tampilan Form Security ---
+                //Tampilan Form Security
                 Visibility(
                   visible: _showSecurityForm,
                   child: ProfileSecurityForm(

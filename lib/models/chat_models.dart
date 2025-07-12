@@ -1,8 +1,7 @@
-
 class ChatMessage {
   final String text;
   final bool isUserMessage;
-  final bool isError; // Untuk nandain kalo itu pesan error
+  final bool isError;
 
   ChatMessage({
     required this.text,
@@ -10,7 +9,6 @@ class ChatMessage {
     this.isError = false,
   });
 
-   // Tambahkan factory constructor ini
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
       text: json['text'],

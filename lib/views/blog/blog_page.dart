@@ -1,12 +1,10 @@
-// lib/views/blog/blog_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_app/controllers/article_controller.dart';
 import 'package:gym_app/models/article_models.dart';
-import 'package:gym_app/views/blog/article_detail_page.dart'; // <-- PENTING: Import halaman detail
+import 'package:gym_app/views/blog/article_detail_page.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
-import 'package:gym_app/views/home/home_page.dart'; // <-- Import HomePage untuk navigasi
+import 'package:gym_app/views/home/home_page.dart';
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -24,19 +22,15 @@ class _BlogPageState extends State<BlogPage> {
     });
   }
 
-  // --- WIDGET KARTU ARTIKEL YANG SUDAH DI-UPGRADE ---
   Widget _buildArticleCard({
     required BuildContext context,
-    required Article article, // <-- Sekarang menerima object Article lengkap
+    required Article article,
   }) {
     return GestureDetector(
-      // <-- DIBUNGKUS DENGAN GESTUREDETECTOR
       onTap: () {
-        // --- INI DIA LOGIC NAVIGASINYA ---
         Navigator.push(
           context,
           MaterialPageRoute(
-            // Kirim slug-nya ke ArticleDetailPage
             builder: (context) => ArticleDetailPage(slug: article.slug),
           ),
         );
@@ -46,7 +40,7 @@ class _BlogPageState extends State<BlogPage> {
         height: 180,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(article.fullCoverPhotoUrl), // <-- Dari model
+            image: NetworkImage(article.fullCoverPhotoUrl),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.5),
@@ -77,13 +71,13 @@ class _BlogPageState extends State<BlogPage> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    article.formattedPublishedDate, // <-- Dari model
+                    article.formattedPublishedDate,
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
               ),
               Text(
-                article.title, // <-- Dari model
+                article.title,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -110,7 +104,6 @@ class _BlogPageState extends State<BlogPage> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
             if (Navigator.canPop(context)) {
-              // Jika ya, kembali ke halaman sebelumnya
               Navigator.pop(context);
             }
             Navigator.pushReplacement(
@@ -127,7 +120,6 @@ class _BlogPageState extends State<BlogPage> {
       ),
       body: Consumer<ArticleController>(
         builder: (context, controller, child) {
-          // (Tampilan loading, error, empty tetap sama persis)
           if (controller.isLoading) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.white),
@@ -140,15 +132,11 @@ class _BlogPageState extends State<BlogPage> {
             return const Center(child: Text('Belum ada artikel.'));
           }
 
-          // --- TAMPILAN LISTVIEW BUILDER ---
           return ListView.builder(
             itemCount: controller.articles.length,
             itemBuilder: (context, index) {
               final Article article = controller.articles[index];
-              return _buildArticleCard(
-                context: context,
-                article: article, // <-- Kirim seluruh object article
-              );
+              return _buildArticleCard(context: context, article: article);
             },
           );
         },

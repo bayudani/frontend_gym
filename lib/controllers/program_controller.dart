@@ -1,11 +1,9 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/program_models.dart';
 import 'package:gym_app/service/content_service.dart'; 
 
 class ProgramController extends ChangeNotifier {
-  // --- 2. Ganti dependency ke ContentService ---
   final ContentService _contentService = ContentService();
 
   List<Program> _programs = [];
@@ -27,7 +25,6 @@ Program? _selectedProgram;
     fetchPrograms();
   }
 
-  // --- 3. Ubah method fetchPrograms ---
   Future<void> fetchPrograms() async {
     _isLoading = true;
     _errorMessage = null;
@@ -35,7 +32,6 @@ Program? _selectedProgram;
 
     try {
       final response = await _contentService.getPrograms();
-      // Dio otomatis decode JSON, ambil datanya dari response.data
       final List<dynamic> programData = response.data;
       _programs = programData.map((data) => Program.fromJson(data)).toList();
     } on DioException catch (e) {
@@ -45,7 +41,6 @@ Program? _selectedProgram;
       notifyListeners();
     }
   }
-  // Method untuk mengambil detail program berdasarkan ID
   Future<void> fetchProgramById(String id) async {
     _isDetailLoading = true;
     _errorMessage = null;
@@ -53,7 +48,6 @@ Program? _selectedProgram;
 
     try {
       final response = await _contentService.getProgramById(id);
-      // Dio otomatis decode JSON, ambil datanya dari response.data
       _selectedProgram = Program.fromJson(response.data);
     } on DioException catch (e) {
       _errorMessage = e.response?.data['message'] ?? e.message ?? "Failed to load program details.";

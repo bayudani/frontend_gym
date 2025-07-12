@@ -1,24 +1,19 @@
-// lib/controllers/auth_controller.dart
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/user_models.dart';
-import 'package:gym_app/service/auth_service.dart'; // <-- Ganti import
-import 'package:gym_app/service/token_service.dart'; // <-- Tambah import
+import 'package:gym_app/service/auth_service.dart';
+import 'package:gym_app/service/token_service.dart';
 import 'package:gym_app/views/auth/login_page.dart';
 import 'package:gym_app/views/auth/verify_email_page.dart';
 import 'package:gym_app/views/home/home_page.dart';
 
-// Jadikan ChangeNotifier untuk state management (misal: loading)
 class AuthController with ChangeNotifier {
-  // Ganti ApiService dengan service yang lebih spesifik
   final AuthService _authService = AuthService();
   final TokenService _tokenService = TokenService();
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // Helper untuk mengubah state loading dan memberitahu UI
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -34,21 +29,19 @@ class AuthController with ChangeNotifier {
     _setLoading(true);
 
     try {
-      // Panggil service yang benar
       await _authService.register(name, email, password);
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registrasi berhasil! Silakan cek email.')),
+        const SnackBar(
+          content: Text('Registrasi berhasil! Silakan cek email.'),
+        ),
       );
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => VerifyEmailPage(email: email),
-        ),
+        MaterialPageRoute(builder: (context) => VerifyEmailPage(email: email)),
       );
     } on DioException catch (e) {
-      // Tangani error dari Dio dengan lebih modern
       if (!context.mounted) return;
       _showError(context, e);
     } finally {
@@ -67,7 +60,6 @@ class AuthController with ChangeNotifier {
     try {
       final response = await _authService.login(email, password);
 
-      // PENTING: Dio sudah otomatis decode JSON, hasilnya ada di `response.data`
       final data = response.data;
       final token = data['token'];
       final user = User.fromJson(data['user']);
@@ -95,7 +87,7 @@ class AuthController with ChangeNotifier {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
-        (route) => false, // Hapus semua halaman sebelumnya
+        (route) => false,
       );
       return user;
     } on DioException catch (e) {
@@ -107,7 +99,6 @@ class AuthController with ChangeNotifier {
     }
   }
 
-  // --- FUNGSI BARU UNTUK VERIFIKASI KODE ---
   Future<void> verifyEmail({
     required String email,
     required String code,
@@ -121,13 +112,9 @@ class AuthController with ChangeNotifier {
       final message = response.data['message'];
       _showSuccessSnackBar(context, message);
 
-      // Jika verifikasi berhasil, hapus semua halaman sebelumnya dan
-      // arahkan ke halaman Login.
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ), // Ganti ke SignInPage jika perlu
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
         (route) => false,
       );
     } on DioException catch (e) {
@@ -139,7 +126,6 @@ class AuthController with ChangeNotifier {
     }
   }
 
-  // --- Helper untuk SnackBar (biar rapi) ---
   void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
@@ -157,20 +143,16 @@ class AuthController with ChangeNotifier {
     if (!context.mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (context) => const SignInScreen(),
-      ), // Arahkan ke halaman login
+      MaterialPageRoute(builder: (context) => const SignInScreen()),
       (route) => false,
     );
   }
 
-  // Helper _showError sekarang menerima DioException agar lebih kuat
   void _showError(BuildContext context, DioException e) {
     if (!context.mounted) return;
 
     String errorMessage = "Terjadi kesalahan tidak dikenal.";
 
-    // Cek apakah error berasal dari response server (misal: 4xx, 5xx)
     if (e.response != null && e.response?.data is Map) {
       final responseData = e.response!.data;
       errorMessage =
@@ -178,7 +160,6 @@ class AuthController with ChangeNotifier {
           responseData['error'] ??
           "Gagal memproses permintaan.";
     } else {
-      // Jika error karena koneksi, timeout, dll.
       errorMessage = e.message ?? "Gagal terhubung ke server.";
     }
 

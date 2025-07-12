@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/controllers/auth_controller.dart';
-import 'package:pinput/pinput.dart'; // Import package pinput
+import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  final String email; // Terima email dari halaman register
+  final String email;
 
   const VerifyEmailPage({super.key, required this.email});
 
@@ -19,7 +19,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   void _handleVerify() {
     if (_formKey.currentState!.validate()) {
       Provider.of<AuthController>(context, listen: false).verifyEmail(
-        email: widget.email, // Ambil email dari widget
+        email: widget.email,
         code: _pinController.text,
         context: context,
       );
@@ -34,7 +34,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Tema untuk Pinput
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 60,
@@ -49,7 +48,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("Verifikasi Email", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Verifikasi Email",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -64,7 +66,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 const SizedBox(height: 40),
                 const Text(
                   "Cek Email Kamu",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -74,7 +80,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 ),
                 const SizedBox(height: 40),
 
-                // Widget Pinput untuk input kode OTP
                 Pinput(
                   length: 6,
                   controller: _pinController,
@@ -90,7 +95,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 ),
                 const SizedBox(height: 40),
 
-                // Tombol Verifikasi
                 Consumer<AuthController>(
                   builder: (context, controller, child) {
                     return SizedBox(
@@ -100,11 +104,26 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        child: controller.isLoading
-                            ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white))
-                            : const Text("VERIFIKASI", style: TextStyle(fontSize: 18, color: Colors.white)),
+                        child:
+                            controller.isLoading
+                                ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : const Text(
+                                  "VERIFIKASI",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
                       ),
                     );
                   },
@@ -112,16 +131,18 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 const SizedBox(height: 24),
                 TextButton(
                   onPressed: () {
-                    // TODO: Tambahkan logika kirim ulang kode di sini
+                    //logika kirim ulang kode
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur kirim ulang belum tersedia.")),
+                      const SnackBar(
+                        content: Text("Fitur kirim ulang belum tersedia."),
+                      ),
                     );
                   },
                   child: const Text(
                     "Tidak menerima kode? Kirim ulang",
                     style: TextStyle(color: Colors.white70),
                   ),
-                )
+                ),
               ],
             ),
           ),

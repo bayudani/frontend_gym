@@ -1,5 +1,3 @@
-// Model untuk menampung data hasil analisis form latihan dari AI
-
 class FormCheckResult {
   final bool isCorrect;
   final int score;
@@ -15,7 +13,8 @@ class FormCheckResult {
 
   factory FormCheckResult.fromJson(Map<String, dynamic> json) {
     var pointsList = json['feedback_points'] as List;
-    List<FeedbackPoint> feedbackPoints = pointsList.map((i) => FeedbackPoint.fromJson(i)).toList();
+    List<FeedbackPoint> feedbackPoints =
+        pointsList.map((i) => FeedbackPoint.fromJson(i)).toList();
 
     return FormCheckResult(
       isCorrect: json['is_correct'] ?? false,
@@ -27,7 +26,7 @@ class FormCheckResult {
 }
 
 class FeedbackPoint {
-  final String type; // "good" atau "bad"
+  final String type;
   final String point;
 
   FeedbackPoint({required this.type, required this.point});

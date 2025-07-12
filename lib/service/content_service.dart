@@ -1,5 +1,3 @@
-// lib/service/content_service.dart
-
 import 'package:dio/dio.dart';
 import 'package:gym_app/service/dio_factory.dart';
 
@@ -38,7 +36,6 @@ class ContentService {
     return _dio.get('/comment/article/$slug');
   }
 
-  /// Mengirim komentar baru ke API (membutuhkan token).
   Future<Response> postComment(String slug, String commentText) {
     return _dio.post('/comment/article/$slug', data: {'comment': commentText});
   }
@@ -55,7 +52,6 @@ class ContentService {
     return _dio.get('/memberships/$id');
   }
 
-  // --- METHOD BARU UNTUK MENGAMBIL ITEM REWARD ---
   Future<Response> getItemRewards() {
     return _dio.get('/item-rewards');
   }
