@@ -12,13 +12,13 @@ Ini adalah repositori **Frontend Mobile untuk FITID**, bagian dari sistem manaje
 
 ## Tentang FITID
 
-FITID adalah solusi terintegrasi untuk manajemen gym, pelacakan aktivitas kebugaran, dan layanan pelanggan. Sistem ini memudahkan pengguna, pelatih, serta pengelola gym dalam mengelola aktivitas secara digital, mulai dari pendaftaran, pelacakan latihan, hingga manajemen jadwal.
+FITID adalah solusi terintegrasi untuk manajemen gym, pelacakan aktivitas kebugaran, dan layanan pelanggan. Sistem ini memudahkan pengguna, serta pengelola gym dalam mengelola aktivitas secara digital, mulai dari pendaftaran, pelacakan latihan.
 
 ## Fitur Frontend
 
 - Autentikasi & pendaftaran pengguna
-- Manajemen jadwal dan riwayat latihan
-- Pelacakan progres kebugaran
+- Chat bot dan pendekteksi gerakan dengan menggunakan API gemini
+- Klaim reward
 - Integrasi dengan API FITID
 - UI/UX responsif dan modern
 
