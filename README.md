@@ -1,8 +1,11 @@
-
 # FITID Frontend
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-%E2%9D%A4-blue)](https://flutter.dev/)
+
+
+![1752488677976](image/README/1752488677976.jpg)
+
 
 Ini adalah repositori **Frontend Mobile untuk FITID**, bagian dari sistem manajemen gym dan fitness center. FITID terdiri dari tiga repositori utama:
 
