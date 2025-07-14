@@ -1,5 +1,3 @@
-// lib/service/dio_factory.dart
-
 import 'package:dio/dio.dart';
 import 'package:gym_app/config/app_config.dart';
 import 'package:gym_app/service/token_service.dart';
@@ -19,7 +17,6 @@ class DioFactory {
       ),
     );
 
-    // --- INTERCEPTOR OTOMATIS PENEMPEL TOKEN ---
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -32,12 +29,13 @@ class DioFactory {
       ),
     );
 
-    // Interceptor untuk logging di console debug (sangat membantu)
-    dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      requestHeader: true,
-    ));
+    dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        requestHeader: true,
+      ),
+    );
 
     return dio;
   }

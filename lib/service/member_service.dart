@@ -1,5 +1,3 @@
-// lib/service/member_service.dart
-
 import 'package:dio/dio.dart';
 import 'package:gym_app/service/dio_factory.dart';
 
@@ -16,11 +14,9 @@ class MemberService {
 
   Future<Response> getAttendanceHistory() async {
     try {
-      // Panggil endpoint sesuai yang lo kasih
       final response = await _dio.get('/member/attends/me');
       return response;
     } catch (e) {
-      // Biarkan DioException di-handle oleh controller
       rethrow;
     }
   }
@@ -31,13 +27,10 @@ class MemberService {
   }
 
   Future<Response> getRewardHistory() {
-    // Endpoint ini juga butuh otentikasi (token)
     return _dio.get('/member/rewards/history');
   }
 
   Future<Response> finalizeReward(String claimId) {
-    // Panggil endpoint PUT yang sudah kita siapkan di backend Express
-    // Sesuaikan path jika berbeda, contoh: /rewards/:claimId/finalize
     return _dio.put('/member/rewards/$claimId/finalize');
   }
 }

@@ -1,5 +1,3 @@
-// lib/controllers/attendance_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:gym_app/models/attends_models.dart';
@@ -26,14 +24,14 @@ class AttendanceController extends ChangeNotifier {
       final response = await _memberService.getAttendanceHistory();
       // Ambil list 'attends' dari dalam respons API
       final List<dynamic> data = response.data['attends'];
-      
+
       _records = data.map((json) => AttendanceRecord.fromJson(json)).toList();
-      
+
       // Urutkan data dari yang paling baru (waktu scan terbesar)
       _records.sort((a, b) => b.scanTime.compareTo(a.scanTime));
-
     } on DioException catch (e) {
-      _errorMessage = e.response?.data['message'] ?? 'Gagal memuat riwayat absen.';
+      _errorMessage =
+          e.response?.data['message'] ?? 'Gagal memuat riwayat absen.';
     } catch (e) {
       _errorMessage = 'Terjadi kesalahan tidak terduga.';
     } finally {

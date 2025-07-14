@@ -32,14 +32,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchAllData() async {
-    final profileController =
-        Provider.of<ProfileController>(context, listen: false);
-    final programController =
-        Provider.of<ProgramController>(context, listen: false);
-    final articleController =
-        Provider.of<ArticleController>(context, listen: false);
+    final profileController = Provider.of<ProfileController>(
+      context,
+      listen: false,
+    );
+    final programController = Provider.of<ProgramController>(
+      context,
+      listen: false,
+    );
+    final articleController = Provider.of<ArticleController>(
+      context,
+      listen: false,
+    );
 
-    // Gunakan Future.wait agar proses fetch berjalan bersamaan, lebih cepat!
     await Future.wait([
       profileController.fetchProfile(context),
       profileController.fetchPoint(context),
@@ -56,8 +61,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleAiChatTap() {
-    final profileController =
-        Provider.of<ProfileController>(context, listen: false);
+    final profileController = Provider.of<ProfileController>(
+      context,
+      listen: false,
+    );
     if (profileController.isMemberActive) {
       Navigator.push(
         context,
@@ -77,9 +84,13 @@ class _HomePageState extends State<HomePage> {
           title: const Row(
             children: [
               SizedBox(width: 10),
-              Text('Fitur Khusus Member',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
+              Text(
+                'Fitur Khusus Member',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           content: const Text(
@@ -100,10 +111,13 @@ class _HomePageState extends State<HomePage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child:
-                  const Text('Jadi Member', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Jadi Member',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(
@@ -151,8 +165,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.only(top: 60.0, left: 24, right: 24),
+                    padding: const EdgeInsets.only(
+                      top: 60.0,
+                      left: 24,
+                      right: 24,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -160,60 +177,70 @@ class _HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Bagian "Hello, Nama"
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Hello',
-                                    style: TextStyle(
-                                        color: Colors.white70, fontSize: 18)),
+                                const Text(
+                                  'Hello',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 18,
+                                  ),
+                                ),
                                 Consumer<ProfileController>(
                                   builder: (context, profileController, child) {
                                     if (profileController.isLoading) {
-                                      return const Text('Loading...',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold));
+                                      return const Text(
+                                        'Loading...',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
                                     }
                                     final userName =
                                         profileController.userProfile?.name ??
-                                            'Guest';
-                                    return Text(userName,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold));
+                                        'Guest';
+                                    return Text(
+                                      userName,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
                             ),
 
-                            // WIDGET KONDISIONAL: POIN ATAU PREMIUM BADGE
                             Consumer<ProfileController>(
                               builder: (context, profileController, child) {
-                                // Jika BUKAN MEMBER, tampilkan Premium Badge
                                 if (!profileController.isMemberActive) {
-                                  // === INI BAGIAN YANG DIUBAH ===
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                const MembershipPage()),
+                                          builder:
+                                              (context) =>
+                                                  const MembershipPage(),
+                                        ),
                                       );
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.transparent,
-                                        borderRadius:
-                                            BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
-                                            color: Colors.red.shade400,
-                                            width: 1),
+                                          color: Colors.red.shade400,
+                                          width: 1,
+                                        ),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -227,9 +254,10 @@ class _HomePageState extends State<HomePage> {
                                           const Text(
                                             'Upgrade Now',
                                             style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -237,49 +265,57 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
 
-                                // Jika MEMBER AKTIF, tampilkan Poin
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PointPage()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const PointPage(),
+                                      ),
+                                    );
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[800],
-                                      borderRadius:
-                                          BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Text('Points',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold)),
+                                        const Text(
+                                          'Points',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                         if (profileController.isPointLoading)
-                                          const Text('...',
-                                              style: TextStyle(
-                                                  color: Colors.yellow,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.bold))
+                                          const Text(
+                                            '...',
+                                            style: TextStyle(
+                                              color: Colors.yellow,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
                                         else
                                           Text(
-                                              (profileController
-                                                      .userPoint?.point ??
-                                                  0)
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.yellow,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.bold)),
+                                            (profileController
+                                                        .userPoint
+                                                        ?.point ??
+                                                    0)
+                                                .toString(),
+                                            style: const TextStyle(
+                                              color: Colors.yellow,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -292,9 +328,10 @@ class _HomePageState extends State<HomePage> {
                         const Text(
                           "Let's start your day",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -306,7 +343,9 @@ class _HomePageState extends State<HomePage> {
               delegate: SliverChildListDelegate([
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 20.0),
+                    horizontal: 16.0,
+                    vertical: 20.0,
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
@@ -331,26 +370,32 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('40% discount',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
+                                const Text(
+                                  '40% discount',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(height: 5),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const MembershipPage(),
+                                        builder:
+                                            (context) => const MembershipPage(),
                                       ),
                                     );
                                   },
-                                  child: const Text('on all our membership →',
-                                      style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 14)),
+                                  child: const Text(
+                                    'on all our membership →',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -358,24 +403,14 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             width: 65,
                             height: 65,
-                            // decoration: BoxDecoration(
-                            //   // Mengubah warna solid menjadi gradient
-                            //   gradient: LinearGradient(
-                            //     begin: Alignment.topCenter, // Mulai dari atas
-                            //     end:
-                            //         Alignment.bottomCenter, // Berakhir di bawah
-                            //     colors: [
-                            //       Colors.orange, // Warna awal: Oranye
-                            //       Colors.red, // Warna akhir: Merah
-                            //     ],
-                            //   ),
-                            //   borderRadius: BorderRadius.circular(10),
-                            // ),
+
                             child: Center(
-                              child: Image.asset(_dumbbellIconPath,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.contain),
+                              child: Image.asset(
+                                _dumbbellIconPath,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ],

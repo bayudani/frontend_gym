@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Style border input field yang sama dengan halaman login/register
-// Ini diulang di sini karena widget ini mungkin perlu mandiri
 const _outlineInputBorder = OutlineInputBorder(
   borderSide: BorderSide(color: Color(0xFF757575)),
   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -10,14 +8,13 @@ const _outlineInputBorder = OutlineInputBorder(
 class CheckoutPaymentSection extends StatelessWidget {
   const CheckoutPaymentSection({super.key});
 
-  // Helper Widget untuk Header Bagian (diulang dari MembershipCheckoutPage untuk konsistensi)
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF262626), // Abu-abu gelap
+        color: const Color(0xFF262626),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[800]!), // Border abu-abu tipis
+        border: Border.all(color: Colors.grey[800]!),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,12 +27,25 @@ class CheckoutPaymentSection extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Dua titik di kanan (dekoratif)
           Row(
             children: [
-              Container(width: 5, height: 5, decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), shape: BoxShape.circle)),
+              Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+              ),
               const SizedBox(width: 5),
-              Container(width: 5, height: 5, decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), shape: BoxShape.circle)),
+              Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+              ),
             ],
           ),
         ],
@@ -43,7 +53,6 @@ class CheckoutPaymentSection extends StatelessWidget {
     );
   }
 
-  // Helper Widget untuk Kartu Info Bank
   Widget _buildBankInfoCard(
     BuildContext context, {
     required String bankLogo,
@@ -54,26 +63,21 @@ class CheckoutPaymentSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.black, // Latar belakang hitam untuk setiap bank card
+        color: Colors.black,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[700]!), // Border abu-abu sedikit lebih gelap
+        border: Border.all(color: Colors.grey[700]!),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // PERBAIKAN: Menyesuaikan ukuran Container logo dan membuat sudut lebih bulat
           Container(
-            width: 70, // Lebar total container logo
-            height: 70, // Tinggi total container logo
-            // padding: const EdgeInsets.all(8.0), // Padding ini DIHAPUS agar logo lebih penuh di dalam kotak
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
-              color: Colors.white, // Latar belakang putih untuk logo
-              borderRadius: BorderRadius.circular(20), // PERBAIKAN: Sudut membulat lebih besar (dari 15)
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: Image.asset(
-              bankLogo, // Logo bank
-              fit: BoxFit.contain, // Memastikan gambar pas di dalam container tanpa terpotong
-            ),
+            child: Image.asset(bankLogo, fit: BoxFit.contain),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -91,17 +95,11 @@ class CheckoutPaymentSection extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   'No. Rekening: $accountNumber',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
                 Text(
                   'A/N: $accountName',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
             ),
@@ -121,15 +119,15 @@ class CheckoutPaymentSection extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: const Color(0xFF262626), // Abu-abu gelap
+            color: const Color(0xFF262626),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey[800]!), // Border abu-abu tipis
+            border: Border.all(color: Colors.grey[800]!),
           ),
           child: Column(
             children: [
               _buildBankInfoCard(
                 context,
-                bankLogo: 'assets/images/logoBri.png', // Ganti dengan logo BRI Anda
+                bankLogo: 'assets/images/logoBri.png',
                 bankName: 'Bank BRI Indonesia',
                 accountNumber: '18203795908643428',
                 accountName: 'Bayu Dani Murti',
@@ -137,7 +135,7 @@ class CheckoutPaymentSection extends StatelessWidget {
               const SizedBox(height: 15),
               _buildBankInfoCard(
                 context,
-                bankLogo: 'assets/images/logoBca.png', // Ganti dengan logo BCA Anda
+                bankLogo: 'assets/images/logoBca.png',
                 bankName: 'Bank Central Asia',
                 accountNumber: '1820814389678537',
                 accountName: 'Rama Otari',

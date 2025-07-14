@@ -1,5 +1,3 @@
-// lib/controllers/membership_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/membership_models.dart';
 import 'package:gym_app/service/content_service.dart';
@@ -37,6 +35,7 @@ class MembershipController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<MembershipPlan?> getMembershipById(String id) async {
     try {
       final response = await _contentService.getMembershipById(id);

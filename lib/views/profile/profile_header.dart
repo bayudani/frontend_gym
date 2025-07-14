@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/user_models.dart';
-// import 'package:gym_app/models/user_profile.dart';
 
 class ProfileHeader extends StatelessWidget {
   final User? userProfile;
@@ -37,7 +36,6 @@ class ProfileHeader extends StatelessWidget {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: Colors.white,
-                    // --- TAMPILKAN INISIAL ATAU IKON DEFAULT ---
                     child:
                         initials.isNotEmpty
                             ? Text(
@@ -49,7 +47,6 @@ class ProfileHeader extends StatelessWidget {
                               ),
                             )
                             : const Icon(
-                              // Fallback jika tidak ada nama
                               Icons.person,
                               size: 40,
                               color: Color(0xFFC62828),

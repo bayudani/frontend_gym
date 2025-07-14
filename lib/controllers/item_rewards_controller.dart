@@ -1,16 +1,14 @@
-// lib/controllers/item_rewards_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/item_rewards_models.dart';
 import 'package:gym_app/service/content_service.dart';
-import 'package:gym_app/service/member_service.dart'; // <-- IMPORT SERVICE BARU
+import 'package:gym_app/service/member_service.dart';
 import 'package:dio/dio.dart';
-import 'package:provider/provider.dart'; // <-- IMPORT PROVIDER
-import 'package:gym_app/controllers/profile_controller.dart'; // <-- IMPORT PROFILE CONTROLLER
+import 'package:provider/provider.dart';
+import 'package:gym_app/controllers/profile_controller.dart';
 
 class RewardController extends ChangeNotifier {
   final ContentService _contentService = ContentService();
-  final MemberService _memberService = MemberService(); // <-- TAMBAHKAN INSTANCE MEMBER SERVICE
+  final MemberService _memberService = MemberService();
 
   List<RewardItem> _rewards = [];
   List<RewardItem> get rewards => _rewards;
@@ -18,17 +16,12 @@ class RewardController extends ChangeNotifier {
   bool _isLoading = true;
   String? _errorMessage;
 
-  // Tambahkan state untuk proses klaim
   bool _isClaiming = false;
   bool get isClaiming => _isClaiming;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Hapus constructor, pemanggilan fetchRewards dilakukan di initState view
-  // RewardController() {
-  //   fetchRewards();
-  // }
 
   Future<void> fetchRewards() async {
     _isLoading = true;
@@ -49,35 +42,31 @@ class RewardController extends ChangeNotifier {
     }
   }
 
-  // --- FUNGSI BARU UNTUK KLAIM REWARD ---
+  // Fungsi klaim reward
   Future<String?> claimReward(BuildContext context, String rewardId) async {
     _isClaiming = true;
     notifyListeners();
 
     try {
-      // Panggil service untuk klaim reward
       await _memberService.claimReward(rewardId);
 
-      // Jika berhasil, refresh data poin dan daftar reward
-      // agar UI otomatis update. Keren kan?
+
       await fetchRewards();
-      // ignore: use_build_context_synchronously
       await Provider.of<ProfileController>(context, listen: false).fetchPoint(context);
 
       _isClaiming = false;
       notifyListeners();
-      return null; // Mengembalikan null menandakan sukses
+      return null;
 
     } on DioException catch (e) {
       _isClaiming = false;
       notifyListeners();
-      // Ambil pesan error spesifik dari backend kamu
       final error = e.response?.data['error'] ?? "Gagal klaim reward. Coba lagi.";
-      return error; // Mengembalikan pesan error
+      return error;
     } catch (e) {
       _isClaiming = false;
       notifyListeners();
-      return "Terjadi kesalahan yang tidak diketahui."; // Error umum
+      return "Terjadi kesalahan yang tidak diketahui.";
     }
   }
 }

@@ -1,5 +1,3 @@
-// lib/views/profile/profile_security_form.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_app/controllers/profile_controller.dart';
@@ -48,7 +46,7 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
             _buildProfileFormField(
               controller: _oldPasswordController,
               labelText: 'Old Password',
-              hintText: 'Enter your old password', // <-- TAMBAHKAN HINTTEXT
+              hintText: 'Enter your old password',
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -61,7 +59,7 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
             _buildProfileFormField(
               controller: _newPasswordController,
               labelText: 'New Password',
-              hintText: 'Enter your new password', // <-- TAMBAHKAN HINTTEXT
+              hintText: 'Enter your new password',
               obscureText: true,
               validator: (value) {
                 if (value == null || value.length < 6) {
@@ -74,7 +72,7 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
             _buildProfileFormField(
               controller: _confirmNewPasswordController,
               labelText: 'Confirm New Password',
-              hintText: 'Re-enter your new password', // <-- TAMBAHKAN HINTTEXT
+              hintText: 'Re-enter your new password',
               obscureText: true,
               validator: (value) {
                 if (value != _newPasswordController.text) {
@@ -89,18 +87,18 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
               child: Consumer<ProfileController>(
                 builder: (context, controller, child) {
                   return ElevatedButton(
-                    // Gunakan isLoading dari controller, kita akan tambah state baru
-                    onPressed: controller.isChangingPassword 
-                      ? null 
-                      : () {
-                          if (_formKey.currentState!.validate()) {
-                            widget.onSave(
-                              _oldPasswordController.text,
-                              _newPasswordController.text,
-                              _confirmNewPasswordController.text,
-                            );
-                          }
-                        },
+                    onPressed:
+                        controller.isChangingPassword
+                            ? null
+                            : () {
+                              if (_formKey.currentState!.validate()) {
+                                widget.onSave(
+                                  _oldPasswordController.text,
+                                  _newPasswordController.text,
+                                  _confirmNewPasswordController.text,
+                                );
+                              }
+                            },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -110,17 +108,23 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
                       ),
                       elevation: 0,
                     ),
-                    // Tampilkan loading jika state-nya true
-                    child: controller.isChangingPassword
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
-                          )
-                        : const Text(
-                            'Simpan Password',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
+                    child:
+                        controller.isChangingPassword
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.white,
+                              ),
+                            )
+                            : const Text(
+                              'Simpan Password',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   );
                 },
               ),
@@ -131,13 +135,12 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
     );
   }
 
-  // --- DEFINISI FUNGSI HELPER YANG DIPERBAIKI ---
   Widget _buildProfileFormField({
     required TextEditingController controller,
     required String hintText,
     required String labelText,
     bool obscureText = false,
-    String? Function(String?)? validator, // <-- TERIMA VALIDATOR
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
@@ -149,7 +152,10 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintStyle: const TextStyle(color: Color(0xFF757575)),
         labelStyle: const TextStyle(color: Colors.black87),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -162,7 +168,7 @@ class _ProfileSecurityFormState extends State<ProfileSecurityForm> {
         fillColor: Colors.white,
         filled: true,
       ),
-      validator: validator, // <-- OPER VALIDATOR KE SINI
+      validator: validator,
     );
   }
 }

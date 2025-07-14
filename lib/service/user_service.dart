@@ -1,5 +1,3 @@
-// lib/service/user_service.dart
-
 import 'package:dio/dio.dart';
 import 'package:gym_app/service/dio_factory.dart';
 
@@ -7,7 +5,6 @@ class UserService {
   final Dio _dio = DioFactory.create();
 
   Future<Response> getProfile() {
-    // Tidak perlu pusing soal token, Dio yang urus!
     return _dio.get('/auth/profile');
   }
 
@@ -20,9 +17,8 @@ class UserService {
     required String newPassword,
     required String confirmPassword,
   }) {
-    // Panggil endpoint Express dengan method POST
     return _dio.put(
-      '/auth/update-password', // <-- Pastikan path ini benar
+      '/auth/update-password',
       data: {
         'currentPassword': currentPassword,
         'newPassword': newPassword,

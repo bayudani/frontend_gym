@@ -4,11 +4,6 @@ import 'package:gym_app/views/auth/register_page.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
 
-//==================================================================
-// HALAMAN UTAMA (SignInScreen)
-// Sekarang jadi StatelessWidget yang simpel, karena logikanya
-// sudah dipindah ke dalam SignInForm.
-//==================================================================
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
 
@@ -51,15 +46,16 @@ class SignInScreen extends StatelessWidget {
                   const Text(
                     "Fit.ID",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-                  
-                  // Memanggil widget form yang sudah mandiri
+
+                  // Memanggil widget form
                   const SignInForm(),
-                  
+
                   const SizedBox(height: 20),
                   const NoAccountText(),
                   const SizedBox(height: 20),
@@ -73,12 +69,6 @@ class SignInScreen extends StatelessWidget {
   }
 }
 
-
-//==================================================================
-// WIDGET FORM (SignInForm)
-// Diubah jadi StatefulWidget agar bisa mengelola state-nya sendiri
-// (TextEditingController) dan mendengarkan perubahan dari AuthController.
-//==================================================================
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
 
@@ -87,7 +77,6 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  // Controller dibuat dan di-dispose di sini, lebih rapi dan aman.
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -97,7 +86,7 @@ class _SignInFormState extends State<SignInForm> {
     passwordController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -115,13 +104,17 @@ class _SignInFormState extends State<SignInForm> {
               hintStyle: const TextStyle(color: Colors.white54),
               labelStyle: const TextStyle(color: Colors.white70),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 24, vertical: 16),
+                horizontal: 24,
+                vertical: 16,
+              ),
               prefixIcon: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
                 child: SvgPicture.string(
                   mailIcon,
                   colorFilter: const ColorFilter.mode(
-                      Colors.white70, BlendMode.srcIn),
+                    Colors.white70,
+                    BlendMode.srcIn,
+                  ),
                   width: 18,
                   height: 13,
                 ),
@@ -146,13 +139,17 @@ class _SignInFormState extends State<SignInForm> {
               hintStyle: const TextStyle(color: Colors.white54),
               labelStyle: const TextStyle(color: Colors.white70),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 24, vertical: 16),
+                horizontal: 24,
+                vertical: 16,
+              ),
               prefixIcon: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
                 child: SvgPicture.string(
                   lockIcon,
                   colorFilter: const ColorFilter.mode(
-                      Colors.white70, BlendMode.srcIn),
+                    Colors.white70,
+                    BlendMode.srcIn,
+                  ),
                   width: 15,
                   height: 18,
                 ),
@@ -165,26 +162,25 @@ class _SignInFormState extends State<SignInForm> {
             ),
           ),
           const SizedBox(height: 24),
-          
-          // --- KEAJAIBAN PROVIDER DIMULAI DARI SINI ---
-          // Tombol dibungkus Consumer agar reaktif terhadap state isLoading.
+
           Consumer<AuthController>(
             builder: (context, controller, child) {
               return ElevatedButton(
-                // Jika sedang loading, tombol akan non-aktif.
-                onPressed: controller.isLoading
-                    ? null
-                    : () {
-                        // Mengambil AuthController dari Provider untuk memanggil fungsi.
-                        // listen: false karena kita hanya butuh memanggil fungsi, bukan me-rebuild widget ini.
-                        final authController = Provider.of<AuthController>(context, listen: false);
+                onPressed:
+                    controller.isLoading
+                        ? null
+                        : () {
+                          final authController = Provider.of<AuthController>(
+                            context,
+                            listen: false,
+                          );
 
-                        authController.login(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim(),
-                          context: context,
-                        );
-                      },
+                          authController.login(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                            context: context,
+                          );
+                        },
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: Colors.red,
@@ -194,20 +190,23 @@ class _SignInFormState extends State<SignInForm> {
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-                // Tampilkan loading indicator atau teks sesuai state dari controller.
-                child: controller.isLoading
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          color: Colors.white,
+                child:
+                    controller.isLoading
+                        ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: Colors.white,
+                          ),
+                        )
+                        : const Text(
+                          "Sign In",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    : const Text(
-                        "Sign In",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
               );
             },
           ),
@@ -216,10 +215,6 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 }
-
-//==================================================================
-// WIDGET-WIDGET PEMBANTU (Tidak ada perubahan)
-//==================================================================
 
 class NoAccountText extends StatelessWidget {
   const NoAccountText({super.key});
@@ -242,10 +237,7 @@ class NoAccountText extends StatelessWidget {
           },
           child: const Text(
             "Sign up here",
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -257,11 +249,6 @@ const authOutlineInputBorder = OutlineInputBorder(
   borderSide: BorderSide(color: Colors.white70),
   borderRadius: BorderRadius.all(Radius.circular(10)),
 );
-
-
-//==================================================================
-// KONSTANTA SVG STRING (Tidak ada perubahan)
-//==================================================================
 
 const mailIcon =
     '''<svg width="18" height="13" viewBox="0 0 18 13" fill="none" xmlns="http://www.w3.org/2000/svg">

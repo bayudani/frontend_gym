@@ -8,7 +8,6 @@ import 'package:gym_app/models/item_rewards_models.dart';
 import 'package:gym_app/widget/custom_bottom_nav_bar.dart';
 import 'package:gym_app/widget/point/reward_history_page.dart';
 
-// --- Definisi Gambar dan Ikon ---
 const String _pointIcon = 'assets/images/coin_stack.png';
 const String _historyIcon = 'assets/images/history.png';
 
@@ -26,7 +25,6 @@ class _PointPageState extends State<PointPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Memuat data saat halaman pertama kali dibuka
       Provider.of<RewardController>(context, listen: false).fetchRewards();
       Provider.of<ProfileController>(
         context,
@@ -51,12 +49,10 @@ class _PointPageState extends State<PointPage> {
       backgroundColor: Colors.black,
       body: RefreshIndicator(
         onRefresh: () async {
-          // Fungsi refresh untuk swipe-down
           await Provider.of<RewardController>(
             context,
             listen: false,
           ).fetchRewards();
-          // ignore: use_build_context_synchronously
           await Provider.of<ProfileController>(
             context,
             listen: false,
@@ -284,7 +280,6 @@ class _PointPageState extends State<PointPage> {
               if (!context.mounted) return;
 
               if (error == null) {
-                // showClaimSuccessPopup(context, reward.name);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -306,7 +301,6 @@ class _PointPageState extends State<PointPage> {
     );
   }
 
-  // --- WIDGET CARD REWARD DENGAN LAYOUT BARU ---
   Widget _buildRewardCard({
     required BuildContext context,
     required RewardItem reward,
@@ -340,7 +334,6 @@ class _PointPageState extends State<PointPage> {
             ),
           ),
 
-          // Informasi teks
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: Column(
@@ -357,7 +350,6 @@ class _PointPageState extends State<PointPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
 
-                // Jarak antar teks
                 const SizedBox(height: 8),
 
                 Text(
@@ -373,10 +365,8 @@ class _PointPageState extends State<PointPage> {
             ),
           ),
 
-          // Jarak antara teks dan tombol
           const SizedBox(height: 12),
 
-          // Tombol klaim
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: ElevatedButton(

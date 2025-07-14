@@ -1,5 +1,3 @@
-// lib/models/member.dart
-
 class Member {
   final String id;
   final String fullName;
@@ -10,8 +8,6 @@ class Member {
   final String? end_date;
   final int? point;
   final String? membership_status;
-  // TODO: Tambahkan properti untuk tanggal berakhir jika nanti ada di API
-  // final DateTime? expiryDate;
 
   Member({
     required this.id,
@@ -23,21 +19,19 @@ class Member {
     this.end_date,
     this.point,
     this.membership_status,
-    // this.expiryDate,
   });
 
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       id: json['id'] ?? '',
       fullName: json['full_name'] ?? 'Nama Tidak Ditemukan',
-      address: json['addres'], // 'addres' sesuai dari API-mu
+      address: json['addres'],
       phone: json['phone'],
       isActive: json['is_active'] ?? false,
       start_date: json['start_date'],
       end_date: json['end_date'],
       point: json['point'] != null ? int.tryParse(json['point'].toString()) : 0,
       membership_status: json['membership_status'] ?? 'Tidak Diketahui',
-      // expiryDate: DateTime.tryParse(json['expiry_date'] ?? ''),
     );
   }
 }

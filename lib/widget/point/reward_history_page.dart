@@ -14,16 +14,16 @@ class RewardHistoryPage extends StatefulWidget {
 
 class _RewardHistoryPageState extends State<RewardHistoryPage> {
   int _selectedIndex = 0;
-  // State untuk melacak ID reward yang sedang dalam proses konfirmasi
   final Set<String> _loadingClaimIds = {};
 
   @override
   void initState() {
     super.initState();
-    // Memuat data saat halaman pertama kali dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<RewardHistoryController>(context, listen: false)
-          .fetchHistory();
+      Provider.of<RewardHistoryController>(
+        context,
+        listen: false,
+      ).fetchHistory();
     });
   }
 
@@ -44,36 +44,49 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Riwayat Reward', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Riwayat Reward',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Consumer<RewardHistoryController>(
         builder: (context, controller, child) {
-          // Tampilkan loading indicator saat data sedang diambil
           if (controller.isLoading && _loadingClaimIds.isEmpty) {
-            return const Center(child: CircularProgressIndicator(color: Colors.white));
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           }
 
-          // Tampilkan pesan error jika terjadi kegagalan
           if (controller.errorMessage != null && controller.history.isEmpty) {
-            return Center(child: Text(controller.errorMessage!, style: const TextStyle(color: Colors.white70)));
+            return Center(
+              child: Text(
+                controller.errorMessage!,
+                style: const TextStyle(color: Colors.white70),
+              ),
+            );
           }
 
-          // Tampilkan pesan jika riwayat kosong
           if (controller.history.isEmpty) {
-            return const Center(child: Text("Kamu belum punya histori reward.", style: TextStyle(color: Colors.white70)));
+            return const Center(
+              child: Text(
+                "Kamu belum punya histori reward.",
+                style: TextStyle(color: Colors.white70),
+              ),
+            );
           }
 
-          // Tampilkan daftar riwayat dengan fitur RefreshIndicator
           return RefreshIndicator(
             onRefresh: () => controller.fetchHistory(),
             color: Colors.white,
             backgroundColor: Colors.red,
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0,
+              ),
               itemCount: controller.history.length,
               itemBuilder: (context, index) {
                 final record = controller.history[index];
-                // Kirim 'context' untuk digunakan oleh pop-up/snackbar
                 return _buildRewardHistoryCard(context, record);
               },
             ),
@@ -87,14 +100,13 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
     );
   }
 
-  /// --- WIDGET KARTU RIWAYAT VERSI UPGRADE ---
-  /// Dengan loading state pada tombol konfirmasi.
-  Widget _buildRewardHistoryCard(BuildContext context, RewardHistoryItem record) {
+  Widget _buildRewardHistoryCard(
+    BuildContext context,
+    RewardHistoryItem record,
+  ) {
     final imageUrl = record.fullImageUrl;
-    // Cek apakah item ini sedang dalam proses finalisasi
     final bool isLoading = _loadingClaimIds.contains(record.id);
 
-    // Logika untuk menentukan warna dan teks status
     Color statusColor;
     String statusText = record.status.toUpperCase();
     FontWeight statusFontWeight = FontWeight.bold;
@@ -128,37 +140,76 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Baris untuk informasi utama (gambar, nama, tanggal, status)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: imageUrl != null
-                    ? Image.network(
-                        imageUrl,
-                        width: 60, height: 60, fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(width: 60, height: 60, color: Colors.grey[850], child: const Icon(Icons.broken_image, size: 40, color: Colors.grey)),
-                      )
-                    : Container(width: 60, height: 60, color: Colors.grey[850], child: const Icon(Icons.card_giftcard, size: 40, color: Colors.grey)),
+                child:
+                    imageUrl != null
+                        ? Image.network(
+                          imageUrl,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                          errorBuilder:
+                              (_, __, ___) => Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[850],
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                        )
+                        : Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[850],
+                          child: const Icon(
+                            Icons.card_giftcard,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(record.name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Text(
+                      record.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
-                    Text(record.formattedDateTime, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(
+                      record.formattedDateTime,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(width: 10),
-              Text(statusText, style: TextStyle(color: statusColor, fontSize: 14, fontWeight: statusFontWeight)),
+              Text(
+                statusText,
+                style: TextStyle(
+                  color: statusColor,
+                  fontSize: 14,
+                  fontWeight: statusFontWeight,
+                ),
+              ),
             ],
           ),
 
-          // Tombol konfirmasi yang hanya muncul jika status 'confirmed'
           if (record.status.toLowerCase() == 'confirmed')
             Padding(
               padding: const EdgeInsets.only(top: 12.0),
@@ -167,54 +218,62 @@ class _RewardHistoryPageState extends State<RewardHistoryPage> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     minimumSize: const Size(double.infinity, 48),
                   ),
-                  // Nonaktifkan tombol jika sedang loading untuk mencegah double-tap
-                  onPressed: isLoading ? null : () async {
-                    setState(() {
-                      _loadingClaimIds.add(record.id);
-                    });
+                  onPressed:
+                      isLoading
+                          ? null
+                          : () async {
+                            setState(() {
+                              _loadingClaimIds.add(record.id);
+                            });
 
-                    try {
-                      // 1. Panggil controller untuk finalisasi reward via API
-                      await Provider.of<RewardHistoryController>(context, listen: false)
-                          .finalizeReward(record.id);
-                      
-                      // 2. Jika berhasil, tampilkan pop-up
-                      if (mounted) {
-                        showClaimSuccessPopup(context, record.name);
-                      }
-                    } catch (e) {
-                      // 3. Jika gagal, tampilkan pesan error di SnackBar
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                        );
-                      }
-                    } finally {
-                      // 4. Pastikan state loading dihentikan setelah proses selesai
-                      if (mounted) {
-                        setState(() {
-                          _loadingClaimIds.remove(record.id);
-                        });
-                      }
-                    }
-                  },
-                  // Ganti child tombol secara dinamis berdasarkan state isLoading
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 3,
+                            try {
+                              await Provider.of<RewardHistoryController>(
+                                context,
+                                listen: false,
+                              ).finalizeReward(record.id);
+
+                              if (mounted) {
+                                showClaimSuccessPopup(context, record.name);
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  _loadingClaimIds.remove(record.id);
+                                });
+                              }
+                            }
+                          },
+                  child:
+                      isLoading
+                          ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                          : const Text(
+                            'Konfirmasi Telah Diterima',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        )
-                      : const Text(
-                          'Konfirmasi Telah Diterima',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
                 ),
               ),
             ),

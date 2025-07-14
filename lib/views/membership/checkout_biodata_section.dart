@@ -1,9 +1,7 @@
-// lib/views/membership/checkout_biodata_section.dart
-
-import 'dart:io'; // Untuk menggunakan kelas File
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // Import image_picker
+import 'package:image_picker/image_picker.dart';
 
 const _outlineInputBorder = OutlineInputBorder(
   borderSide: BorderSide(color: Color(0xFF757575)),
@@ -11,21 +9,17 @@ const _outlineInputBorder = OutlineInputBorder(
 );
 
 class CheckoutBiodataSection extends StatefulWidget {
-  // Tambahkan key di constructor agar bisa diakses oleh parent
   const CheckoutBiodataSection({super.key});
 
   @override
-  // State class sekarang jadi public agar bisa diakses via GlobalKey
   CheckoutBiodataSectionState createState() => CheckoutBiodataSectionState();
 }
 
-// State class sekarang jadi public (tanpa underscore)
 class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
-  // Controllers dan variabel gambar sekarang jadi public (tanpa underscore)
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  File? pickedImage; // Variabel untuk menyimpan gambar yang dipilih
+  File? pickedImage;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -34,7 +28,7 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         setState(() {
-          pickedImage = File(image.path); // Menggunakan pickedImage (public)
+          pickedImage = File(image.path);
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -46,7 +40,6 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
         }
       }
     } catch (e) {
-      // Menangkap PlatformException dan error lainnya
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -58,7 +51,6 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
     }
   }
 
-  // Metode untuk menghapus gambar yang dipilih
   void _clearPickedImage() {
     setState(() {
       pickedImage = null;
@@ -71,7 +63,6 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
     );
   }
 
-  // Helper Widget untuk TextField
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
@@ -86,7 +77,7 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
       obscureText: obscureText,
       maxLines: maxLines,
       style: const TextStyle(color: Colors.white),
-      textAlignVertical: TextAlignVertical.center, 
+      textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -105,7 +96,6 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
     );
   }
 
-  // Helper Widget untuk Header Bagian
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -169,11 +159,9 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
         Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: const Color(0xFF262626), // Abu-abu gelap
+            color: const Color(0xFF262626),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.grey[800]!,
-            ), // Border abu-abu tipis
+            border: Border.all(color: Colors.grey[800]!),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,20 +172,20 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: nameController, // pakai controller public
+                controller: nameController,
                 hintText: 'Nama lengkap',
                 icon: Icons.person,
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: phoneController, // pakai controller public
+                controller: phoneController,
                 hintText: 'NO HP',
                 icon: Icons.phone,
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 15),
               _buildTextField(
-                controller: addressController, // pakai controller public
+                controller: addressController,
                 hintText: 'Alamat',
                 icon: Icons.location_on,
                 maxLines: 1,
@@ -225,42 +213,34 @@ class CheckoutBiodataSectionState extends State<CheckoutBiodataSection> {
                   ),
                 ),
               ),
-              // PERBAIKAN: Tampilkan pratinjau gambar yang dipilih dengan tombol hapus
-              if (pickedImage != null) // Menggunakan pickedImage (public)
+              if (pickedImage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Stack(
-                    // Menggunakan Stack untuk menempatkan tombol hapus di atas gambar
-                    alignment:
-                        Alignment.topRight, // Menempatkan di sudut kanan atas
+                    alignment: Alignment.topRight,
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.file(
-                          pickedImage!, // Menggunakan pickedImage (public)
-                          height: 150, // Sesuaikan tinggi sesuai kebutuhan
-                          width: double.infinity, // Ambil lebar penuh
-                          fit:
-                              BoxFit
-                                  .cover, // Gunakan BoxFit.cover agar gambar mengisi ruang
+                          pickedImage!,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       Positioned(
                         top: 5,
                         right: 5,
                         child: GestureDetector(
-                          onTap:
-                              _clearPickedImage, // Memanggil fungsi untuk menghapus gambar
+                          onTap: _clearPickedImage,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(
-                                0.6,
-                              ), // Latar belakang tombol hapus
+                              color: Colors.black.withOpacity(0.6),
                               shape: BoxShape.circle,
                             ),
                             padding: const EdgeInsets.all(4),
                             child: const Icon(
-                              Icons.close, // Ikon silang
+                              Icons.close,
                               color: Colors.white,
                               size: 20,
                             ),

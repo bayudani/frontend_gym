@@ -1,9 +1,7 @@
-// lib/models/comment_model.dart
-
 class Comment {
   final String id;
-  final String content; // Diubah dari 'comment' menjadi 'content'
-  final String userName;  // Diubah dari object 'User' menjadi 'userName'
+  final String content;
+  final String userName;
   final DateTime createdAt;
 
   Comment({
@@ -13,7 +11,6 @@ class Comment {
     required this.createdAt,
   });
 
-  // Factory method ini sekarang pas dengan respons GET dari API lo
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
       id: json['id']?.toString() ?? '',

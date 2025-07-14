@@ -3,7 +3,7 @@ import 'package:gym_app/controllers/article_controller.dart';
 import 'package:gym_app/models/article_models.dart';
 import 'package:gym_app/views/blog/blog_page.dart';
 import 'package:provider/provider.dart';
-import 'package:gym_app/views/blog/article_detail_page.dart'; // <-- PENTING: Import halaman detail
+import 'package:gym_app/views/blog/article_detail_page.dart';
 
 class ArticleSection extends StatelessWidget {
   const ArticleSection({super.key});
@@ -88,16 +88,13 @@ class ArticleSection extends StatelessWidget {
     required BuildContext context,
     required Article article,
   }) {
-    // --- TAMBAHKAN INI UNTUK DEBUGGING ---
     final imageUrl = article.fullCoverPhotoUrl;
     print("Mencoba memuat gambar dari URL: $imageUrl");
     return GestureDetector(
       onTap: () {
-        // --- INI DIA LOGIC NAVIGASINYA ---
         Navigator.push(
           context,
           MaterialPageRoute(
-            // Kirim slug-nya ke ArticleDetailPage
             builder: (context) => ArticleDetailPage(slug: article.slug),
           ),
         );
@@ -109,7 +106,6 @@ class ArticleSection extends StatelessWidget {
             image: NetworkImage(imageUrl),
             fit: BoxFit.cover,
             onError: (exception, stackTrace) {
-              // Fallback jika gambar gagal dimuat
               print('Gagal memuat gambar: ${article.fullCoverPhotoUrl}');
             },
             colorFilter: ColorFilter.mode(

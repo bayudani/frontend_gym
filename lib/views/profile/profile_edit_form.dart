@@ -1,5 +1,3 @@
-// lib/views/profile/profile_edit_form.dart
-
 import 'package:flutter/material.dart';
 import 'package:gym_app/models/user_models.dart';
 
@@ -12,7 +10,6 @@ class ProfileEditForm extends StatefulWidget {
     required this.userProfile,
     required this.onSave,
   });
-
 
   @override
   State<ProfileEditForm> createState() => _ProfileEditFormState();
@@ -58,7 +55,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
             _buildProfileFormField(
               controller: _nameController,
               labelText: 'Name',
-              hintText: 'Enter your name', // <-- TAMBAHKAN hintText YANG HILANG
+              hintText: 'Enter your name',
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Name cannot be empty';
@@ -70,8 +67,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
             _buildProfileFormField(
               controller: _emailController,
               labelText: 'Email',
-              hintText: 'Enter your email', // <-- TAMBAHKAN hintText YANG HILANG
-              readOnly: true, // <-- TAMBAHIN INI AJA
+              hintText: 'Enter your email',
+              readOnly: true,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || !RegExp(r".+@.+\..+").hasMatch(value)) {
@@ -113,7 +110,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     );
   }
 
-  // --- DEFINISI FUNGSI HELPER YANG DIPERBAIKI ---
   Widget _buildProfileFormField({
     required TextEditingController controller,
     required String hintText,
@@ -121,7 +117,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
     bool readOnly = false,
-    String? Function(String?)? validator, // <-- TERIMA FUNGSI VALIDATOR DI SINI
+    String? Function(String?)? validator,
   }) {
     const profileOutlineInputBorder = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.white70),
@@ -140,7 +136,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintStyle: const TextStyle(color: Color(0xFF757575)),
         labelStyle: const TextStyle(color: Colors.black87),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
         border: profileOutlineInputBorder,
         enabledBorder: profileOutlineInputBorder.copyWith(
           borderSide: const BorderSide(color: Color(0xFF757575)),
@@ -151,7 +150,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         fillColor: Colors.white,
         filled: true,
       ),
-      validator: validator, // <-- OPER validator-NYA KE SINI
+      validator: validator,
     );
   }
 }

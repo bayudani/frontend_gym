@@ -13,14 +13,14 @@ class AttendanceHistoryPage extends StatefulWidget {
 }
 
 class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
-  
   @override
   void initState() {
     super.initState();
-    // Panggil fungsi untuk fetch data saat halaman pertama kali dibuka
-    // `listen: false` wajib di initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AttendanceController>(context, listen: false).fetchAttendanceHistory();
+      Provider.of<AttendanceController>(
+        context,
+        listen: false,
+      ).fetchAttendanceHistory();
     });
   }
 
@@ -37,18 +37,20 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Riwayat Absen', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Riwayat Absen',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
-      // Gunakan Consumer untuk "mendengarkan" perubahan dari AttendanceController
       body: Consumer<AttendanceController>(
         builder: (context, controller, child) {
-          // Tampilan saat LOADING
           if (controller.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: Colors.white));
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           }
 
-          // Tampilan saat ada ERROR
           if (controller.errorMessage != null) {
             return Center(
               child: Padding(
@@ -62,7 +64,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
             );
           }
 
-          // Tampilan saat data KOSONG
           if (controller.records.isEmpty) {
             return const Center(
               child: Text(
@@ -71,18 +72,19 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
               ),
             );
           }
-          
-          // Tampilan saat data BERHASIL dimuat
+
           return RefreshIndicator(
             onRefresh: () => controller.fetchAttendanceHistory(),
             color: Colors.white,
             backgroundColor: Colors.grey[800],
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0,
+              ),
               itemCount: controller.records.length,
               itemBuilder: (context, index) {
                 final AttendanceRecord record = controller.records[index];
-                // Karena semua data adalah riwayat scan, maka 'present' selalu true
                 return _buildAttendanceCard(record.formattedScanDateTime, true);
               },
             ),
@@ -92,7 +94,6 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
     );
   }
 
-  // Widget untuk setiap kartu riwayat absen (tidak ada perubahan di sini)
   Widget _buildAttendanceCard(String date, bool present) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15.0),
@@ -109,7 +110,7 @@ class _AttendanceHistoryPageState extends State<AttendanceHistoryPage> {
             date,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 16, // Sedikit disesuaikan agar pas
+              fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),

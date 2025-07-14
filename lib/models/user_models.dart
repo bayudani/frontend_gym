@@ -3,11 +3,7 @@ class User {
   final String email;
   final String token;
 
-  User({
-    required this.name,
-    required this.email,
-    required this.token,
-  });
+  User({required this.name, required this.email, required this.token});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -17,11 +13,7 @@ class User {
     );
   }
 
-  User copyWith({
-    String? name,
-    String? email,
-    String? token,
-  }) {
+  User copyWith({String? name, String? email, String? token}) {
     return User(
       name: name ?? this.name,
       email: email ?? this.email,
@@ -36,8 +28,6 @@ class UserPoint {
   UserPoint({required this.point});
 
   factory UserPoint.fromJson(Map<String, dynamic> json) {
-    return UserPoint(
-      point: json['point'] ?? 0, // Ambil 'point', kalo null default-nya 0
-    );
+    return UserPoint(point: json['point'] ?? 0);
   }
 }
